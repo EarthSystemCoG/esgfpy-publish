@@ -14,14 +14,17 @@ from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
 import sys
 
 # laptop parameters
+ROOT_DIR = "/Users/cinquini/data/Evaluation/Dataset"
 BASE_URL = "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset"
 HOSTNAME = "localhost:8080"
 
 # dev-hydra parameters
+ROOT_DIR = "/data/ncpp/dip/Evaluation/Dataset"
 BASE_URL = "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
 HOSTNAME = "dev-hydra.wx.noaa.gov"
 
 # hydra parameters
+ROOT_DIR = "/data/ncpp/dip/Evaluation/Dataset"
 BASE_URL = "http://hydra.fsl.noaa.gov/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
 HOSTNAME = "hydra.fsl.noaa.gov"
 
@@ -43,8 +46,7 @@ if __name__ == '__main__':
     solrBaseUrl = "http://localhost:8984/solr"
     
     # root directory where the data are stored
-    rootDirectory = "/Users/cinquini/data/Evaluation/Dataset"
-    #rootDirectory = "/data/ncpp/dip/Evaluation/Dataset"
+    rootDirectory = ROOT_DIR
     
     # sub-directory struture
     subDirs = [ "method", "protocol", "dataset", "metrics", "group", "metrics_type" ]
