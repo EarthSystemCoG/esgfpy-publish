@@ -24,13 +24,15 @@ SUBTYPE_MOVIE = "movie"
 SUBTYPE_DOCUMENT = "document"
 SUBTYPE_XML = "xml"
 SUBTYPE_DATA = "data"
+SUBTYPE_XCEL = "xcel"
 
 # dictionary that maps file sub-types to file extensions
 FILE_SUBTYPES = { SUBTYPE_IMAGE: ["jpg", "jpeg", "gif", "png", "tif", "tiff"],
                   SUBTYPE_MOVIE: ["mov"],
                   SUBTYPE_DOCUMENT: ["doc", "docx", "pdf", "txt", "ppt", "key"],
                   SUBTYPE_XML: ["xml"], 
-                  SUBTYPE_DATA: ["nc", "hdf"]
+                  SUBTYPE_DATA: ["nc", "hdf"],
+                  SUBTYPE_XCEL: ["xlsx", "xls", "csv"]
                 }
 
 # service names

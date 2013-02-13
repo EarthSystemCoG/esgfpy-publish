@@ -19,14 +19,14 @@ BASE_URL = "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset"
 HOSTNAME = "localhost:8080"
 
 # dev-hydra parameters
-ROOT_DIR = "/data/ncpp/dip/Evaluation/Dataset"
-BASE_URL = "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
-HOSTNAME = "dev-hydra.wx.noaa.gov"
+#ROOT_DIR = "/data/ncpp/dip/Evaluation/Dataset"
+#BASE_URL = "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
+#HOSTNAME = "dev-hydra.wx.noaa.gov"
 
 # hydra parameters
-ROOT_DIR = "/data/ncpp/dip/Evaluation/Dataset"
-BASE_URL = "http://hydra.fsl.noaa.gov/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
-HOSTNAME = "hydra.fsl.noaa.gov"
+#ROOT_DIR = "/data/ncpp/dip/Evaluation/Dataset"
+#BASE_URL = "http://hydra.fsl.noaa.gov/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
+#HOSTNAME = "hydra.fsl.noaa.gov"
 
 
 def str2bool(v):
