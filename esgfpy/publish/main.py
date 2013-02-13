@@ -13,6 +13,19 @@ from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
 from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
 import sys
 
+# laptop parameters
+BASE_URL = "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset"
+HOSTNAME = "localhost:8080"
+
+# dev-hydra parameters
+BASE_URL = "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
+HOSTNAME = "dev-hydra.wx.noaa.gov"
+
+# hydra parameters
+BASE_URL = "http://hydra.fsl.noaa.gov/thredds/fileServer/ncpp-dip/Evaluation/Dataset"
+HOSTNAME = "hydra.fsl.noaa.gov"
+
+
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
                                      
@@ -38,12 +51,12 @@ if __name__ == '__main__':
     
     # constant dataset-level metadata
     datasetFields = { "project": ["NCPP"],
-                      "index_node": ["localhost:8080"],
-                      "data_node":["localhost:8080"] }
+                      "index_node": [HOSTNAME],
+                      "data_node":[HOSTNAME] }
     
     # constant file-level metadata
-    fileFields = {  "index_node": ["localhost:8080"],
-                    "data_node":["localhost:8080"] }
+    fileFields = {  "index_node": [HOSTNAME],
+                    "data_node":[HOSTNAME] }
         
     # Dataset records factory
     myDatasetRecordFactory = DirectoryDatasetRecordFactory("noaa.esrl", rootDirectory=rootDirectory, subDirs=subDirs, fields=datasetFields)
@@ -51,10 +64,8 @@ if __name__ == '__main__':
     # Files records factory
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields, 
                                                     rootDirectory=rootDirectory,
-                                                    baseUrls={ SERVICE_HTTP      : "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset",
-                                                               SERVICE_THUMBNAIL : "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset" },
-                                                    #baseUrls={ SERVICE_HTTP      : "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset",
-                                                    #           SERVICE_THUMBNAIL : "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset" },
+                                                    baseUrls={ SERVICE_HTTP      : BASE_URL,
+                                                               SERVICE_THUMBNAIL : BASE_URL },
                                                     generateThumbnails=True
                                                     )
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, metadataFileParser=XMLMetadataFileParser())
