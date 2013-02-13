@@ -10,6 +10,7 @@ Example driver program for publishing/unpublishing records to ESGF.
 from esgfpy.publish.factories import DirectoryDatasetRecordFactory, FilepathFileRecordFactory
 from esgfpy.publish.services import FileSystemIndexer, PublishingClient
 from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
+from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
 import sys
 
 def str2bool(v):
@@ -30,6 +31,7 @@ if __name__ == '__main__':
     
     # root directory where the data are stored
     rootDirectory = "/Users/cinquini/data/Evaluation/Dataset"
+    #rootDirectory = "/data/ncpp/dip/Evaluation/Dataset"
     
     # sub-directory struture
     subDirs = [ "method", "protocol", "dataset", "metrics", "group", "metrics_type" ]
@@ -49,7 +51,10 @@ if __name__ == '__main__':
     # Files records factory
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields, 
                                                     rootDirectory=rootDirectory,
-                                                    baseUrls={ "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset":"HTTP Download"},
+                                                    baseUrls={ SERVICE_HTTP      : "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset",
+                                                               SERVICE_THUMBNAIL : "http://localhost:8000/site_media/data/ncpp/Evaluation/Dataset" },
+                                                    #baseUrls={ SERVICE_HTTP      : "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset",
+                                                    #           SERVICE_THUMBNAIL : "http://dev-hydra.esrl.svc/thredds/fileServer/ncpp-dip/Evaluation/Dataset" },
                                                     generateThumbnails=True
                                                     )
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, metadataFileParser=XMLMetadataFileParser())

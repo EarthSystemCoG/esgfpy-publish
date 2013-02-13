@@ -21,7 +21,7 @@ import string
 import os
 
 from .models import DatasetRecord, FileRecord
-from .consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT
+from .consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL
 from .utils import getMimeType
 import Image
 
@@ -139,36 +139,31 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             title = filename
             fields = {}
             fields['format'] = [ext]
+            isImage = False
             for subtype, values in FILE_SUBTYPES.items():
                 if ext in values:
                     fields['subtype'] = [subtype]
+                    if subtype==SUBTYPE_IMAGE:
+                        isImage=True
                     
             # create image thumbnail
-            if self.generateThumbnails:
-                if 'subtype' in fields.keys() and SUBTYPE_IMAGE in fields['subtype']:
-                    thumbnailPath = os.path.join(dir, "%s.thumbnail.jpg" % name)
-                    if not os.path.exists(thumbnailPath) or os.path.getsize(thumbnailPath)==0:
-                        print '\nGenerating thumbnail: %s' % thumbnailPath
-                        try:
-                            im = Image.open(filepath)
-                            if im.mode != "RGB":
-                                im = im.convert("RGB")
-                            size = THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT
-                            im.thumbnail(size)
-                            im.save(thumbnailPath, "JPEG")
-                        except IOError as error:
-                            print "Cannot create thumbnail for", filepath
-                            print error
-                 
+            if self.generateThumbnails and isImage:
+                thumbnailPath = os.path.join(dir, "%s.%s" % (name, THUMBNAIL_EXT) )
+                self._generateThumbnail(filepath, thumbnailPath)                 
                     
             # add file access URLs
             relativeUrl = filepath
             if self.rootDirectory is not None:
                 relativeUrl = relativeUrl.replace(self.rootDirectory,"")
             urls = []
-            for serverBaseUrl, serverName in self.baseUrls.items():
+            for serverName, serverBaseUrl in self.baseUrls.items():
                 url = string.strip(serverBaseUrl,('/'))+relativeUrl
-                urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
+                if serverName == SERVICE_THUMBNAIL:
+                    url = url.replace(".%s" % ext, THUMBNAIL_EXT)
+                    urls.append( "%s|%s|%s" % ( url, getMimeType("jpeg"), serverName) )
+                else:                   
+                    urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
+                    
             if len(urls)>0:
                 fields["url"] = urls
                 
@@ -181,3 +176,18 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             
         else:
             raise Exception("%s is not a file" % filepath)  
+        
+    def _generateThumbnail(self, filePath, thumbnailPath):
+        
+        if not os.path.exists(thumbnailPath) or os.path.getsize(thumbnailPath)==0:
+            print '\nGenerating thumbnail: %s' % thumbnailPath
+            try:
+                im = Image.open(filePath)
+                if im.mode != "RGB":
+                    im = im.convert("RGB")
+                size = THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT
+                im.thumbnail(size)
+                im.save(thumbnailPath, "JPEG")
+            except IOError as error:
+                print "Cannot create thumbnail for", filepath
+                print error

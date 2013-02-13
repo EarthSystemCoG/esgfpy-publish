@@ -33,6 +33,11 @@ FILE_SUBTYPES = { SUBTYPE_IMAGE: ["jpg", "jpeg", "gif", "png", "tif", "tiff"],
                   SUBTYPE_DATA: ["nc", "hdf"]
                 }
 
+# service names
+SERVICE_HTTP = "HTTP Download"
+SERVICE_THUMBNAIL = "Thumbnail"
+
 # dimension of dynamically generated thumbnails
 THUMBNAIL_WIDTH = 60
 THUMBNAIL_HEIGHT = 60
+THUMBNAIL_EXT = "thumbnail.jpg"
