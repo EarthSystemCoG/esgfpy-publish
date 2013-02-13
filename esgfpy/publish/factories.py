@@ -159,7 +159,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             for serverName, serverBaseUrl in self.baseUrls.items():
                 url = string.strip(serverBaseUrl,('/'))+relativeUrl
                 if serverName == SERVICE_THUMBNAIL:
-                    url = url.replace(".%s" % ext, THUMBNAIL_EXT)
+                    url = url.replace(ext, THUMBNAIL_EXT)
                     urls.append( "%s|%s|%s" % ( url, getMimeType("jpeg"), serverName) )
                 else:                   
                     urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
