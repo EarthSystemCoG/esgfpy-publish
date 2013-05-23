@@ -203,6 +203,8 @@ class FileSystemIndexer(Indexer):
                 # create list of one Dataset record
                 datasetRecord = self.datasetRecordFactory.create(dir, 
                                                                  metadata=self._subSelectMetadata(dMetadata,dir))
+                # add number of files
+                datasetRecord.fields['number_of_files'] = [str(len(datafiles))]
                 
                 # directory structure matches template
                 if datasetRecord is not None:

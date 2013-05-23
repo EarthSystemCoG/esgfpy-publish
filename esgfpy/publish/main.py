@@ -54,6 +54,7 @@ if __name__ == '__main__':
     # constant dataset-level metadata
     datasetFields = { "project": ["NCPP"],
                       "index_node": [HOSTNAME],
+                      "metadata_format":["THREDDS"], # currently needed by ESGF web-fe to add datasets to data cart
                       "data_node":[HOSTNAME] }
     
     # constant file-level metadata
