@@ -156,7 +156,7 @@ class FileSystemIndexer(Indexer):
         self.fileRecordFactory = fileRecordFactory
         self.metadataFileParser = metadataFileParser
                 
-    def index(self, rootDirectory):
+    def index(self, startDirectory):
         """ 
         This method implementation traverses the directory tree
         and creates records whenever it finds a non-empty sub-directory.
@@ -167,7 +167,7 @@ class FileSystemIndexer(Indexer):
         records = { TYPE_DATASET:[], TYPE_FILE:[]}
         dMetadata = {} # empty additional dataset-level metadata dictionary
         fMetadata = {} # empty additional file-level metadata dictionary
-        for dir, subdirs, files in os.walk(rootDirectory):
+        for dir, subdirs, files in os.walk(startDirectory):
             
             # distinguish data and metadata files
             datafiles = []

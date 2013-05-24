@@ -86,7 +86,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                         fields[subDir] = [part] # list of one element
                         title += "%s=%s, " % (string.capitalize(subDir), part)
                     
-                    id = string.join(subValues,'.')
+                    id = "%s.%s" % (self.rootId, string.join(subValues,'.'))
                                      
                     # add constant metadata fields + instance metadata fields
                     for (key, values) in (self.fields.items() + metadata.items()):

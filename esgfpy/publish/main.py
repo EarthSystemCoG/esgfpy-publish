@@ -38,6 +38,7 @@ if __name__ == '__main__':
     if len(sys.argv) != 2:  # the program name and one argument
         # stop the program and print an error message
         sys.exit("Usage: esgfpy/publish/main.py True|False (to publish/unpublish)")
+    startDirectory = "/Users/cinquini/data/Evaluation/Dataset/Hayhoe/Protocol1/GCM1Data/Metrics/Group1/Temperature"
     publish = str2bool(sys.argv[1])
         
     # URL of ESGF publishing service
@@ -76,7 +77,7 @@ if __name__ == '__main__':
     publisher = PublishingClient(indexer, solrBaseUrl)
     if publish:
         print 'Publishing...'
-        publisher.publish(rootDirectory)
+        publisher.publish(startDirectory)
     else:
         print 'Unpublishing...'
-        publisher.unpublish(rootDirectory)
+        publisher.unpublish(startDirectory)
