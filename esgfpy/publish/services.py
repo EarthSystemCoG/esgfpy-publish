@@ -168,6 +168,10 @@ class FileSystemIndexer(Indexer):
         records = { TYPE_DATASET:[], TYPE_FILE:[]}
         dMetadata = {} # empty additional dataset-level metadata dictionary
         fMetadata = {} # empty additional file-level metadata dictionary
+        if not os.path.isdir(startDirectory):
+            raise Exception("Wrong starting directory: %s" % startDirectory)
+        else:
+            print 'Start directory=%s' % startDirectory
         for dir, subdirs, files in os.walk(startDirectory):
             
             # distinguish data and metadata files
