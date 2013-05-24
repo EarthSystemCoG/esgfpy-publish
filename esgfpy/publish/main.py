@@ -9,6 +9,7 @@ Example configuration file:
 
 [NCPP]
 ROOT_DIR = /data/ncpp/dip/Evaluation/Dataset
+ROOT_ID = ncpp.dip-2013
 BASE_URL = http://hydra.fsl.noaa.gov/thredds/fileServer/ncpp-dip/Evaluation/Dataset
 HOSTNAME = hydra.fsl.noaa.gov
 SOLR_URL = http://localhost:8984/solr
@@ -46,6 +47,7 @@ if __name__ == '__main__':
     try:
         config.read( os.path.expanduser(CONFIG_FILE) )
         ROOT_DIR = config.get(project, "ROOT_DIR")
+        ROOT_ID = config.get(project, "ROOT_ID")
         BASE_URL = config.get(project, "BASE_URL")
         HOSTNAME = config.get(project, "HOSTNAME")
         # URL of ESGF publishing service
@@ -72,7 +74,7 @@ if __name__ == '__main__':
                     "data_node":[HOSTNAME] }
         
     # Dataset records factory
-    myDatasetRecordFactory = DirectoryDatasetRecordFactory("noaa.esrl", rootDirectory=ROOT_DIR, subDirs=subDirs, fields=datasetFields)
+    myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=subDirs, fields=datasetFields)
     
     # Files records factory
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields, 
