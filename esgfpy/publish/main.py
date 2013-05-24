@@ -79,5 +79,5 @@ if __name__ == '__main__':
         print 'Publishing...'
         publisher.publish(startDirectory)
     else:
-        print 'Unpublishing...'
+        print 'Un-Publishing...'
         publisher.unpublish(startDirectory)

@@ -50,11 +50,9 @@ class PublishingClient(object):
         
         # publish records to remote publishing service, one type at a time
         # first Datasets
-        print '\nNumber of Dataset records=%s' % len(records[TYPE_DATASET])
         self._post( records[TYPE_DATASET], TYPE_DATASET )
         
         # then Files
-        print '\nNumber of File records=%s' % len(records[TYPE_FILE])
         self._post( records[TYPE_FILE], TYPE_FILE )
         
     def unpublish(self, uri):
@@ -68,10 +66,10 @@ class PublishingClient(object):
         records = self.indexer.index(uri)
         
         # unpublish Files first
-        self._post( records[TYPE_FILE], TYPE_FILE, publish=False)
+        self._post( records[TYPE_FILE], TYPE_FILE, publish=False )
         
         # then unpublish Datasets
-        self._post( records[TYPE_DATASET], TYPE_DATASET, publish=False)
+        self._post( records[TYPE_DATASET], TYPE_DATASET, publish=False )
         
     def _post(self, records, record_type, publish=True):
         """Method to publish/unpublish a list of records of the same type to the publishing service."""
@@ -86,12 +84,15 @@ class PublishingClient(object):
             rootEl = Element("delete")
 
         # loop over records, publish/unpublish "MAX_RECORDS" records at once
+        print "Number of %s records: %s" % (record_type, len(records))
         for i, record in enumerate(records):
             
             # add/delete this record
             if publish:
+                print "Adding record: type=%s id=%s" % (record.type, record.id)
                 rootEl.append(record.toXML())
             else:
+                print "Deleting record: type=%s id=%s" % (record.type, record.id)
                 queryEl = SubElement(rootEl, "query")
                 queryEl.text = "id:%s" % record.id
              
@@ -114,7 +115,7 @@ class PublishingClient(object):
     def _post_xml(self, url, xml):
         """Method to post an XML document to the publishing service."""
         
-        print '\nPosting to URL=%s\nXML=\n%s' % (url, xml)     
+        #print '\nPosting to URL=%s\nXML=\n%s' % (url, xml)     
         request = urllib2.Request(url=url, 
                                   data=xml, 
                                   headers={'Content-Type': 'text/xml; charset=UTF-8'})

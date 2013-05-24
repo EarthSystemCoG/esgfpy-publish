@@ -75,7 +75,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                     directory = directory[1:]
                 parts = directory.split(os.sep)
                 if len(parts) == len(self.subDirs):    
-                    print 'Generating Dataset record for directory: %s'  % directory         
+                    print 'Parsing directory: %s'  % directory         
                     # loop over sub-directories bottom-to-top
                     subValues = []
                     fields = {}
