@@ -13,6 +13,8 @@ ROOT_ID = ncpp.dip-2013
 BASE_URL = http://hydra.fsl.noaa.gov/thredds/fileServer/ncpp-dip/Evaluation/Dataset
 HOSTNAME = hydra.fsl.noaa.gov
 SOLR_URL = http://localhost:8984/solr
+PROJECT = NCPP
+SUBDIRS = method, protocol, dataset, metrics, group, metrics_type
 
 @author: Luca Cinquini
 '''
@@ -25,7 +27,6 @@ import sys, os
 import ConfigParser
 
 CONFIG_FILE = "/usr/local/esgf/config/esgfpy-publish.cfg"
-
 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
@@ -50,21 +51,21 @@ if __name__ == '__main__':
         ROOT_ID = config.get(project, "ROOT_ID")
         BASE_URL = config.get(project, "BASE_URL")
         HOSTNAME = config.get(project, "HOSTNAME")
+        PROJECT = config.get(project, "PROJECT")
         # URL of ESGF publishing service
         # NOTE: must NOT end in '/'
         #! TODO: replace with ESGF publishing service
         SOLR_URL = config.get(project, "SOLR_URL")
+        # transform value "method, protocol, dataset, metrics, group, metrics_type" into list ["method", "protocol", ...]
+        SUBDIRS = config.get(project, "SUBDIRS").replace(" ","").split(",")
         
     except Exception as e:
         print "ERROR: esgfpy-publish configuration file not found"
         print e
         sys.exit(-1)
-        
-    # sub-directory struture
-    subDirs = [ "method", "protocol", "dataset", "metrics", "group", "metrics_type" ]
-    
+            
     # constant dataset-level metadata
-    datasetFields = { "project": ["NCPP"],
+    datasetFields = { "project": [PROJECT],
                       "index_node": [HOSTNAME],
                       "metadata_format":["THREDDS"], # currently needed by ESGF web-fe to add datasets to data cart
                       "data_node":[HOSTNAME] }
@@ -74,7 +75,7 @@ if __name__ == '__main__':
                     "data_node":[HOSTNAME] }
         
     # Dataset records factory
-    myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=subDirs, fields=datasetFields)
+    myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=SUBDIRS, fields=datasetFields)
     
     # Files records factory
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields, 
