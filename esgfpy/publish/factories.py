@@ -67,8 +67,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
         
         if os.path.isdir(directory):
              
-            if self.rootDirectory in directory:
-                print 'Parsing directory: %s'  % directory      
+            if self.rootDirectory in directory:    
         
                 # remove rootDirectory, then split remaining path into subdirectories
                 directory = directory.replace(self.rootDirectory,"")
@@ -76,6 +75,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                     directory = directory[1:]
                 parts = directory.split(os.sep)
                 if len(parts) == len(self.subDirs):      
+                    print 'Parsing directory: %s'  % directory  
                     # loop over sub-directories bottom-to-top
                     subValues = []
                     fields = {}
@@ -94,6 +94,8 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                         
                     # create and return one Dataset record
                     return DatasetRecord(id, title[:-2], fields)
+                else:
+                    print "Directory %s does NOT match sub-directory structure:%s" % (directory, self.subDirs)
                             
         # no Dataset record created
         return None
