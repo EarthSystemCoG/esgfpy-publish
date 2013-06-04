@@ -19,6 +19,7 @@ Module containing factories for creating Record objects.
 
 import string
 import os
+import re
 
 from .models import DatasetRecord, FileRecord
 from .consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL
@@ -117,16 +118,18 @@ class AbstractFileRecordFactory(object):
 class FilepathFileRecordFactory(AbstractFileRecordFactory):
     """Class that generates FileRecord objects from a filepath in the local file system."""
     
-    def __init__(self, fields={}, rootDirectory=None, baseUrls={}, generateThumbnails=False):
+    def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, generateThumbnails=False):
         """
         :param fields: constants metadata fields as (key, values) pairs
         :param rootDirectory: root directory of file location, will be removed when creating the file access URL
+        :param filenamePatterns: optional list of matching filename patterns (with named groups)
         :param baseUrls: map of (base server URL, server name) to create file access URLs
         :param generateThumbnails: set to True to automatically generate thumbnails when publishing image files
         """
 
         self.fields = fields
         self.rootDirectory = rootDirectory
+        self.filenamePatterns = filenamePatterns
         self.baseUrls = baseUrls
         self.generateThumbnails = generateThumbnails
     
@@ -135,7 +138,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
         if os.path.isfile(filepath):
             
             dir, filename = os.path.split(filepath)
-            name, extension = os.path.splitext(filepath)
+            name, extension = os.path.splitext(filename)
             ext =  extension[1:] # remove '.' from file extension
             id = string.join( [datasetRecord.id, filename], '.')
             title = filename
@@ -169,6 +172,15 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                     
             if len(urls)>0:
                 fields["url"] = urls
+                
+            # extract information from file names
+            for pattern in self.filenamePatterns:
+                match = re.match(pattern, filename)
+                if match:
+                    print 'Filename:%s matches template' % filename
+                    for key in match.groupdict().keys():
+                        print 'File Metadata: key=%s value=%s' % (key,  match.group(key))
+                        fields[key] = [ match.group(key) ]
                 
             # add constant metadata fields + instance metadata fields
             for (key, values) in (self.fields.items() + metadata.items()):

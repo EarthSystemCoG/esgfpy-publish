@@ -73,13 +73,40 @@ if __name__ == '__main__':
     # constant file-level metadata
     fileFields = {  "index_node": [HOSTNAME],
                     "data_node":[HOSTNAME] }
-        
+    
+    # 12 fields example: QED2013_evalData_ARRM_CGCM3_P1_G1_tasmax_ann_tx90p_US48_19712000.jpg
+    # 10 fields example: QED2013_evalData_Maurer02_P1_G2agro_tasmax_ann_GSL_US48_19712000.jpg
+    # 13 fields example: QED2013_comparData_obsosb_Maurer02_PRISM_P1_G1_tasmax_bias_day_stdev_US48_19712000.jpg
+    # 14 fields example: QED2013_comparData_downscObs_ARRM_CGCM3_Maurer02_P1_G2agro_tasmax_bias_ann_GSL_US48_19712000.jpg
+    FILENAME_PATTERNS = [ "(?P<evaluation_project>[^_]*)_(?P<activity>[^_]*)_(?P<downscaling_model_type>[^_]*)" \
+                         +"_(?P<model_id>[^_]*)_(?P<driving_model_id>[^_]*)_(?P<protocol>[^_]*)" \
+                         +"_(?P<metric_group>[^_]*)_(?P<variable>[^_]*)_(?P<time_frequency>[^_]*)" \
+                         +"_(?P<metric>[^_]*)_(?P<region>[^_]*)_(?P<period>[^_]*)\.\w+",
+                         
+                          "(?P<evaluation_project>[^_]*)_(?P<activity>[^_]*)_(?P<obs_data>[^_]*)" \
+                         +"_(?P<protocol>[^_]*)_(?P<metric_group>[^_]*)_(?P<variable>[^_]*)" \
+                         +"_(?P<time_frequency>[^_]*)_(?P<metric>[^_]*)_(?P<region>[^_]*)" \
+                         +"_(?P<period>[^_]*)\.\w+",
+                         
+                          "(?P<evaluation_project>[^_]*)_(?P<activity>[^_]*)_(?P<comparison_type>[^_]*)" \
+                         +"_(?P<obs_data>[^_]*)_(?P<comparison_data>[^_]*)_(?P<protocol>[^_]*)" \
+                         +"_(?P<metric_group>[^_]*)_(?P<variable>[^_]*)_(?P<comparison_metric>[^_]*)" \
+                         +"_(?P<time_frequency>[^_]*)_(?P<metric>[^_]*)_(?P<region>[^_]*)" \
+                         +"_(?P<period>[^_]*)\.\w+",
+                         
+                          "(?P<evaluation_project>[^_]*)_(?P<activity>[^_]*)_(?P<comparison_type>[^_]*)" \
+                         +"_(?P<model_id>[^_]*)_(?P<driving_model_id>[^_]*)_(?P<comparison_data>[^_]*)" \
+                         +"_(?P<protocol>[^_]*)_(?P<metric_group>[^_]*)_(?P<variable>[^_]*)" \
+                         +"_(?P<comparison_metric>[^_]*)_(?P<time_frequency>[^_]*)_(?P<metric>[^_]*)" \
+                         +"_(?P<region>[^_]*)_(?P<period>[^_]*)\.\w+"]
+                                     
     # Dataset records factory
     myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=SUBDIRS, fields=datasetFields)
     
     # Files records factory
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields, 
                                                     rootDirectory=ROOT_DIR,
+                                                    filenamePatterns=FILENAME_PATTERNS,
                                                     baseUrls={ SERVICE_HTTP      : BASE_URL,
                                                                SERVICE_THUMBNAIL : BASE_URL },
                                                     generateThumbnails=True
