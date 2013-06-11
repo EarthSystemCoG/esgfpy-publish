@@ -2,8 +2,10 @@
 Module for parsing records metadata from ancillary files.
 '''
 
-from os.path import splitext
+from os.path import splitext, expanduser
 from xml.etree.ElementTree import fromstring
+from esgfpy.publish.consts import METADATA_MAPPING_FILE
+import ConfigParser
 
 class AbstractMetadataFileParser(object):
     """API for parsing metadata from local file system."""
@@ -40,6 +42,19 @@ class XMLMetadataFileParser(AbstractMetadataFileParser):
     (specifically, files ending in '.xml').
     """
     
+    def __init__(self, metadata_mapping_file=METADATA_MAPPING_FILE):
+        
+        # read optional mappings for facet keys and values
+        config = ConfigParser.RawConfigParser()
+        try:
+            config.read( expanduser(metadata_mapping_file) )
+            self.metadataKeyMappings = dict(config.items('keys'))
+            self.metadataValueMappings = dict(config.items('values'))
+            
+        except Exception as e:
+            print "Metadata mapping file %s NOT found" % metadata_mapping_file
+            print e
+    
     def isMetadataFile(self, filepath):
         """Files ending in '.xml' are considered ancillary metadata files."""
         name, ext = splitext(filepath)
@@ -57,9 +72,15 @@ class XMLMetadataFileParser(AbstractMetadataFileParser):
         
         # loop over children of root element
         for childEl in rootEl:
-            #print childEl.tag, childEl.attrib, childEl.text
-            if not childEl.tag in metadata:
-                metadata[childEl.tag] = []
-            metadata[childEl.tag].append(childEl.text)
+            key = childEl.tag
+            value = childEl.text
+            # apply optional mappings for key, value
+            if key in self.metadataKeyMappings:
+                key = self.metadataKeyMappings[key]           
+            if value in self.metadataValueMappings:
+                value = self.metadataValueMappings[value]
+            if not key in metadata:
+                metadata[key] = []
+            metadata[key].append(value)
             
         return metadata

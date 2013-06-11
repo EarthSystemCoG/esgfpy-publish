@@ -43,3 +43,6 @@ SERVICE_THUMBNAIL = "Thumbnail"
 THUMBNAIL_WIDTH = 60
 THUMBNAIL_HEIGHT = 60
 THUMBNAIL_EXT = "thumbnail.jpg"
+
+# default file for mapping facet keys and values
+METADATA_MAPPING_FILE = "/usr/local/esgf/config/metadata-mapping.cfg"
