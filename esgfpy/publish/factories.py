@@ -48,10 +48,8 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
         """
         :param rootId: root of assigned dataset identifiers
         :param rootDirectory: root filepath removed before parsing for subdirectories
-        :param subDirs: list of named subdirectories above the file locations.
-                        Files must be located in a directory structure at least as deep
-                        as the number of given subdirectories. 
-                        Subdirectories above the structure will be ignored as far as assigning facet values.
+        :param subDirs: list of one or more directory templates.
+                        Datasets and files will be published only if they are stored in a directory that matches one of the templates.
         :param fields: constants metadata fields as (key, values) pairs
         """
         self.rootId = rootId
@@ -62,7 +60,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
     def create(self, directory, metadata={}):
         """
         Generates a single dataset from the given directory,
-        provided it conforms to the specified template: rootDirectory + subDirs
+        provided it conforms to one of the specified templates: rootDirectory + subDirs
         (otherwise None is returned).
         """   
         
@@ -75,30 +73,31 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                 if directory.startswith("/"):
                     directory = directory[1:]
                 parts = directory.split(os.sep)
-                if len(parts) == len(self.subDirs):      
-                    print 'Parsing directory: %s'  % directory  
-                    # loop over sub-directories bottom-to-top
-                    subValues = []
-                    fields = {}
-                    title = ""
-                    for i, part in enumerate(parts):                       
-                        subValues.append(part)
-                        subDir = self.subDirs[i] 
-                        fields[subDir] = [part] # list of one element
-                        title += "%s=%s, " % (string.capitalize(subDir), part)
-                    
-                    id = "%s.%s" % (self.rootId, string.join(subValues,'.'))
-                                     
-                    # add constant metadata fields + instance metadata fields
-                    for (key, values) in (self.fields.items() + metadata.items()):
-                        fields[key] = values
+                for subDirs in self.subDirs:
+                    if len(parts) == len(subDirs):      
+                        print 'Parsing directory: %s'  % directory  
+                        # loop over sub-directories bottom-to-top
+                        subValues = []
+                        fields = {}
+                        title = ""
+                        for i, part in enumerate(parts):                       
+                            subValues.append(part)
+                            subDir = subDirs[i] 
+                            fields[subDir] = [part] # list of one element
+                            title += "%s=%s, " % (string.capitalize(subDir), part)
                         
-                    # create and return one Dataset record
-                    return DatasetRecord(id, title[:-2], fields)
-                else:
-                    print "Directory %s does NOT match sub-directory structure:%s" % (directory, self.subDirs)
+                        id = "%s.%s" % (self.rootId, string.join(subValues,'.'))
+                                         
+                        # add constant metadata fields + instance metadata fields
+                        for (key, values) in (self.fields.items() + metadata.items()):
+                            fields[key] = values
                             
-        # no Dataset record created
+                        # create and return one Dataset record
+                        return DatasetRecord(id, title[:-2], fields)
+ 
+                            
+        # no Dataset record created - return None
+        print "Directory %s does NOT match any sub-directory template" % directory
         return None
     
         

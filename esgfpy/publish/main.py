@@ -56,8 +56,9 @@ if __name__ == '__main__':
         # NOTE: must NOT end in '/'
         #! TODO: replace with ESGF publishing service
         SOLR_URL = config.get(project, "SOLR_URL")
-        # transform value "method, protocol, dataset, metrics, group, metrics_type" into list ["method", "protocol", ...]
-        SUBDIRS = config.get(project, "SUBDIRS").replace(" ","").split(",")
+        # [['activity', 'evaluation_data', 'variable', 'metric', 'time_frequency', 'period', 'region'], 
+        #  ['activity', 'comparison_data', 'evaluation_data', 'comparison_metric', 'parameter', 'metric', 'frequency', 'period', 'region']]
+        SUBDIRS = [template.split(",") for template in config.get(project, "SUBDIRS").replace(" ","").replace("\n","").split("|")]
         
     except Exception as e:
         print "ERROR: esgfpy-publish configuration file not found"
