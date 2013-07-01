@@ -140,7 +140,12 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             name, extension = os.path.splitext(filename)
             ext =  extension[1:] # remove '.' from file extension
             id = string.join( [datasetRecord.id, filename], '.')
-            title = filename
+            # set record title to filename, unless overridden by file-specific metadata
+            try:
+                title = metadata['title'][0]
+                del metadata['title']
+            except KeyError:
+                title = filename
             fields = {}
             fields['format'] = [ext]
             isImage = False
@@ -185,7 +190,6 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             for (key, values) in (self.fields.items() + metadata.items()):
                 fields[key] = values
 
-                    
             return FileRecord(datasetRecord, id, title, fields)
             
         else:
