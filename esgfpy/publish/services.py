@@ -161,7 +161,7 @@ class FileSystemIndexer(Indexer):
         """ 
         This method implementation traverses the directory tree
         and creates records whenever it finds a non-empty sub-directory.
-        The metadata file: /.../.../<subdir>/<subdir>.xml will be associated with all dataset records under /.../.../<subdir>
+        The metadata file: <subdir>_......<subdir>_<subdir>.xml will be associated with all dataset records under /.../.../<subdir>
         The metadata file: /.../.../<subdir>/<filemname>.ext.xml will be associated with the single file <filemname>.ext
         """
         
@@ -189,9 +189,10 @@ class FileSystemIndexer(Indexer):
                             
                             met = self.metadataFileParser.parseMetadata(filepath)
                             filename, ext = os.path.splitext(file)
-                            if dir.endswith(filename):
+                            dirname = dir.replace("/","_")
+                            if dirname.endswith(filename):
                                 # dataset-level metadata
-                                # key example: /Users/.../Evaluation/Dataset/BCCA/Protocol1
+                                # key example: ncpp_eval_Maurer02_tas_q90_october_1970-1999_US48
                                 dMetadata[dir] = met
                             else:
                                 # file-level metadata
@@ -203,12 +204,12 @@ class FileSystemIndexer(Indexer):
                             datafiles.append(filepath)
                   
             # create dataset containing these data files
-            if len(datafiles)>0:      
-                        
+            if len(datafiles)>0: 
+                                        
                 # create list of one Dataset record
                 datasetRecord = self.datasetRecordFactory.create(dir, 
                                                                  metadata=self._subSelectMetadata(dMetadata,dir))
-                
+                                
                 # directory structure matches template
                 if datasetRecord is not None:
                     
@@ -225,7 +226,7 @@ class FileSystemIndexer(Indexer):
         return records
 
     def _subSelectMetadata(self, metadata, path):
-        """Utility method to subselect a metadata dictionart by matching keys to the given path."""
+        """Utility method to subselect a metadata dictionary by matching keys to the given path."""
         subMetadata = {}
         for key, met in metadata.items():
             if key in path:
