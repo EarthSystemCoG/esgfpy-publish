@@ -85,12 +85,16 @@ if __name__ == '__main__':
     # 6 fields example: ARRM-CGCM3_tx90p_median_mon7_1971-2000_US48.jpg
     # 8 fields structure: comparison_data|evaluation_data|comparison_metric|parameter|metric|frequency|period|region.jpg
     # 8 fields example: Maurer02_PRISM_bias_tasmax_stdev_seaWin_1971-2000_US48.jpg
+    #                   maurer02v2_arrm_ccsm_bias_praavga_mean_annual_1971-2000.png
+    """
     FILENAME_PATTERNS = [ "(?P<evaluation_data>[^_]*)_(?P<variable>[^_]*)_(?P<metric>[^_]*)" \
                          +"_(?P<time_frequency>[^_]*)_(?P<period>[^_]*)_(?P<region>[^_]*)\.\w+",
                           
                           "(?P<comparison_data>[^_]*)_(?P<evaluation_data>[^_]*)_(?P<comparison_metric>[^_]*)" \
                          +"_(?P<variable>[^_]*)_(?P<metric>[^_]*)_(?P<time_frequency>[^_]*)" \
                          +"_(?P<perdio>[^_]*)_(?P<region>[^_]*)" ]
+                         """
+    FILENAME_PATTERNS = []
                                      
     # Dataset records factory
     myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=SUBDIRS, fields=datasetFields)
