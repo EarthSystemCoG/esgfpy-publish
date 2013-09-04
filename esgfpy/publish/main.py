@@ -56,7 +56,7 @@ if __name__ == '__main__':
         # NOTE: must NOT end in '/'
         #! TODO: replace with ESGF publishing service
         SOLR_URL = config.get(project, "SOLR_URL")
-        # [['activity', 'evaluation_data', 'variable', 'metric', 'time_frequency', 'period', 'region'], 
+        # [['activity', 'evaluation_data', 'variable', 'metric', 'frequency', 'period', 'region'], 
         #  ['activity', 'comparison_data', 'evaluation_data', 'comparison_metric', 'parameter', 'metric', 'frequency', 'period', 'region']]
         SUBDIRS = [template.split(",") for template in config.get(project, "SUBDIRS").replace(" ","").replace("\n","").split("|")]
         
@@ -88,10 +88,10 @@ if __name__ == '__main__':
     #                   maurer02v2_arrm_ccsm_bias_praavga_mean_annual_1971-2000.png
     """
     FILENAME_PATTERNS = [ "(?P<evaluation_data>[^_]*)_(?P<variable>[^_]*)_(?P<metric>[^_]*)" \
-                         +"_(?P<time_frequency>[^_]*)_(?P<period>[^_]*)_(?P<region>[^_]*)\.\w+",
+                         +"_(?P<frequency>[^_]*)_(?P<period>[^_]*)_(?P<region>[^_]*)\.\w+",
                           
                           "(?P<comparison_data>[^_]*)_(?P<evaluation_data>[^_]*)_(?P<comparison_metric>[^_]*)" \
-                         +"_(?P<variable>[^_]*)_(?P<metric>[^_]*)_(?P<time_frequency>[^_]*)" \
+                         +"_(?P<variable>[^_]*)_(?P<metric>[^_]*)_(?P<frequency>[^_]*)" \
                          +"_(?P<perdio>[^_]*)_(?P<region>[^_]*)" ]
                          """
     FILENAME_PATTERNS = []
