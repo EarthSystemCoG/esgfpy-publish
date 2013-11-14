@@ -181,10 +181,13 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             for pattern in self.filenamePatterns:
                 match = re.match(pattern, filename)
                 if match:
-                    #print 'Filename:%s matches template' % filename
+                    print '\tFilename: %s matches template: %s' % (filename, pattern)
                     for key in match.groupdict().keys():
                         #print 'File Metadata: key=%s value=%s' % (key,  match.group(key))
                         fields[key] = [ match.group(key) ]
+                    break # no more matching
+            if not match:
+                print '\tNo matching pattern found for filename: %s' % filename
                 
             # add constant metadata fields + instance metadata fields
             for (key, values) in (self.fields.items() + metadata.items()):
