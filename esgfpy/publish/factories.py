@@ -44,18 +44,20 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
     from a structured directory tree.
     """
     
-    def __init__(self, rootId, rootDirectory="/", subDirs=[], fields={}):
+    def __init__(self, rootId, rootDirectory="/", subDirs=[], fields={}, metadataMapper=None):
         """
         :param rootId: root of assigned dataset identifiers
         :param rootDirectory: root filepath removed before parsing for subdirectories
         :param subDirs: list of one or more directory templates.
                         Datasets and files will be published only if they are stored in a directory that matches one of the templates.
         :param fields: constants metadata fields as (key, values) pairs
+        :param metadataMapper: optional class to map metadata values to controlled vocabulary
         """
         self.rootId = rootId
         self.rootDirectory = rootDirectory
         self.subDirs = subDirs
         self.fields = fields
+        self.metadataMapper = metadataMapper
        
     def create(self, directory, metadata={}):
         """
@@ -91,7 +93,13 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                         # add constant metadata fields + instance metadata fields
                         for (key, values) in (self.fields.items() + metadata.items()):
                             fields[key] = values
-                            
+                                                            
+                        # optional mapping of metadata values        
+                        if self.metadataMapper is not None:
+                            for key, values in fields.items():
+                                for i, value in enumerate(values):
+                                    values[i] = self.metadataMapper.mappit(key, value)
+                          
                         # create and return one Dataset record
                         return DatasetRecord(id, title[:-2], fields)
  

@@ -22,11 +22,13 @@ SUBDIRS = model, experiment, variable
 from esgfpy.publish.factories import DirectoryDatasetRecordFactory, FilepathFileRecordFactory
 from esgfpy.publish.services import FileSystemIndexer, PublishingClient
 from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
+from esgfpy.publish.metadata_mappers import ConfigFileMetadataMapper
 from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
 import sys, os
 import ConfigParser
 
 CONFIG_FILE = "/usr/local/esgf/config/esgfpy-publish.cfg"
+MAPPING_FILE = '/usr/local/esgf/config/gass-ytoc-mip_facets_mapping.cfg'
 
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")
@@ -64,6 +66,9 @@ if __name__ == '__main__':
         print "ERROR: esgfpy-publish configuration file not found"
         print e
         sys.exit(-1)
+        
+    # class that maps metadata values from a configuration file
+    metadataMapper = ConfigFileMetadataMapper(MAPPING_FILE)
             
     # constant dataset-level metadata
     datasetFields = { "project": [PROJECT],
@@ -75,34 +80,15 @@ if __name__ == '__main__':
     fileFields = {  "index_node": [HOSTNAME],
                     "data_node":[HOSTNAME] }
     
-    # 12 fields example: QED2013_evalData_ARRM_CGCM3_P1_G1_tasmax_ann_tx90p_US48_19712000.jpg
-    # 10 fields example: QED2013_evalData_Maurer02_P1_G2agro_tasmax_ann_GSL_US48_19712000.jpg
-    # 13 fields example: QED2013_comparData_obsosb_Maurer02_PRISM_P1_G1_tasmax_bias_day_stdev_US48_19712000.jpg
-    # 14 fields example: QED2013_comparData_downscObs_ARRM_CGCM3_Maurer02_P1_G2agro_tasmax_bias_ann_GSL_US48_19712000.jpg
-    
-    
-    # 6 fields structure:  evaluation_data|parameter|metric|frequency|period|region.jpg
-    # 6 fields example: ARRM-CGCM3_tx90p_median_mon7_1971-2000_US48.jpg
-    # 8 fields structure: comparison_data|evaluation_data|comparison_metric|parameter|metric|frequency|period|region.jpg
-    # 8 fields example: Maurer02_PRISM_bias_tasmax_stdev_seaWin_1971-2000_US48.jpg
-    #                   maurer02v2_arrm_ccsm_bias_praavga_mean_annual_1971-2000.png
-    """
-    FILENAME_PATTERNS = [ "(?P<evaluation_data>[^_]*)_(?P<variable>[^_]*)_(?P<metric>[^_]*)" \
-                         +"_(?P<frequency>[^_]*)_(?P<period>[^_]*)_(?P<region>[^_]*)\.\w+",
-                          
-                          "(?P<comparison_data>[^_]*)_(?P<evaluation_data>[^_]*)_(?P<comparison_metric>[^_]*)" \
-                         +"_(?P<variable>[^_]*)_(?P<metric>[^_]*)_(?P<frequency>[^_]*)" \
-                         +"_(?P<perdio>[^_]*)_(?P<region>[^_]*)" ]
-                         """
-                         
-    
-    # ModelE.zg.1999010100-1999123118.nc
+                            
+    # possible filename patterns
     FILENAME_PATTERNS = [ "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)-(?P<stop>\d+)\.nc", # ModelE.tvapbl.2000010100-2000123118.nc
                           "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.00Z\.nc" ] # ModelE.zg.20100109.00Z.nc
 
                                      
     # Dataset records factory
-    myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=SUBDIRS, fields=datasetFields)
+    myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=SUBDIRS, 
+                                                           fields=datasetFields, metadataMapper=metadataMapper)
     
     # Files records factory
     # fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, generateThumbnails=False
