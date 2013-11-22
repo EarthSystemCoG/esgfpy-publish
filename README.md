@@ -3,6 +3,11 @@ esgfpy-publish
 
 Python package containing client-side functionality to publish resources to ESGF.
 
+Prerequisites:
+
+o PIL - Python Image Library
+	sudo pip install pil
+
 Quick startup instructions:
 
 o cd <INSTALLATION DIRECTORY>

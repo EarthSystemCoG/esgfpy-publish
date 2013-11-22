@@ -23,7 +23,7 @@ from esgfpy.publish.factories import DirectoryDatasetRecordFactory, FilepathFile
 from esgfpy.publish.services import FileSystemIndexer, PublishingClient
 from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
 from esgfpy.publish.metadata_mappers import ConfigFileMetadataMapper
-from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
+from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL, SERVICE_OPENDAP
 import sys, os
 import ConfigParser
 
@@ -51,7 +51,8 @@ if __name__ == '__main__':
         config.read( os.path.expanduser(CONFIG_FILE) )
         ROOT_DIR = config.get(project, "ROOT_DIR")
         ROOT_ID = config.get(project, "ROOT_ID")
-        BASE_URL = config.get(project, "BASE_URL")
+        BASE_URL_HTTP = config.get(project, "BASE_URL_HTTP")
+        BASE_URL_OPENDAP = config.get(project, "BASE_URL_OPENDAP")
         HOSTNAME = config.get(project, "HOSTNAME")
         PROJECT = config.get(project, "PROJECT")
         # URL of ESGF publishing service
@@ -95,8 +96,8 @@ if __name__ == '__main__':
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields, 
                                                     rootDirectory=ROOT_DIR,
                                                     filenamePatterns=FILENAME_PATTERNS,
-                                                    baseUrls={ SERVICE_HTTP      : BASE_URL,
-                                                               SERVICE_THUMBNAIL : BASE_URL },
+                                                    baseUrls={ SERVICE_HTTP    : BASE_URL_HTTP,
+                                                               SERVICE_OPENDAP : BASE_URL_OPENDAP },
                                                     generateThumbnails=True
                                                     )
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, metadataFileParser=XMLMetadataFileParser())

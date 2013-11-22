@@ -37,6 +37,7 @@ FILE_SUBTYPES = { SUBTYPE_IMAGE: ["jpg", "jpeg", "gif", "png", "tif", "tiff"],
 
 # service names
 SERVICE_HTTP = "HTTP Download"
+SERVICE_OPENDAP = "OpenDAP"
 SERVICE_THUMBNAIL = "Thumbnail"
 
 # dimension of dynamically generated thumbnails
