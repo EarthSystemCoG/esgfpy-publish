@@ -7,14 +7,14 @@ Example driver program for publishing/unpublishing records to ESGF.
 The static configuration parameters are read from CONFIG_FILE.
 Example configuration file:
 
-[NCPP]
-ROOT_DIR = /data/ncpp/dip/Evaluation/Dataset
-ROOT_ID = ncpp.dip-2013
-BASE_URL = http://hydra.fsl.noaa.gov/thredds/fileServer/ncpp-dip/Evaluation/Dataset
-HOSTNAME = hydra.fsl.noaa.gov
+[GASS-YoTC-MIP]
+ROOT_DIR = /Users/cinquini/data/davarchive/data/archive
+ROOT_ID = gass-yotc-mip
+BASE_URL = http://localhost:8000/site_media/data/ncpp
+HOSTNAME = localhost:8080
 SOLR_URL = http://localhost:8984/solr
-PROJECT = NCPP
-SUBDIRS = method, protocol, dataset, metrics, group, metrics_type
+PROJECT = GASS-YoTC-MIP
+SUBDIRS = model, experiment, variable
 
 @author: Luca Cinquini
 '''
@@ -96,15 +96,16 @@ if __name__ == '__main__':
                          """
                          
     
-    
+    # ModelE.zg.1999010100-1999123118.nc
     FILENAME_PATTERNS = [ "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)-(?P<stop>\d+)\.nc", # ModelE.tvapbl.2000010100-2000123118.nc
-                          "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.00Z\.nc" ]         # ModelE.zg.20100109.00Z.nc
+                          "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.00Z\.nc" ] # ModelE.zg.20100109.00Z.nc
 
                                      
     # Dataset records factory
     myDatasetRecordFactory = DirectoryDatasetRecordFactory(ROOT_ID, rootDirectory=ROOT_DIR, subDirs=SUBDIRS, fields=datasetFields)
     
     # Files records factory
+    # fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, generateThumbnails=False
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields, 
                                                     rootDirectory=ROOT_DIR,
                                                     filenamePatterns=FILENAME_PATTERNS,

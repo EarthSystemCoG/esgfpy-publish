@@ -178,10 +178,11 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 fields["url"] = urls
                 
             # extract information from file names
+            match = False
             for pattern in self.filenamePatterns:
                 match = re.match(pattern, filename)
                 if match:
-                    print '\tFilename: %s matches template: %s' % (filename, pattern)
+                    #print '\tFilename: %s matches template: %s' % (filename, pattern)
                     for key in match.groupdict().keys():
                         #print 'File Metadata: key=%s value=%s' % (key,  match.group(key))
                         fields[key] = [ match.group(key) ]
