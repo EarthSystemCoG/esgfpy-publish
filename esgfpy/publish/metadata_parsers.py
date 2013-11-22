@@ -6,14 +6,19 @@ from os.path import splitext, expanduser
 from xml.etree.ElementTree import fromstring
 from esgfpy.publish.consts import METADATA_MAPPING_FILE
 import ConfigParser
+import abc
+from netCDF4 import Dataset
 
 class AbstractMetadataFileParser(object):
-    """API for parsing metadata from local file system."""
+    """API for parsing metadata from files."""
     
+    __metaclass__ = abc.ABCMeta
+        
+    @abc.abstractmethod
     def isMetadataFile(self, filepath):
         """Determines whether the given file is a metadata file."""
         raise NotImplementedError
-    
+    @abc.abstractmethod
     def parseMetadata(self, filepath):
         """
         Parses the given file into a dictionary of metadata elements.
@@ -21,6 +26,13 @@ class AbstractMetadataFileParser(object):
         :return: dictionary of (name, values) metadata elements
         """
         raise NotImplementedError
+    
+    def _addMetadata(self, metadata, key, value):
+        '''Method to append a new metadata value for a given key.'''
+        
+        if not key in metadata:
+            metadata[key] = [] # initialize empty list
+        metadata[key].append(value)
     
 class OptOutMetadataFileParser(AbstractMetadataFileParser):
     """
@@ -79,8 +91,40 @@ class XMLMetadataFileParser(AbstractMetadataFileParser):
                 key = self.metadataKeyMappings[key]           
             if value in self.metadataValueMappings:
                 value = self.metadataValueMappings[value]
-            if not key in metadata:
-                metadata[key] = []
-            metadata[key].append(value)
+            self._addMetadata(metadata, key, value)
+            
+        return metadata
+    
+class NetcdfMetadataFileParser(AbstractMetadataFileParser):
+    '''Parses metadata from NetCDF files.'''
+    
+    def isMetadataFile(self, filepath):
+        return filepath.lower().endswith(".nc")
+    
+    def parseMetadata(self, filepath):
+        
+        metadata = {} # empty metadata dictionary
+    
+        try:
+            # open file
+            nc = Dataset(filepath, 'r')
+            
+            # loop over global attributes
+            for attname in nc.ncattrs():
+                self._addMetadata(metadata, attname, getattr(nc, attname) )
+            
+            # loop over variable attributes
+            for key, variable in nc.variables.items():
+                if key.lower()!='longitude' and key.lower()!='latitude' and key.lower()!='altitude' and key.lower()!='time' and key.lower()!='level':
+                    # IMPORTANT: the variable arrays must have the same number of entries
+                    self._addMetadata(metadata, 'variable', key)
+                    self._addMetadata(metadata, 'variable_long_name', getattr(variable, 'long_name', None) )
+                    self._addMetadata(metadata, 'cf_standard_name', getattr(variable, 'stanadard_name', None) )
+                    self._addMetadata(metadata, 'units', getattr(variable, 'units', None) )
+
+        except Exception as e:
+            print e
+        finally:
+            nc.close()
             
         return metadata

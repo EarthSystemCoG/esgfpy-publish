@@ -24,6 +24,7 @@ import re
 from .models import DatasetRecord, FileRecord
 from .consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL, SERVICE_OPENDAP
 from .utils import getMimeType
+from esgfpy.publish.metadata_parsers import NetcdfMetadataFileParser
 import Image
 
 class AbstractDatasetRecordFactory(object):
@@ -139,6 +140,9 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
         self.filenamePatterns = filenamePatterns
         self.baseUrls = baseUrls
         self.generateThumbnails = generateThumbnails
+        
+        # list of metadata parsers
+        self.parsers = [ NetcdfMetadataFileParser() ]
     
     def create(self, datasetRecord, filepath, metadata={}):
         
@@ -148,12 +152,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             name, extension = os.path.splitext(filename)
             ext =  extension[1:] # remove '.' from file extension
             id = string.join( [datasetRecord.id, filename], '.')
-            # set record title to filename, unless overridden by file-specific metadata
-            try:
-                title = metadata['title'][0]
-                del metadata['title']
-            except KeyError:
-                title = filename
+
             fields = {}
             fields['format'] = [ext]
             isImage = False
@@ -200,10 +199,22 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                     break # no more matching
             if not match:
                 print '\tNo matching pattern found for filename: %s' % filename
-                
+               
+            # FIXME?
+            for parser in self.parsers:
+                if parser.isMetadataFile(filepath):
+                    ncmet = parser.parseMetadata(filepath)
+                    
             # add constant metadata fields + instance metadata fields
-            for (key, values) in (self.fields.items() + metadata.items()):
+            for (key, values) in (self.fields.items() + metadata.items() + ncmet.items()):
                 fields[key] = values
+                
+            # set record title to filename, unless already set by file-specific metadata
+            try:
+                title = fields['title'][0]
+                del fields['title']
+            except KeyError:
+                title = filename
 
             return FileRecord(datasetRecord, id, title, fields)
             

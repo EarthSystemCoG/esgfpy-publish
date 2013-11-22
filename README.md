@@ -6,7 +6,19 @@ Python package containing client-side functionality to publish resources to ESGF
 Prerequisites:
 
 o PIL - Python Image Library
+	to process images
 	sudo pip install pil
+	
+o netcdf4-python
+    to parse metadata contained in NetCDF files
+	download netCDF4-1.0.7.tar.gz
+	tar xvfz netCDF4-1.0.7.tar.gz
+	cd netCDF4-1.0.7
+	python setup.py build
+	sudo python setup.py install
+	
+o xml.etree
+  to parse metadata within XML files
 
 Quick startup instructions:
 
