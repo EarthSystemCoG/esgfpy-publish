@@ -22,7 +22,7 @@ import os
 import re
 
 from .models import DatasetRecord, FileRecord
-from .consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL
+from .consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL, SERVICE_OPENDAP
 from .utils import getMimeType
 import Image
 
@@ -179,6 +179,9 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                     if isImage:
                         url = url.replace(ext, THUMBNAIL_EXT)
                         urls.append( "%s|%s|%s" % ( url, getMimeType("jpeg"), serverName) )
+                elif serverName == SERVICE_OPENDAP:
+                    url = "%s.html" % url # must add ".html" extension to OpenDAP URLs
+                    urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
                 else:                   
                     urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
                     
