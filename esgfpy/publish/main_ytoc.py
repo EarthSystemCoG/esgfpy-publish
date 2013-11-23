@@ -96,8 +96,7 @@ if __name__ == '__main__':
                                                     rootDirectory=ROOT_DIR,
                                                     filenamePatterns=FILENAME_PATTERNS,
                                                     baseUrls={ SERVICE_HTTP    : BASE_URL_HTTP,
-                                                               SERVICE_OPENDAP : BASE_URL_OPENDAP },
-                                                    generateThumbnails=True
+                                                               SERVICE_OPENDAP : BASE_URL_OPENDAP }
                                                     )
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, metadataFileParser=XMLMetadataFileParser())
     #indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory)
