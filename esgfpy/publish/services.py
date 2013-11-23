@@ -165,7 +165,7 @@ class FileSystemIndexer(Indexer):
         The metadata file: /.../.../<subdir>/<filemname>.ext.xml will be associated with the single file <filemname>.ext
         """
         
-        records = { TYPE_DATASET:[], TYPE_FILE:[]}
+        records = {TYPE_DATASET:[], TYPE_FILE:[]}
         dMetadata = {} # empty additional dataset-level metadata dictionary
         fMetadata = {} # empty additional file-level metadata dictionary
         if not os.path.isdir(startDirectory):
@@ -180,9 +180,11 @@ class FileSystemIndexer(Indexer):
                 
                 for file in files:
                     # ignore hidden files and thumbnails
-                    if not file[0] == '.' and not 'thumbnail' in file:
+                    if not file[0] == '.' and not 'thumbnail' in file and not file.endswith('.xml'):
                         filepath = os.path.join(dir, file)
+                        datafiles.append(filepath)
                         
+                        '''
                         # metadata file
                         if self.metadataFileParser.isMetadataFile(filepath):
                             print 'Parsing metadata file: %s' % filepath
@@ -202,13 +204,14 @@ class FileSystemIndexer(Indexer):
                         # data file
                         else:
                             datafiles.append(filepath)
+                        '''
                   
             # create dataset containing these data files
             if len(datafiles)>0: 
                                         
                 # create list of one Dataset record
-                datasetRecord = self.datasetRecordFactory.create(dir, 
-                                                                 metadata=self._subSelectMetadata(dMetadata,dir))
+                datasetRecord = self.datasetRecordFactory.create(dir)
+                                                                 #metadata=self._subSelectMetadata(dMetadata,dir))
                                 
                 # directory structure matches template
                 if datasetRecord is not None:
@@ -220,8 +223,8 @@ class FileSystemIndexer(Indexer):
                     records[TYPE_DATASET].append( datasetRecord )
                     # create list of multiple File records
                     for datafile in datafiles:
-                        records[TYPE_FILE].append( self.fileRecordFactory.create(datasetRecord, datafile, 
-                                                                                 metadata=self._subSelectMetadata(fMetadata, datafile)) )
+                        records[TYPE_FILE].append( self.fileRecordFactory.create(datasetRecord, datafile) )
+                                                                                 #metadata=self._subSelectMetadata(fMetadata, datafile)) )
                 
         return records
 

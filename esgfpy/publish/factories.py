@@ -24,7 +24,7 @@ import re
 from .models import DatasetRecord, FileRecord
 from .consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL, SERVICE_OPENDAP
 from .utils import getMimeType
-from esgfpy.publish.metadata_parsers import NetcdfMetadataFileParser
+from esgfpy.publish.metadata_parsers import NetcdfMetadataFileParser, XMLMetadataFileParser
 import Image
 
 class AbstractDatasetRecordFactory(object):
@@ -45,7 +45,9 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
     from a structured directory tree.
     """
     
-    def __init__(self, rootId, rootDirectory="/", subDirs=[], fields={}, metadataMapper=None):
+    def __init__(self, rootId, rootDirectory="/", subDirs=[], fields={}, 
+                 metadataParsers = [ XMLMetadataFileParser() ],
+                 metadataMapper=None):
         """
         :param rootId: root of assigned dataset identifiers
         :param rootDirectory: root filepath removed before parsing for subdirectories
@@ -58,6 +60,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
         self.rootDirectory = rootDirectory
         self.subDirs = subDirs
         self.fields = fields
+        self.metadataParsers = metadataParsers
         self.metadataMapper = metadataMapper
        
     def create(self, directory, metadata={}):
@@ -90,9 +93,19 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                             title += "%s=%s, " % (string.capitalize(subDir), part)
                         
                         id = "%s.%s" % (self.rootId, string.join(subValues,'.'))
+                        
+                                       
+                        # add dataset-level metadata from configured parsers
+                        met = {}
+                        dirpath = os.path.join(self.rootDirectory, directory)
+                        for parser in self.metadataParsers:
+                            if parser.isMetadataFile(dirpath):
+                                newmet = parser.parseMetadata(dirpath)
+                                met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
+
                                          
                         # add constant metadata fields + instance metadata fields
-                        for (key, values) in (self.fields.items() + metadata.items()):
+                        for (key, values) in (self.fields.items() + metadata.items() + met.items()):
                             fields[key] = values
                                                             
                         # optional mapping of metadata values        
@@ -126,24 +139,25 @@ class AbstractFileRecordFactory(object):
 class FilepathFileRecordFactory(AbstractFileRecordFactory):
     """Class that generates FileRecord objects from a filepath in the local file system."""
     
-    def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, generateThumbnails=False):
+    def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, 
+                 metadataParsers = [ NetcdfMetadataFileParser(), XMLMetadataFileParser() ],
+                 generateThumbnails=False):
         """
         :param fields: constants metadata fields as (key, values) pairs
         :param rootDirectory: root directory of file location, will be removed when creating the file access URL
         :param filenamePatterns: optional list of matching filename patterns (with named groups)
         :param baseUrls: map of (base server URL, server name) to create file access URLs
+        :param metadataParsers: list of metadata parsers to generate or extract file-level metadata
         :param generateThumbnails: set to True to automatically generate thumbnails when publishing image files
         """
 
         self.fields = fields
         self.rootDirectory = rootDirectory
         self.filenamePatterns = filenamePatterns
+        self.metadataParsers = metadataParsers
         self.baseUrls = baseUrls
         self.generateThumbnails = generateThumbnails
-        
-        # list of metadata parsers
-        self.parsers = [ NetcdfMetadataFileParser() ]
-    
+            
     def create(self, datasetRecord, filepath, metadata={}):
         
         if os.path.isfile(filepath):
@@ -200,13 +214,15 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             if not match:
                 print '\tNo matching pattern found for filename: %s' % filename
                
-            # FIXME?
-            for parser in self.parsers:
+            # add file-level metadata from configured parsers
+            met = {}
+            for parser in self.metadataParsers:
                 if parser.isMetadataFile(filepath):
-                    ncmet = parser.parseMetadata(filepath)
+                    newmet = parser.parseMetadata(filepath)
+                    met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
                     
             # add constant metadata fields + instance metadata fields
-            for (key, values) in (self.fields.items() + metadata.items() + ncmet.items()):
+            for (key, values) in (self.fields.items() + metadata.items() + met.items()):
                 fields[key] = values
                 
             # set record title to filename, unless already set by file-specific metadata
