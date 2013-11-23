@@ -1,54 +1,10 @@
-'''
-Module for parsing records metadata from ancillary files.
-'''
-
+from esgfpy.publish.metadata_parsers.abstract_parser import AbstractMetadataFileParser
 from os.path import splitext, expanduser
 from xml.etree.ElementTree import fromstring
-from esgfpy.publish.consts import METADATA_MAPPING_FILE
 import ConfigParser
-import abc
-from netCDF4 import Dataset
+from esgfpy.publish.consts import METADATA_MAPPING_FILE
 import os
 
-class AbstractMetadataFileParser(object):
-    """API for parsing metadata from files."""
-    
-    __metaclass__ = abc.ABCMeta
-        
-    @abc.abstractmethod
-    def isMetadataFile(self, filepath):
-        """Determines whether the given file is a metadata file."""
-        raise NotImplementedError
-    @abc.abstractmethod
-    def parseMetadata(self, filepath):
-        """
-        Parses the given file into a dictionary of metadata elements.
-        :param filepath: file location on local file system
-        :return: dictionary of (name, values) metadata elements
-        """
-        raise NotImplementedError
-    
-    def _addMetadata(self, metadata, key, value):
-        '''Method to append a new metadata value for a given key.'''
-        
-        if not key in metadata:
-            metadata[key] = [] # initialize empty list
-        metadata[key].append(value)
-    
-class OptOutMetadataFileParser(AbstractMetadataFileParser):
-    """
-    Implementation of AbstractMetadataFileParser that does nothing
-    (i.e. doesn't parse metadata from any file).
-    """
-    
-    def isMetadataFile(self, filepath):
-        """Implementation that ignores all files."""
-        return False
-    
-    def parseMetadata(self, filepath):
-        """Returns an empty dictionary."""
-        return {}
-    
 class XMLMetadataFileParser(AbstractMetadataFileParser):
     """
     Implementation of AbstractMetadataFileParser that parses metadata from XML files
@@ -128,38 +84,3 @@ class XMLMetadataFileParser(AbstractMetadataFileParser):
             return os.path.join(filepath, tail+".xml")
         else:
             return filepath +".xml"
-    
-class NetcdfMetadataFileParser(AbstractMetadataFileParser):
-    '''Parses metadata from NetCDF files.'''
-    
-    def isMetadataFile(self, filepath):
-        return filepath.lower().endswith(".nc")
-    
-    def parseMetadata(self, filepath):
-        print 'NetcdfMetadataFileParser: parsing filepath=%s' % filepath
-        
-        metadata = {} # empty metadata dictionary
-    
-        try:
-            # open file
-            nc = Dataset(filepath, 'r')
-            
-            # loop over global attributes
-            for attname in nc.ncattrs():
-                self._addMetadata(metadata, attname, getattr(nc, attname) )
-            
-            # loop over variable attributes
-            for key, variable in nc.variables.items():
-                if key.lower()!='longitude' and key.lower()!='latitude' and key.lower()!='altitude' and key.lower()!='time' and key.lower()!='level':
-                    # IMPORTANT: the variable arrays must have the same number of entries
-                    self._addMetadata(metadata, 'variable', key)
-                    self._addMetadata(metadata, 'variable_long_name', getattr(variable, 'long_name', None) )
-                    self._addMetadata(metadata, 'cf_standard_name', getattr(variable, 'stanadard_name', None) )
-                    self._addMetadata(metadata, 'units', getattr(variable, 'units', None) )
-
-        except Exception as e:
-            print e
-        finally:
-            nc.close()
-            
-        return metadata

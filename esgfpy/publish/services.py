@@ -183,35 +183,12 @@ class FileSystemIndexer(Indexer):
                     if not file[0] == '.' and not 'thumbnail' in file and not file.endswith('.xml'):
                         filepath = os.path.join(dir, file)
                         datafiles.append(filepath)
-                        
-                        '''
-                        # metadata file
-                        if self.metadataFileParser.isMetadataFile(filepath):
-                            print 'Parsing metadata file: %s' % filepath
-                            
-                            met = self.metadataFileParser.parseMetadata(filepath)
-                            filename, ext = os.path.splitext(file)
-                            dirname = dir.replace("/","_")
-                            if dirname.endswith(filename):
-                                # dataset-level metadata
-                                # key example: ncpp_eval_Maurer02_tas_q90_october_1970-1999_US48
-                                dMetadata[dir] = met
-                            else:
-                                # file-level metadata
-                                # key example: /Users/.../Evaluation/Dataset/BCCA/Protocol1/Group1/Temperature/Maurer_Tmax_Above_90_deg_NC_CSC_1950.jpg
-                                fMetadata[os.path.join(dir,filename)] = met
-                        
-                        # data file
-                        else:
-                            datafiles.append(filepath)
-                        '''
-                  
+                                          
             # create dataset containing these data files
             if len(datafiles)>0: 
                                         
                 # create list of one Dataset record
                 datasetRecord = self.datasetRecordFactory.create(dir)
-                                                                 #metadata=self._subSelectMetadata(dMetadata,dir))
                                 
                 # directory structure matches template
                 if datasetRecord is not None:
@@ -224,18 +201,9 @@ class FileSystemIndexer(Indexer):
                     # create list of multiple File records
                     for datafile in datafiles:
                         records[TYPE_FILE].append( self.fileRecordFactory.create(datasetRecord, datafile) )
-                                                                                 #metadata=self._subSelectMetadata(fMetadata, datafile)) )
                 
         return records
 
-    def _subSelectMetadata(self, metadata, path):
-        """Utility method to subselect a metadata dictionary by matching keys to the given path."""
-        subMetadata = {}
-        for key, met in metadata.items():
-            if key in path:
-                # copy 'met' dictionary onto 'subMetadata' dictionary
-                subMetadata.update(met)
-        return subMetadata
 
 def build_solr_update_url(solr_base_url, record_type):
     #! TODO: remove this function as records will not be published to Solr directly."""
