@@ -161,7 +161,7 @@ class FileSystemIndexer(Indexer):
         """ 
         This method implementation traverses the directory tree
         and creates records whenever it finds a non-empty sub-directory.
-        The metadata file: <subdir>_......<subdir>_<subdir>.xml will be associated with all dataset records under /.../.../<subdir>
+        The metadata file: /.../.../<subdir>/<subdir>.xml will be associated with all dataset records under /.../.../<subdir>
         The metadata file: /.../.../<subdir>/<filemname>.ext.xml will be associated with the single file <filemname>.ext
         """
         
