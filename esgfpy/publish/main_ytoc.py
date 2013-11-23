@@ -24,14 +24,13 @@ from esgfpy.publish.services import FileSystemIndexer, PublishingClient
 from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
 from esgfpy.publish.metadata_mappers import ConfigFileMetadataMapper
 from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL, SERVICE_OPENDAP
+from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 
 CONFIG_FILE = "/usr/local/esgf/config/esgfpy-publish.cfg"
 MAPPING_FILE = '/usr/local/esgf/config/gass-ytoc-mip_facets_mapping.cfg'
 
-def str2bool(v):
-    return v.lower() in ("yes", "true", "t", "1")
                                      
 if __name__ == '__main__':
     

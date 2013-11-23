@@ -23,13 +23,11 @@ from esgfpy.publish.factories import DirectoryDatasetRecordFactory, FilepathFile
 from esgfpy.publish.services import FileSystemIndexer, PublishingClient
 from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
 from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
+from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 
 CONFIG_FILE = "/usr/local/esgf/config/esgfpy-publish.cfg"
-
-def str2bool(v):
-    return v.lower() in ("yes", "true", "t", "1")
                                      
 if __name__ == '__main__':
     
