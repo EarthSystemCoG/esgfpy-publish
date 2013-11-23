@@ -1,4 +1,4 @@
-from esgfpy.publish.metadata_parsers.abstract_parser import AbstractMetadataFileParser
+from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
 from netCDF4 import Dataset
 import logging
 

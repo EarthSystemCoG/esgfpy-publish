@@ -1,4 +1,4 @@
-from esgfpy.publish.metadata_parsers.abstract_parser import AbstractMetadataFileParser
+from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
 from os.path import splitext, expanduser
 from xml.etree.ElementTree import fromstring
 import ConfigParser
