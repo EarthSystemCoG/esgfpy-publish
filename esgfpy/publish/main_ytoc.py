@@ -21,12 +21,14 @@ SUBDIRS = model, experiment, variable
 
 from esgfpy.publish.factories import DirectoryDatasetRecordFactory, FilepathFileRecordFactory
 from esgfpy.publish.services import FileSystemIndexer, PublishingClient
-from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
 from esgfpy.publish.metadata_mappers import ConfigFileMetadataMapper
 from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL, SERVICE_OPENDAP
 from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 CONFIG_FILE = "/usr/local/esgf/config/esgfpy-publish.cfg"
 MAPPING_FILE = '/usr/local/esgf/config/gass-ytoc-mip_facets_mapping.cfg'
@@ -98,7 +100,7 @@ if __name__ == '__main__':
                                                     baseUrls={ SERVICE_HTTP    : BASE_URL_HTTP,
                                                                SERVICE_OPENDAP : BASE_URL_OPENDAP }
                                                     )
-    indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, metadataFileParser=XMLMetadataFileParser())
+    indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory)
     #indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory)
     publisher = PublishingClient(indexer, SOLR_URL)
     startDirectory = os.path.join(ROOT_DIR, relativeDirectory)

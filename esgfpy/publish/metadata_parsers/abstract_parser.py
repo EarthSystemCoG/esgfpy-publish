@@ -1,14 +1,10 @@
 import abc
 
 class AbstractMetadataFileParser(object):
-    """API for parsing metadata from files."""
+    """API for parsing metadata from files and directories."""
     
     __metaclass__ = abc.ABCMeta
         
-    @abc.abstractmethod
-    def isMetadataFile(self, filepath):
-        """Determines whether the given file is a metadata file."""
-        raise NotImplementedError
     @abc.abstractmethod
     def parseMetadata(self, filepath):
         """
@@ -19,7 +15,7 @@ class AbstractMetadataFileParser(object):
         raise NotImplementedError
     
     def _addMetadata(self, metadata, key, value):
-        '''Method to append a new metadata value for a given key.'''
+        '''Utility method to append a new metadata value for a given key.'''
         
         if not key in metadata:
             metadata[key] = [] # initialize empty list

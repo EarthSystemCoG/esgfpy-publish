@@ -99,9 +99,8 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                         met = {}
                         dirpath = os.path.join(self.rootDirectory, directory)
                         for parser in self.metadataParsers:
-                            if parser.isMetadataFile(dirpath):
-                                newmet = parser.parseMetadata(dirpath)
-                                met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
+                            newmet = parser.parseMetadata(dirpath)
+                            met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
 
                                          
                         # add constant metadata fields + instance metadata fields
@@ -217,9 +216,8 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             # add file-level metadata from configured parsers
             met = {}
             for parser in self.metadataParsers:
-                if parser.isMetadataFile(filepath):
-                    newmet = parser.parseMetadata(filepath)
-                    met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
+                newmet = parser.parseMetadata(filepath)
+                met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
                     
             # add constant metadata fields + instance metadata fields
             for (key, values) in (self.fields.items() + metadata.items() + met.items()):

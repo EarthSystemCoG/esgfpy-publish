@@ -21,7 +21,6 @@ SUBDIRS = method, protocol, dataset, metrics, group, metrics_type
 
 from esgfpy.publish.factories import DirectoryDatasetRecordFactory, FilepathFileRecordFactory
 from esgfpy.publish.services import FileSystemIndexer, PublishingClient
-from esgfpy.publish.metadata_parsers import XMLMetadataFileParser
 from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
 from esgfpy.publish.utils import str2bool
 import sys, os
@@ -105,7 +104,7 @@ if __name__ == '__main__':
                                                                SERVICE_THUMBNAIL : BASE_URL },
                                                     generateThumbnails=True
                                                     )
-    indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, metadataFileParser=XMLMetadataFileParser())
+    indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory)
     #indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory)
     publisher = PublishingClient(indexer, SOLR_URL)
     startDirectory = os.path.join(ROOT_DIR, relativeDirectory)

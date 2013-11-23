@@ -13,7 +13,6 @@ import os
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 from .consts import TYPE_DATASET, TYPE_FILE, SOLR_CORES
-from .metadata_parsers import OptOutMetadataFileParser
 
 class PublishingClient(object):
     """
@@ -143,19 +142,15 @@ class FileSystemIndexer(Indexer):
     Class that generates XML/Solr records by parsing a local directory tree.
     It uses the configured DatasetRecordFactory and FileRecordfactory to create the records.
     A dataset record is created whenever files are found in a directory, and associated with the corresponding file records.
-    An optional MetadataFileParser can be used to parse additional metadata inside files within the directory tree
-    - in this case, the metadata files are not counted towards the creation of a dataset record.
     """
     
-    def __init__(self, datasetRecordFactory, fileRecordFactory, metadataFileParser=OptOutMetadataFileParser()):
+    def __init__(self, datasetRecordFactory, fileRecordFactory):
         """
         :param datasetRecordFactory: subclass of DatasetRecordFactory
         :param fileRecordFactory: subclass of FileRecordFactory
-        :param metadataFileParser: optional collaborator to augment the dataset and files metadata (defaults to no-opt)
         """
         self.datasetRecordFactory = datasetRecordFactory
         self.fileRecordFactory = fileRecordFactory
-        self.metadataFileParser = metadataFileParser
                 
     def index(self, startDirectory):
         """ 

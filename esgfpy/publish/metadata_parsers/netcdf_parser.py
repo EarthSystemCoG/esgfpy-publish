@@ -1,14 +1,12 @@
 from esgfpy.publish.metadata_parsers.abstract_parser import AbstractMetadataFileParser
 from netCDF4 import Dataset
+import logging
 
 class NetcdfMetadataFileParser(AbstractMetadataFileParser):
     '''Parses metadata from NetCDF files.'''
-    
-    def isMetadataFile(self, filepath):
-        return filepath.lower().endswith(".nc")
-    
+        
     def parseMetadata(self, filepath):
-        print 'NetcdfMetadataFileParser: parsing filepath=%s' % filepath
+        logging.debug('NetcdfMetadataFileParser: parsing filepath=%s' % filepath)
         
         metadata = {} # empty metadata dictionary
     
