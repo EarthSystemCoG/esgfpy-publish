@@ -100,7 +100,14 @@ if __name__ == '__main__':
                                                     baseUrls={ SERVICE_HTTP    : BASE_URL_HTTP,
                                                                SERVICE_OPENDAP : BASE_URL_OPENDAP }
                                                     )
-    indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory)
+    
+    # metadata fields to copy Dataset <--> File
+    append=False
+    fileMetadataKeysToCopy = {'variable_long_name':append, 'cf_standard_name':append }
+    datasetMetadataKeysToCopy = {'model':append, 'experiment':append }
+    
+    indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, 
+                                fileMetadataKeysToCopy=fileMetadataKeysToCopy, datasetMetadataKeysToCopy=datasetMetadataKeysToCopy)
     #indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory)
     publisher = PublishingClient(indexer, SOLR_URL)
     startDirectory = os.path.join(ROOT_DIR, relativeDirectory)

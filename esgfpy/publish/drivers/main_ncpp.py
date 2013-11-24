@@ -25,6 +25,9 @@ from esgfpy.publish.consts import SERVICE_HTTP, SERVICE_THUMBNAIL
 from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 CONFIG_FILE = "/usr/local/esgf/config/esgfpy-publish.cfg"
                                      

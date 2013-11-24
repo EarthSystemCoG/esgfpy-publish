@@ -142,15 +142,24 @@ class FileSystemIndexer(Indexer):
     Class that generates XML/Solr records by parsing a local directory tree.
     It uses the configured DatasetRecordFactory and FileRecordfactory to create the records.
     A dataset record is created whenever files are found in a directory, and associated with the corresponding file records.
+    Optionally, selected File metadata can be copied into the containing Dataset metadata, and viceversa.
     """
     
-    def __init__(self, datasetRecordFactory, fileRecordFactory):
+    def __init__(self, datasetRecordFactory, fileRecordFactory, fileMetadataKeysToCopy=[], datasetMetadataKeysToCopy=[] ):
         """
         :param datasetRecordFactory: subclass of DatasetRecordFactory
         :param fileRecordFactory: subclass of FileRecordFactory
+        :param fileMetadataKeysToCopy: list of metadata keys (strings)
+        :param datasetMetadataKeysToCopy: list of metadata keys (strings)
         """
+        
+        # record factories
         self.datasetRecordFactory = datasetRecordFactory
         self.fileRecordFactory = fileRecordFactory
+        
+        # metadata fields to copy
+        self.fileMetadataKeysToCopy = fileMetadataKeysToCopy
+        self.datasetMetadataKeysToCopy = datasetMetadataKeysToCopy
                 
     def index(self, startDirectory):
         """ 
@@ -192,13 +201,38 @@ class FileSystemIndexer(Indexer):
                     datasetRecord.fields['number_of_files'] = [str(len(datafiles))]
                     
                     #print 'Walking dir=%s, subdirs=%s, files=%s' % (dir, subdirs, datafiles)
-                    records[TYPE_DATASET].append( datasetRecord )
+                    
                     # create list of multiple File records
                     for datafile in datafiles:
-                        records[TYPE_FILE].append( self.fileRecordFactory.create(datasetRecord, datafile) )
+                        fileRecord = self.fileRecordFactory.create(datasetRecord, datafile)
+                        
+                        # copy metadata from File --> Dataset
+                        self._copyMetadata(self.fileMetadataKeysToCopy, fileRecord, datasetRecord)
+                        # copy metadata from Dataset --> File
+                        self._copyMetadata(self.datasetMetadataKeysToCopy, datasetRecord, fileRecord)
+                        
+                        # add this File record
+                        records[TYPE_FILE].append( fileRecord )
+                        
+                    # add this Dataset record
+                    records[TYPE_DATASET].append( datasetRecord )
                 
         return records
-
+    
+    def _copyMetadata(self, keys, fromRecord, toRecord):
+        '''Utility method to copy selected metadata fields from one record to another.
+           For each key, if append=False the field is only copied if not existing already,
+           if append=True the field is appended to the existing values.
+           '''
+        
+        for key, append in keys.items():
+            if key in fromRecord.fields:
+                if append or key not in toRecord.fields:
+                    if key not in toRecord.fields:
+                        toRecord.fields[key] = []
+                    for value in fromRecord.fields[key]:
+                        toRecord.fields[key].append(value)
+                    
 
 def build_solr_update_url(solr_base_url, record_type):
     #! TODO: remove this function as records will not be published to Solr directly."""
