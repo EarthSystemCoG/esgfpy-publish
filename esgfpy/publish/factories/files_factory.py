@@ -1,11 +1,10 @@
 import string
 import os
-import re
 
 from esgfpy.publish.models import FileRecord
 from esgfpy.publish.consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL, SERVICE_OPENDAP
 from esgfpy.publish.utils import getMimeType
-from esgfpy.publish.parsers import NetcdfMetadataFileParser, XMLMetadataFileParser
+from esgfpy.publish.parsers import NetcdfMetadataFileParser, XMLMetadataFileParser, FilenameMetadataParser
 import Image
 
 
@@ -27,24 +26,25 @@ class AbstractFileRecordFactory(object):
 class FilepathFileRecordFactory(AbstractFileRecordFactory):
     """Class that generates FileRecord objects from a filepath in the local file system."""
     
-    def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, 
-                 metadataParsers = [ NetcdfMetadataFileParser(), XMLMetadataFileParser() ],
-                 generateThumbnails=False):
+    def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, generateThumbnails=False):
         """
         :param fields: constants metadata fields as (key, values) pairs
         :param rootDirectory: root directory of file location, will be removed when creating the file access URL
         :param filenamePatterns: optional list of matching filename patterns (with named groups)
         :param baseUrls: map of (base server URL, server name) to create file access URLs
-        :param metadataParsers: list of metadata parsers to generate or extract file-level metadata
         :param generateThumbnails: set to True to automatically generate thumbnails when publishing image files
         """
 
         self.fields = fields
         self.rootDirectory = rootDirectory
         self.filenamePatterns = filenamePatterns
-        self.metadataParsers = metadataParsers
         self.baseUrls = baseUrls
         self.generateThumbnails = generateThumbnails
+        
+        # define list of metadata parsers
+        self.metadataParsers = [ FilenameMetadataParser(self.filenamePatterns), 
+                                NetcdfMetadataFileParser(), 
+                                XMLMetadataFileParser() ]
             
     def create(self, datasetRecord, filepath, metadata={}):
         
@@ -90,6 +90,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 fields["url"] = urls
                 
             # extract information from file names
+            '''
             match = False
             for pattern in self.filenamePatterns:
                 match = re.match(pattern, filename)
@@ -101,6 +102,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                     break # no more matching
             if not match:
                 print '\tNo matching pattern found for filename: %s' % filename
+            '''
                
             # add file-level metadata from configured parsers
             met = {}

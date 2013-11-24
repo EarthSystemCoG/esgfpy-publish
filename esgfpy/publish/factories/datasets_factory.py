@@ -3,7 +3,7 @@ import os
 import re
 
 from esgfpy.publish.models import DatasetRecord
-from esgfpy.publish.parsers import XMLMetadataFileParser
+from esgfpy.publish.parsers import XMLMetadataFileParser, DirectoryMetadataParser
 
 
 class AbstractDatasetRecordFactory(object):
@@ -25,7 +25,6 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
     """
     
     def __init__(self, rootId, rootDirectory="/", subDirs=[], fields={}, 
-                 metadataParsers = [ XMLMetadataFileParser() ],
                  metadataMapper=None):
         """
         :param rootId: root of assigned dataset identifiers
@@ -39,8 +38,12 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
         self.rootDirectory = rootDirectory
         self.subDirs = subDirs
         self.fields = fields
-        self.metadataParsers = metadataParsers
         self.metadataMapper = metadataMapper
+        
+        # define list of metadata parsers
+        self.metadataParsers = [ DirectoryMetadataParser(self.rootDirectory, self.subDirs), 
+                                 XMLMetadataFileParser() ]
+
        
     def create(self, directory, metadata={}):
         """
@@ -60,20 +63,9 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                 parts = directory.split(os.sep)
                 for subDirs in self.subDirs:
                     if len(parts) == len(subDirs):      
+                        
                         print 'Parsing directory: %s'  % directory  
-                        # loop over sub-directories bottom-to-top
-                        subValues = []
-                        fields = {}
-                        title = ""
-                        for i, part in enumerate(parts):                       
-                            subValues.append(part)
-                            subDir = subDirs[i] 
-                            fields[subDir] = [part] # list of one element
-                            title += "%s=%s, " % (string.capitalize(subDir), part)
-                        
-                        id = "%s.%s" % (self.rootId, string.join(subValues,'.'))
-                        
-                                       
+                                                               
                         # add dataset-level metadata from configured parsers
                         met = {}
                         dirpath = os.path.join(self.rootDirectory, directory)
@@ -83,8 +75,18 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
 
                                          
                         # add constant metadata fields + instance metadata fields
+                        fields = {}
                         for (key, values) in (self.fields.items() + metadata.items() + met.items()):
                             fields[key] = values
+                            
+                        # build Dataset id, title from sub-directory structure
+                        title = ""
+                        id = self.rootId
+                        for subDir in subDirs:
+                            if len(title)>0:
+                                title += ", "
+                            title += "%s=%s" % (string.capitalize(subDir), fields[subDir][0])
+                            id += ".%s" % fields[subDir][0]
                                                             
                         # optional mapping of metadata values        
                         if self.metadataMapper is not None:
