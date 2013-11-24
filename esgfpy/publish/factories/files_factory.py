@@ -7,18 +7,14 @@ from esgfpy.publish.utils import getMimeType
 from esgfpy.publish.parsers import NetcdfMetadataFileParser, XMLMetadataFileParser, FilenameMetadataParser
 import Image
 
-
-    
-        
 class AbstractFileRecordFactory(object):
     """API for generating ESGF records of type File."""
     
-    def create(self, datasetRecord, uri, metadata={}):
+    def create(self, datasetRecord, uri):
         """
         Generates a FileRecord from the given resource URI and parent Dataset record.
         :param datasetRecord: parent dataset record
         :param uri: source URI for generating file record
-        :param metadata: optional additional dictionary of metadata (name, values) pairs to be added to the file record instance
         :return: FileRecord object
         """
         raise NotImplementedError
@@ -43,10 +39,10 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
         
         # define list of metadata parsers
         self.metadataParsers = [ FilenameMetadataParser(self.filenamePatterns), 
-                                NetcdfMetadataFileParser(), 
-                                XMLMetadataFileParser() ]
+                                 NetcdfMetadataFileParser(), 
+                                 XMLMetadataFileParser() ]
             
-    def create(self, datasetRecord, filepath, metadata={}):
+    def create(self, datasetRecord, filepath):
         
         if os.path.isfile(filepath):
             
@@ -89,39 +85,20 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             if len(urls)>0:
                 fields["url"] = urls
                 
-            # extract information from file names
-            '''
-            match = False
-            for pattern in self.filenamePatterns:
-                match = re.match(pattern, filename)
-                if match:
-                    #print '\tFilename: %s matches template: %s' % (filename, pattern)
-                    for key in match.groupdict().keys():
-                        #print 'File Metadata: key=%s value=%s' % (key,  match.group(key))
-                        fields[key] = [ match.group(key) ]
-                    break # no more matching
-            if not match:
-                print '\tNo matching pattern found for filename: %s' % filename
-            '''
-               
-            # add file-level metadata from configured parsers
-            met = {}
+            # add file-level metadata from configured parsers to fixed metadata
+            metadata = self.fields.copy()
             for parser in self.metadataParsers:
-                newmet = parser.parseMetadata(filepath)
-                met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
-                    
-            # add constant metadata fields + instance metadata fields
-            for (key, values) in (self.fields.items() + metadata.items() + met.items()):
-                fields[key] = values
-                
+                met = parser.parseMetadata(filepath)
+                metadata = dict(metadata.items() + met.items()) # NOTE: met items override metadata items
+                                    
             # set record title to filename, unless already set by file-specific metadata
             try:
-                title = fields['title'][0]
-                del fields['title']
+                title = metadata['title'][0]
+                del metadata['title']
             except KeyError:
                 title = filename
 
-            return FileRecord(datasetRecord, id, title, fields)
+            return FileRecord(datasetRecord, id, title, metadata)
             
         else:
             raise Exception("%s is not a file" % filepath)  

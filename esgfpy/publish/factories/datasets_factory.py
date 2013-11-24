@@ -9,11 +9,10 @@ from esgfpy.publish.parsers import XMLMetadataFileParser, DirectoryMetadataParse
 class AbstractDatasetRecordFactory(object):
     """API for generating ESGF records of type Dataset."""
     
-    def create(self, uri, metadata={}):
+    def create(self, uri):
         """
         Generates a DatasetRecord from the given resource URI.
         :param uri: string representing the metadata source (a local file system path, a remote URL, a database connection, etc.)
-        :param metadata: optional additional dictionary of metadata (name, values) pairs to be added to the dataset record instance
         :return: DatasetRecord object
         """
         raise NotImplementedError
@@ -45,7 +44,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                                  XMLMetadataFileParser() ]
 
        
-    def create(self, directory, metadata={}):
+    def create(self, directory):
         """
         Generates a single dataset from the given directory,
         provided it conforms to one of the specified templates: rootDirectory + subDirs
@@ -66,18 +65,18 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                         
                         print 'Parsing directory: %s'  % directory  
                                                                
-                        # add dataset-level metadata from configured parsers
-                        met = {}
+                        # add dataset-level metadata from configured parsers to fixed metadata fields
+                        metadata = self.fields.copy()
                         dirpath = os.path.join(self.rootDirectory, directory)
                         for parser in self.metadataParsers:
-                            newmet = parser.parseMetadata(dirpath)
-                            met = dict(met.items() + newmet.items()) # NOTE: newmet items override met items
+                            met = parser.parseMetadata(dirpath)
+                            metadata = dict(metadata.items() + met.items()) # NOTE: met items override metadata items
 
                                          
                         # add constant metadata fields + instance metadata fields
-                        fields = {}
-                        for (key, values) in (self.fields.items() + metadata.items() + met.items()):
-                            fields[key] = values
+                        #fields = {}
+                        #for (key, values) in (self.fields.items() + met.items()):
+                        #    fields[key] = values
                             
                         # build Dataset id, title from sub-directory structure
                         title = ""
@@ -85,17 +84,17 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                         for subDir in subDirs:
                             if len(title)>0:
                                 title += ", "
-                            title += "%s=%s" % (string.capitalize(subDir), fields[subDir][0])
-                            id += ".%s" % fields[subDir][0]
+                            title += "%s=%s" % (string.capitalize(subDir), metadata[subDir][0])
+                            id += ".%s" % metadata[subDir][0]
                                                             
                         # optional mapping of metadata values        
                         if self.metadataMapper is not None:
-                            for key, values in fields.items():
+                            for key, values in metadata.items():
                                 for i, value in enumerate(values):
                                     values[i] = self.metadataMapper.mappit(key, value)
                           
                         # create and return one Dataset record
-                        return DatasetRecord(id, title[:-2], fields)
+                        return DatasetRecord(id, title[:-2], metadata)
  
                             
         # no Dataset record created - return None
