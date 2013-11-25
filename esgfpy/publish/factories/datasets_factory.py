@@ -71,6 +71,8 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                         for parser in self.metadataParsers:
                             met = parser.parseMetadata(dirpath)
                             metadata = dict(metadata.items() + met.items()) # NOTE: met items override metadata items
+                            
+                        print "METADATA=%s" % metadata
 
                                          
                         # add constant metadata fields + instance metadata fields
@@ -86,6 +88,8 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                                 title += ", "
                             title += "%s=%s" % (string.capitalize(subDir), metadata[subDir][0])
                             id += ".%s" % metadata[subDir][0]
+                            
+                        print 'DATASET TITLE=%s' % title
                                                             
                         # optional mapping of metadata values        
                         if self.metadataMapper is not None:
