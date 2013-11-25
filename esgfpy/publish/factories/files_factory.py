@@ -87,6 +87,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 
             # add file-level metadata from configured parsers to fixed metadata
             metadata = self.fields.copy()
+            metadata = dict(metadata.items() + fields.items()) # FIXME
             for parser in self.metadataParsers:
                 met = parser.parseMetadata(filepath)
                 metadata = dict(metadata.items() + met.items()) # NOTE: met items override metadata items
