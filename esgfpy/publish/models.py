@@ -73,7 +73,7 @@ class Record(object):
         """Method to add a single-valued field to an XML element."""
         
         el = SubElement(docEl, "field", attrib={ "name": name })
-        el.text = value
+        el.text = str(value)
         
 class DatasetRecord(Record):
     """Class representing an ESGF metadata record of type 'Dataset'."""

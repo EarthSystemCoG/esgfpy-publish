@@ -11,6 +11,7 @@ import urllib2
 import string
 import os
 from xml.etree.ElementTree import Element, SubElement, tostring
+import logging
 
 from .consts import TYPE_DATASET, TYPE_FILE, SOLR_CORES
 
@@ -98,6 +99,8 @@ class PublishingClient(object):
             # send every MAX_RECORDS records
             if ( (i+1) % PublishingClient.MAX_RECORDS) == 0:  
                 
+                #logging.debug("Posting XML:\n%s" % tostring(rootEl, encoding="UTF-8") )
+                
                 # post these records
                 self._post_xml(solr_url, tostring(rootEl, encoding="UTF-8") )
                 
@@ -106,6 +109,7 @@ class PublishingClient(object):
                 
         # post remaining records
         if len(list(rootEl)) > 0:
+            #logging.debug("Posting XML:\n%s" % tostring(rootEl, encoding="UTF-8") )
             self._post_xml(solr_url, tostring(rootEl, encoding="UTF-8") )                
         
         # commit all records of this type at once                        
