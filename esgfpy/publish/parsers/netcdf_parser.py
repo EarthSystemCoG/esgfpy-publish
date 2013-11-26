@@ -28,8 +28,11 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
                     self._addMetadata(metadata, 'units', getattr(variable, 'units', None) )
 
         except Exception as e:
-            print e
+            logging.error(e)
         finally:
-            nc.close()
+            try:
+                nc.close()
+            except:
+                pass
             
         return metadata
