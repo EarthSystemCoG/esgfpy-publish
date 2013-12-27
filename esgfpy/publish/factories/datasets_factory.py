@@ -41,7 +41,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
         
         # define list of metadata parsers
         self.metadataParsers = [ DirectoryMetadataParser(self.rootDirectory, self.subDirs), 
-                                 XMLMetadataFileParser() ]
+                                 XMLMetadataFileParser(startDirectory=rootDirectory) ]
 
        
     def create(self, directory):
