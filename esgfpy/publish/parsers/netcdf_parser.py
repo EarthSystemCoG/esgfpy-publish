@@ -20,6 +20,7 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
                 
             # loop over dimensions
             for key, dim in nc.dimensions.items():
+                print 'DIMENSION=%s' % dim
                 self._addMetadata(metadata, 'dimension', "%s: %s" % (key, len(dim)) )
             
             # loop over variable attributes
@@ -42,5 +43,7 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
         return metadata
     
     def _isCoordinate(self, key):
-        return (key.lower()!='longitude' and key.lower()!='latitude' 
-                and key.lower()!='altitude' and key.lower()!='time' and key.lower()!='level')
+        return (   key.lower()=='longitude' or key.lower()=='lon' 
+                or key.lower()=='latitude' or key.lower()=='lat' 
+                or key.lower()=='altitude' or key.lower()=='time' 
+                or key.lower()=='level' or key.lower()=='altitude' or key.lower()=='alt')
