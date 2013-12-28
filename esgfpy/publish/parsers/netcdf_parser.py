@@ -20,7 +20,6 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
                 
             # loop over dimensions
             for key, dim in nc.dimensions.items():
-                print 'DIMENSION=%s' % dim
                 self._addMetadata(metadata, 'dimension', "%s:%s" % (key, len(dim)) )
             
             # loop over variable attributes
