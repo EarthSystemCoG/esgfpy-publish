@@ -103,7 +103,7 @@ if __name__ == '__main__':
     
     # metadata fields to copy Dataset <--> File
     append=False
-    fileMetadataKeysToCopy = {'variable_long_name':append, 'cf_standard_name':append }
+    fileMetadataKeysToCopy = {'variable_long_name':append, 'cf_standard_name':append, 'units':append }
     datasetMetadataKeysToCopy = {'project':append, 'model':append, 'experiment':append }
     
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory, 
