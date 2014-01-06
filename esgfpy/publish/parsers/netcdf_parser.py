@@ -1,6 +1,7 @@
 from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
 from netCDF4 import Dataset
 import logging
+from dateutil.parser import *
 
 class NetcdfMetadataFileParser(AbstractMetadataFileParser):
     '''Parses metadata from NetCDF files.'''
@@ -16,7 +17,13 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
             
             # loop over global attributes
             for attname in nc.ncattrs():
-                self._addMetadata(metadata, attname, getattr(nc, attname) )
+                attvalue = getattr(nc, attname)
+                if 'date' in attname.lower():
+                    # must format dates in Solr format
+                    solrDateTime = parse(attvalue)
+                    self._addMetadata(metadata, attname, solrDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') )
+                else:
+                    self._addMetadata(metadata, attname, attvalue )
                 
             # loop over dimensions
             for key, dim in nc.dimensions.items():
