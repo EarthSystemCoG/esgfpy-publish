@@ -19,6 +19,9 @@ o netcdf4-python
 	
 o xml.etree
   to parse metadata within XML files
+  
+o python-dateutils
+  to parse a large set of date formats from NetCDF global attribute values
 
 Quick startup instructions:
 
