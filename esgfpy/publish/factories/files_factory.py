@@ -92,12 +92,14 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 met = parser.parseMetadata(filepath)
                 metadata = dict(metadata.items() + met.items()) # NOTE: met items override metadata items
                                     
-            # set record title to filename, unless already set by file-specific metadata
+            # set record title to filename - rename 'title' global attribute if found
             try:
                 title = metadata['title'][0]
+                metadata['file title'] = [ title ]
                 del metadata['title']
             except KeyError:
-                title = filename
+                pass
+            title = filename
 
             return FileRecord(datasetRecord, id, title, metadata)
             
