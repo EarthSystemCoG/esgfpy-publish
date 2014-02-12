@@ -35,8 +35,8 @@ FILE_SUBTYPES = { SUBTYPE_IMAGE: ["jpg", "jpeg", "gif", "png", "tif", "tiff"],
                   SUBTYPE_XCEL: ["xlsx", "xls", "csv"]
                 }
 
-# service names
-SERVICE_HTTP = "HTTP Download"
+# service names (must conform to THREDDS Controlled Vocabulary)
+SERVICE_HTTP = "HTTPServer" # NOTE: ESGF wget script generator mandates use of 'HTTPServer'
 SERVICE_OPENDAP = "OpenDAP"
 SERVICE_THUMBNAIL = "Thumbnail"
 
