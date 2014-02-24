@@ -84,11 +84,12 @@ if __name__ == '__main__':
     
                             
     # possible filename patterns
-    FILENAME_PATTERNS = [ "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)-(?P<stop>\d+)\.nc", # ModelE.tvapbl.2000010100-2000123118.nc
-                          "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.00Z\.nc",          # ModelE.zg.20100109.00Z.nc
-                          "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.nc",               # MetUM.cli.199303.nc
-                          "(?P<model_name>[^\.]*)_(?P<variable>[^\.]*)_(?P<start>\d+)_(?P<stop>\d+)\.nc",   # CAM3_rsntds_1991_2010.nc
+    FILENAME_PATTERNS = [ "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)-(?P<stop>\d+)\.nc",    # ModelE.tvapbl.2000010100-2000123118.nc
+                          "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.00Z\.nc",             # ModelE.zg.20100109.00Z.nc
+                          "(?P<model_name>[^\.]*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.nc",                  # MetUM.cli.199303.nc
+                          "(?P<model_name>[^\.]*)_(?P<variable>[^\.]*)_(?P<start>\d+)_(?P<stop>\d+)\.nc",      # CAM3_rsntds_1991_2010.nc
                           "(?P<model_name>[^\.]*\.1\.)(?P<variable>[^\.]*)\.(?P<start>\d+)-(?P<stop>\d+)\.nc", # BCCAGCM2.1.zg.2010010100-2010123118.nc
+                          "(?P<model_name>.*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.00Z\.nc",                 # NCAR.CAM5.hfss.20091010.00Z.nc
                         ] # 
 
                                      
