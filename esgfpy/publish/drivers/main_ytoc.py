@@ -90,6 +90,7 @@ if __name__ == '__main__':
                           "(?P<model_name>[^\.]*)_(?P<variable>[^\.]*)_(?P<start>\d+)_(?P<stop>\d+)\.nc",      # CAM3_rsntds_1991_2010.nc
                           "(?P<model_name>[^\.]*\.1\.)(?P<variable>[^\.]*)\.(?P<start>\d+)-(?P<stop>\d+)\.nc", # BCCAGCM2.1.zg.2010010100-2010123118.nc
                           "(?P<model_name>.*)\.(?P<variable>[^\.]*)\.(?P<start>\d+)\.00Z\.nc",                 # NCAR.CAM5.hfss.20091010.00Z.nc
+                          "(?P<variable>[^\.]*)_(?P<start>\d+)\.nc",                                           # tnqc_20091107.nc
                         ] # 
 
                                      
