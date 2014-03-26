@@ -13,7 +13,7 @@ TYPE_FILE = 'File'
 TYPE_AGGREGATION = 'Aggregation'
 
 # dictionary that contains mappings from record type to Solr core
-SOLR_CORES = { 
+SOLR_CORES = {
               TYPE_DATASET:'datasets',
               TYPE_FILE: 'files',
               TYPE_AGGREGATION: 'aggregations'
@@ -30,7 +30,7 @@ SUBTYPE_XCEL = "xcel"
 FILE_SUBTYPES = { SUBTYPE_IMAGE: ["jpg", "jpeg", "gif", "png", "tif", "tiff"],
                   SUBTYPE_MOVIE: ["mov"],
                   SUBTYPE_DOCUMENT: ["doc", "docx", "pdf", "txt", "ppt", "key"],
-                  SUBTYPE_XML: ["xml"], 
+                  SUBTYPE_XML: ["xml"],
                   SUBTYPE_DATA: ["nc", "hdf"],
                   SUBTYPE_XCEL: ["xlsx", "xls", "csv"]
                 }
@@ -39,6 +39,7 @@ FILE_SUBTYPES = { SUBTYPE_IMAGE: ["jpg", "jpeg", "gif", "png", "tif", "tiff"],
 SERVICE_HTTP = "HTTPServer" # NOTE: ESGF wget script generator mandates use of 'HTTPServer'
 SERVICE_OPENDAP = "OpenDAP"
 SERVICE_THUMBNAIL = "Thumbnail"
+SERVICE_THREDDS = "THREDDS"
 
 # dimension of dynamically generated thumbnails
 THUMBNAIL_WIDTH = 60

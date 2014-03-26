@@ -9,7 +9,7 @@ Module containing utility functions.
 
 def getMimeType(ext):
     """Returns the mime type for a given file extension."""
-    
+
     ext = ext.lower()
     if ext=='jpg' or ext=='jpeg':
         return "image/jpeg"
@@ -29,16 +29,18 @@ def getMimeType(ext):
         return "application/msword"
     elif ext=="pdf":
         return "application/pdf"
+    elif ext=="thredds":
+        return "application/xml+thredds"
     else:
         return ""
-    
+
 def isNull(s):
     """Checks wether a string is None or is empty."""
-    
+
     if s is None or len(s.strip())==0:
         return True
     else:
         return False
-    
+
 def str2bool(v):
     return v.lower() in ("yes", "true", "t", "1")

@@ -9,7 +9,7 @@ import Image
 
 class AbstractFileRecordFactory(object):
     """API for generating ESGF records of type File."""
-    
+
     def create(self, datasetRecord, uri):
         """
         Generates a FileRecord from the given resource URI and parent Dataset record.
@@ -18,10 +18,10 @@ class AbstractFileRecordFactory(object):
         :return: FileRecord object
         """
         raise NotImplementedError
-    
+
 class FilepathFileRecordFactory(AbstractFileRecordFactory):
     """Class that generates FileRecord objects from a filepath in the local file system."""
-    
+
     def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, generateThumbnails=False):
         """
         :param fields: constants metadata fields as (key, values) pairs
@@ -36,16 +36,16 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
         self.filenamePatterns = filenamePatterns
         self.baseUrls = baseUrls
         self.generateThumbnails = generateThumbnails
-        
+
         # define list of metadata parsers
-        self.metadataParsers = [ FilenameMetadataParser(self.filenamePatterns), 
-                                 NetcdfMetadataFileParser(), 
+        self.metadataParsers = [ FilenameMetadataParser(self.filenamePatterns),
+                                 NetcdfMetadataFileParser(),
                                  XMLMetadataFileParser() ]
-            
+
     def create(self, datasetRecord, filepath):
-        
+
         if os.path.isfile(filepath):
-            
+
             dir, filename = os.path.split(filepath)
             name, extension = os.path.splitext(filename)
             ext =  extension[1:] # remove '.' from file extension
@@ -59,12 +59,12 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                     fields['subtype'] = [subtype]
                     if subtype==SUBTYPE_IMAGE:
                         isImage=True
-                    
+
             # create image thumbnail
             if self.generateThumbnails and isImage:
                 thumbnailPath = os.path.join(dir, "%s.%s" % (name, THUMBNAIL_EXT) )
-                self._generateThumbnail(filepath, thumbnailPath)                 
-                    
+                self._generateThumbnail(filepath, thumbnailPath)
+
             # add file access URLs
             relativeUrl = filepath
             if self.rootDirectory is not None:
@@ -79,19 +79,19 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 elif serverName == SERVICE_OPENDAP:
                     url = "%s.html" % url # must add ".html" extension to OpenDAP URLs
                     urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
-                else:                   
+                else:
                     urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
-                    
+
             if len(urls)>0:
                 fields["url"] = urls
-                
+
             # add file-level metadata from configured parsers to fixed metadata
             metadata = self.fields.copy()
             metadata = dict(metadata.items() + fields.items()) # FIXME
             for parser in self.metadataParsers:
                 met = parser.parseMetadata(filepath)
                 metadata = dict(metadata.items() + met.items()) # NOTE: met items override metadata items
-                                    
+
             # set record title to filename - rename 'title' global attribute if found
             try:
                 title = metadata['title'][0]
@@ -102,12 +102,12 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             title = filename
 
             return FileRecord(datasetRecord, id, title, metadata)
-            
+
         else:
-            raise Exception("%s is not a file" % filepath)  
-        
+            raise Exception("%s is not a file" % filepath)
+
     def _generateThumbnail(self, filePath, thumbnailPath):
-        
+
         if not os.path.exists(thumbnailPath) or os.path.getsize(thumbnailPath)==0:
             print '\nGenerating thumbnail: %s' % thumbnailPath
             try:
@@ -118,5 +118,5 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 im.thumbnail(size)
                 im.save(thumbnailPath, "JPEG")
             except IOError as error:
-                print "Cannot create thumbnail for", filepath
+                print "Cannot create thumbnail for", filePath
                 print error
