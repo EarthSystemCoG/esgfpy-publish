@@ -3,7 +3,7 @@ import os
 
 from esgfpy.publish.models import FileRecord
 from esgfpy.publish.consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL, SERVICE_OPENDAP
-from esgfpy.publish.utils import getMimeType
+from esgfpy.publish.factories.utils import generateUrls
 from esgfpy.publish.parsers import NetcdfMetadataFileParser, XMLMetadataFileParser, FilenameMetadataParser
 import Image
 
@@ -66,22 +66,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 self._generateThumbnail(filepath, thumbnailPath)
 
             # add file access URLs
-            relativeUrl = filepath
-            if self.rootDirectory is not None:
-                relativeUrl = relativeUrl.replace(self.rootDirectory,"")
-            urls = []
-            for serverName, serverBaseUrl in self.baseUrls.items():
-                url = string.strip(serverBaseUrl,('/'))+relativeUrl
-                if serverName == SERVICE_THUMBNAIL:
-                    if isImage:
-                        url = url.replace(ext, THUMBNAIL_EXT)
-                        urls.append( "%s|%s|%s" % ( url, getMimeType("jpeg"), serverName) )
-                elif serverName == SERVICE_OPENDAP:
-                    url = "%s.html" % url # must add ".html" extension to OpenDAP URLs
-                    urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
-                else:
-                    urls.append( "%s|%s|%s" % ( url, getMimeType(ext), serverName) )
-
+            urls = generateUrls(self.baseUrls, self.rootDirectory, filepath, isImage=isImage)
             if len(urls)>0:
                 fields["url"] = urls
 

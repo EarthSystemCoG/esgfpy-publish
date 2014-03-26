@@ -10,8 +10,33 @@ Module containing utility functions for factory classes.
 import string
 import os
 from esgfpy.publish.consts import THUMBNAIL_EXT, SERVICE_THUMBNAIL, SERVICE_OPENDAP, SERVICE_THREDDS
-from esgfpy.publish.utils import getMimeType
 
+def getMimeType(ext):
+    """Returns the mime type for a given file extension."""
+
+    ext = ext.lower()
+    if ext=='jpg' or ext=='jpeg':
+        return "image/jpeg"
+    elif ext=="gif":
+        return "image/gif"
+    elif ext=="png":
+        return "image/png"
+    elif ext=="tiff" or ext=="tif":
+        return "image/tiff"
+    elif ext=="nc":
+        return "application/x-netcdf"
+    elif ext=="hdf":
+        return "application/x-hdf"
+    elif ext=="xml":
+        return "text/xml"
+    elif ext=="word" or ext=="wordx":
+        return "application/msword"
+    elif ext=="pdf":
+        return "application/pdf"
+    elif ext=="thredds":
+        return "application/xml+thredds"
+    else:
+        return ""
 
 def generateUrls(baseUrls, rootDirectory, filepath, isImage=False):
     '''Utility function to generate URL fields from templates.'''

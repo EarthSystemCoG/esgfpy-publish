@@ -90,8 +90,7 @@ class PublishingClient(object):
             # add/delete this record
             if publish:
                 print "Adding record: type=%s id=%s" % (record.type, record.id)
-                # FIXME
-                print tostring(record.toXML(), encoding="UTF-8")
+                #print tostring(record.toXML(), encoding="UTF-8")
                 rootEl.append(record.toXML())
             else:
                 print "Deleting record: type=%s id=%s" % (record.type, record.id)
