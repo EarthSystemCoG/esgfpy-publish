@@ -6,6 +6,8 @@ from esgfpy.publish.consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH,
 from esgfpy.publish.factories.utils import generateUrls
 from esgfpy.publish.parsers import NetcdfMetadataFileParser, XMLMetadataFileParser, FilenameMetadataParser
 import Image
+from esgfpy.publish.factories.utils import generateId
+from esgfpy.publish.consts import MASTER_ID
 
 class AbstractFileRecordFactory(object):
     """API for generating ESGF records of type File."""
@@ -49,7 +51,6 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             dir, filename = os.path.split(filepath)
             name, extension = os.path.splitext(filename)
             ext =  extension[1:] # remove '.' from file extension
-            id = string.join( [datasetRecord.id, filename], '.')
 
             fields = {}
             fields['format'] = [ext]
@@ -77,6 +78,11 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 met = parser.parseMetadata(filepath)
                 metadata = dict(metadata.items() + met.items()) # NOTE: met items override metadata items
 
+            # build 'id', 'instance_id, 'master_id'
+            # start from dataset 'master_id' since it has no version, data_node information
+            identifier = string.join( [datasetRecord.fields[MASTER_ID][0], filename], '.')
+            id = generateId(identifier, metadata)
+
             # set record title to filename - rename 'title' global attribute if found
             try:
                 title = metadata['title'][0]
@@ -90,18 +96,3 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
 
         else:
             raise Exception("%s is not a file" % filepath)
-
-    def _generateThumbnail(self, filePath, thumbnailPath):
-
-        if not os.path.exists(thumbnailPath) or os.path.getsize(thumbnailPath)==0:
-            print '\nGenerating thumbnail: %s' % thumbnailPath
-            try:
-                im = Image.open(filePath)
-                if im.mode != "RGB":
-                    im = im.convert("RGB")
-                size = THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT
-                im.thumbnail(size)
-                im.save(thumbnailPath, "JPEG")
-            except IOError as error:
-                print "Cannot create thumbnail for", filePath
-                print error

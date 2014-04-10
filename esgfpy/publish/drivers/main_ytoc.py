@@ -17,6 +17,7 @@ HOSTNAME = esg-datanode.jpl.nasa.gov
 SOLR_URL = http://localhost:8984/solr
 PROJECT = GASS-YoTC-MIP
 SUBDIRS = model, experiment, variable
+VERSION = v1
 
 @author: Luca Cinquini
 '''
@@ -59,6 +60,7 @@ if __name__ == '__main__':
         BASE_URL_OPENDAP = config.get(project, "BASE_URL_OPENDAP")
         HOSTNAME = config.get(project, "HOSTNAME")
         PROJECT = config.get(project, "PROJECT")
+        VERSION = config.get(project, "VERSION")
         # URL of ESGF publishing service
         # NOTE: must NOT end in '/'
         #! TODO: replace with ESGF publishing service
@@ -79,11 +81,13 @@ if __name__ == '__main__':
     datasetFields = { "project": [PROJECT],
                       "index_node": [HOSTNAME],
                       "metadata_format":["THREDDS"], # currently needed by ESGF web-fe to add datasets to data cart
-                      "data_node":[HOSTNAME] }
+                      "data_node":[HOSTNAME],
+                      "version":[VERSION] }
 
     # constant file-level metadata
     fileFields = {  "index_node": [HOSTNAME],
-                    "data_node":[HOSTNAME] }
+                    "data_node":[HOSTNAME],
+                    "version":[VERSION] }
 
 
     # possible filename patterns

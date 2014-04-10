@@ -1,10 +1,10 @@
 import string
 import os
-import re
 
 from esgfpy.publish.models import DatasetRecord
 from esgfpy.publish.parsers import XMLMetadataFileParser, DirectoryMetadataParser
 from esgfpy.publish.factories.utils import generateUrls
+from esgfpy.publish.factories.utils import generateId
 
 
 class AbstractDatasetRecordFactory(object):
@@ -82,12 +82,15 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
 
                         # build Dataset id, title from sub-directory structure
                         title = ""
-                        id = self.rootId
+                        identifier = self.rootId
                         for subDir in subDirs:
                             if len(title)>0:
                                 title += ", "
                             title += "%s=%s" % (string.capitalize(subDir), metadata[subDir][0])
-                            id += ".%s" % metadata[subDir][0]
+                            identifier += ".%s" % metadata[subDir][0]
+
+                        # build 'id', 'instance_id, 'master_id'
+                        id = generateId(identifier, metadata)
 
                         # optional mapping of metadata values
                         if self.metadataMapper is not None:

@@ -48,3 +48,10 @@ THUMBNAIL_EXT = "thumbnail.jpg"
 
 # default file for mapping facet keys and values
 METADATA_MAPPING_FILE = "/usr/local/esgf/config/metadata-mapping.cfg"
+
+# special metadata fields
+VERSION = 'version'
+DATA_NODE = 'data_node'
+INDEX_NODE = 'index_node'
+INSTANCE_ID = 'instance_id'
+MASTER_ID = 'master_id'
