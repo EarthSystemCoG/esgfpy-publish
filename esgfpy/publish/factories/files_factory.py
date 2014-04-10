@@ -2,12 +2,17 @@ import string
 import os
 
 from esgfpy.publish.models import FileRecord
-from esgfpy.publish.consts import FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, THUMBNAIL_EXT, SERVICE_THUMBNAIL, SERVICE_OPENDAP
+from esgfpy.publish.consts import (FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_EXT,
+                                   CHECKSUM, CHECKSUM_TYPE, TRACKING_ID)
+
 from esgfpy.publish.factories.utils import generateUrls
 from esgfpy.publish.parsers import NetcdfMetadataFileParser, XMLMetadataFileParser, FilenameMetadataParser
 import Image
 from esgfpy.publish.factories.utils import generateId
 from esgfpy.publish.consts import MASTER_ID
+import hashlib
+import logging
+from uuid import uuid4
 
 class AbstractFileRecordFactory(object):
     """API for generating ESGF records of type File."""
@@ -24,7 +29,8 @@ class AbstractFileRecordFactory(object):
 class FilepathFileRecordFactory(AbstractFileRecordFactory):
     """Class that generates FileRecord objects from a filepath in the local file system."""
 
-    def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={}, generateThumbnails=False):
+    def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={},
+                 generateThumbnails=False, generateChecksum=False, generateTrackingId=True):
         """
         :param fields: constants metadata fields as (key, values) pairs
         :param rootDirectory: root directory of file location, will be removed when creating the file access URL
@@ -38,6 +44,8 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
         self.filenamePatterns = filenamePatterns
         self.baseUrls = baseUrls
         self.generateThumbnails = generateThumbnails
+        self.generateChecksum = generateChecksum
+        self.generateTrackingId = generateTrackingId
 
         # define list of metadata parsers
         self.metadataParsers = [ FilenameMetadataParser(self.filenamePatterns),
@@ -61,7 +69,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                     if subtype==SUBTYPE_IMAGE:
                         isImage=True
 
-            # create image thumbnail
+            # create image thumbnail ?
             if self.generateThumbnails and isImage:
                 thumbnailPath = os.path.join(dir, "%s.%s" % (name, THUMBNAIL_EXT) )
                 self._generateThumbnail(filepath, thumbnailPath)
@@ -92,7 +100,37 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 pass
             title = filename
 
+            # create Md5 checksum ?
+            if self.generateChecksum:
+                logging.debug('Computing Md5 checksum for file: %s ...' % filepath)
+                md5 = md5_for_file(filepath, hr=True)
+                logging.debug('...Md5 checksum=%s' % md5)
+                metadata[CHECKSUM] = [md5]
+                metadata[CHECKSUM_TYPE] = ['MD5']
+
+            # generate tracking ID ?
+            if self.generateTrackingId:
+                metadata[TRACKING_ID] = [str(uuid4())]
+
+
             return FileRecord(datasetRecord, id, title, metadata)
 
         else:
             raise Exception("%s is not a file" % filepath)
+
+def md5_for_file(path, block_size=256*128, hr=False):
+    '''
+    Function to compute the Md5 checksum of a file.
+
+    Block size directly depends on the block size of your filesystem to avoid performances issues.
+    Here I have blocks of 4096 octets (Default NTFS).
+
+    Acknowledgment: http://stackoverflow.com/questions/1131220/get-md5-hash-of-big-files-in-python
+    '''
+    md5 = hashlib.md5()
+    with open(path,'rb') as f:
+        for chunk in iter(lambda: f.read(block_size), b''):
+            md5.update(chunk)
+    if hr:
+        return md5.hexdigest()
+    return md5.digest()
