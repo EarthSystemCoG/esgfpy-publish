@@ -48,13 +48,17 @@ def generateUrls(baseUrls, rootDirectory, filepath, isImage=False):
     relativeUrl = filepath
     if rootDirectory is not None:
         relativeUrl = relativeUrl.replace(rootDirectory,"")
+    if relativeUrl[0] == '/': # remove leading  '/'
+        relativeUrl = relativeUrl[1:]
 
     dir, filename = os.path.split(filepath)
     name, extension = os.path.splitext(filename)
     ext =  extension[1:] # remove '.' from file extension
 
     for serverName, serverBaseUrl in baseUrls.items():
-        url = string.strip(serverBaseUrl,('/'))+relativeUrl
+        if serverBaseUrl[-1]!='/': # add trailing '/'
+            serverBaseUrl = serverBaseUrl + "/"
+        url = serverBaseUrl+relativeUrl
         if serverName == SERVICE_THUMBNAIL:
             if isImage:
                 url = url.replace(ext, THUMBNAIL_EXT)
