@@ -13,6 +13,7 @@ from esgfpy.publish.consts import MASTER_ID
 import hashlib
 import logging
 from uuid import uuid4
+import datetime as dt
 
 class AbstractFileRecordFactory(object):
     """API for generating ESGF records of type File."""
@@ -30,13 +31,14 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
     """Class that generates FileRecord objects from a filepath in the local file system."""
 
     def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={},
-                 generateThumbnails=False, generateChecksum=False, generateTrackingId=True):
+                 generateThumbnails=False, generateChecksum=False, generateTrackingId=True, metadataMapper=None):
         """
         :param fields: constants metadata fields as (key, values) pairs
         :param rootDirectory: root directory of file location, will be removed when creating the file access URL
         :param filenamePatterns: optional list of matching filename patterns (with named groups)
         :param baseUrls: map of (base server URL, server name) to create file access URLs
         :param generateThumbnails: set to True to automatically generate thumbnails when publishing image files
+        :param metadataMapper: optional class to map metadata values to controlled vocabulary
         """
 
         self.fields = fields
@@ -46,6 +48,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
         self.generateThumbnails = generateThumbnails
         self.generateChecksum = generateChecksum
         self.generateTrackingId = generateTrackingId
+        self.metadataMapper = metadataMapper
 
         # define list of metadata parsers
         self.metadataParsers = [ FilenameMetadataParser(self.filenamePatterns),
@@ -111,8 +114,40 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
             # generate tracking ID ?
             if self.generateTrackingId:
                 metadata[TRACKING_ID] = [str(uuid4())]
+                
+            # FIXME: remove when proper metadata is read from HDF files
+            if "acos" in filepath:
+                yymmdd = metadata["yymmdd"][0]
+                yyyymmdd = "20%s" % yymmdd
+                startDate = dt.datetime.strptime(yyyymmdd, "%Y%m%d")
+                del metadata["yymmdd"]
+                
+            elif "AIRS" in filepath:
+                yyyy = metadata["yyyy"][0]
+                mm = metadata["mm"][0]
+                dd = metadata["dd"][0]
+                startDate = dt.datetime.strptime("%s%s%s" % (yyyy, mm, dd), "%Y%m%d")
+                del metadata["yyyy"]
+                del metadata["mm"]
+                del metadata["dd"]
+                
+            if "acos" in filepath or "AIRS" in filepath:
+                stopDate = startDate + dt.timedelta(days=1)
+                metadata["datetime_start"] = [ startDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+                metadata["datetime_stop"] = [ stopDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+                    
+                metadata["north_degrees"] = [90]
+                metadata["south_degrees"] = [-90]
+                metadata["west_degrees"] = [-180]
+                metadata["east_degrees"] = [180]
+                
+            # optional mapping of metadata values
+            if self.metadataMapper is not None:
+                for key, values in metadata.items():
+                    for i, value in enumerate(values):
+                        values[i] = self.metadataMapper.mappit(key, value)
 
-
+                
             return FileRecord(datasetRecord, id, title, metadata)
 
         else:

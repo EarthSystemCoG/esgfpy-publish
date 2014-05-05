@@ -25,7 +25,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
     """
 
     def __init__(self, rootId, rootDirectory="/", subDirs=[], fields={},
-                 metadataMapper=None, baseUrls={}):
+                 metadataMapper=None, baseUrls={}, addVersion=True):
         """
         :param rootId: root of assigned dataset identifiers
         :param rootDirectory: root filepath removed before parsing for subdirectories
@@ -34,6 +34,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
         :param fields: constants metadata fields as (key, values) pairs
         :param metadataMapper: optional class to map metadata values to controlled vocabulary
         :param baseUrls: map of (base server URL, server name) to create dataset access URLs
+        :param addVersion: True to add version information to dataset identifier (if not included already from directory structure)
         """
         self.rootId = rootId
         self.rootDirectory = rootDirectory
@@ -41,6 +42,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
         self.fields = fields
         self.metadataMapper = metadataMapper
         self.baseUrls = baseUrls
+        self.addVersion = addVersion
 
         # define list of metadata parsers
         self.metadataParsers = [ DirectoryMetadataParser(self.rootDirectory, self.subDirs),
@@ -90,7 +92,7 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
                             identifier += ".%s" % metadata[subDir][0]
 
                         # build 'id', 'instance_id, 'master_id'
-                        id = generateId(identifier, metadata)
+                        id = generateId(identifier, metadata, addVersion=self.addVersion)
 
                         # optional mapping of metadata values
                         if self.metadataMapper is not None:

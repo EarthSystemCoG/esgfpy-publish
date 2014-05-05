@@ -23,9 +23,9 @@ class PublishingClient(object):
     """
 
     # number of max records for publishing/unpublishing operations
-    MAX_RECORDS = 10
+    MAX_RECORDS_PER_REQUEST = 10
 
-    def __init__(self, indexer, publishing_service_url='http://localhost:8984/solr'):
+    def __init__(self, indexer, publishing_service_url='http://localhost:8984/solr', maxRecords=-1):
         """
         :param indexer: Indexer instance responsible for generating the XML records.
         :param publishing_service_url: URL of publishing service where XML records are sent.
@@ -37,6 +37,9 @@ class PublishingClient(object):
 
         # URL or remote publishing service
         self.publishing_service_url = publishing_service_url
+        
+        # maximum number of records published/unpublished
+        self.maxRecords = maxRecords
 
     def publish(self, uri):
         """
@@ -46,7 +49,7 @@ class PublishingClient(object):
         """
 
         # generate records from repository
-        records = self.indexer.index(uri)
+        records = self.indexer.index(uri, self.maxRecords)
 
         # publish records to remote publishing service, one type at a time
         # first Datasets
@@ -63,7 +66,7 @@ class PublishingClient(object):
         """
 
         # generate records from repository
-        records = self.indexer.index(uri)
+        records = self.indexer.index(uri, self.maxRecords)
 
         # unpublish Files first
         self._post( records[TYPE_FILE], TYPE_FILE, publish=False )
@@ -83,7 +86,7 @@ class PublishingClient(object):
         else:
             rootEl = Element("delete")
 
-        # loop over records, publish/unpublish "MAX_RECORDS" records at once
+        # loop over records, publish/unpublish "MAX_RECORDS_PER_REQUEST" records at once
         print "Number of %s records: %s" % (record_type, len(records))
         for i, record in enumerate(records):
 
@@ -97,8 +100,8 @@ class PublishingClient(object):
                 queryEl = SubElement(rootEl, "query")
                 queryEl.text = "id:%s" % record.id
 
-            # send every MAX_RECORDS records
-            if ( (i+1) % PublishingClient.MAX_RECORDS) == 0:
+            # send every MAX_RECORDS_PER_REQUEST records
+            if ( (i+1) % PublishingClient.MAX_RECORDS_PER_REQUEST) == 0:
 
                 #logging.debug("Posting XML:\n%s" % tostring(rootEl, encoding="UTF-8") )
 
@@ -134,9 +137,10 @@ class PublishingClient(object):
 class Indexer(object):
     """API for generating ESGF metadata records by parsing a given URI location."""
 
-    def index(self, uri):
+    def index(self, uri, maxRecords=-1):
         """
         :param uri: reference to records storage
+        :param maxRecords: if greater than 0, maximum number of records to be published
         :return: dictionary of record type, records list
         """
         raise NotImplementedError("Error: index() method must be implemented by subclasses.")
@@ -166,7 +170,7 @@ class FileSystemIndexer(Indexer):
         self.fileMetadataKeysToCopy = fileMetadataKeysToCopy
         self.datasetMetadataKeysToCopy = datasetMetadataKeysToCopy
 
-    def index(self, startDirectory):
+    def index(self, startDirectory, maxRecords=-1):
         """
         This method implementation traverses the directory tree
         and creates records whenever it finds a non-empty sub-directory.
@@ -188,10 +192,11 @@ class FileSystemIndexer(Indexer):
             if len(files)>0:
 
                 for file in files:
-                    # ignore hidden files and thumbnails
-                    if not file[0] == '.' and not 'thumbnail' in file and not file.endswith('.xml'):
-                        filepath = os.path.join(dir, file)
-                        datafiles.append(filepath)
+                    if maxRecords < 0 or len(datafiles) < maxRecords-1:
+                        # ignore hidden files and thumbnails
+                        if not file[0] == '.' and not 'thumbnail' in file and not file.endswith('.xml'):
+                            filepath = os.path.join(dir, file)
+                            datafiles.append(filepath)
 
             # create dataset containing these data files
             if len(datafiles)>0:

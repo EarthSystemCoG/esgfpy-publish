@@ -70,7 +70,7 @@ def generateUrls(baseUrls, rootDirectory, filepath, isImage=False):
 
     return urls
 
-def generateId(identifier, metadata):
+def generateId(identifier, metadata, addVersion=True):
     '''Generates an object 'id' starting from the supplied identifer,
        and possibly adding information from the metadata fields.
        Also sets the 'instance_id' and 'master_id' inside the metadata container.
@@ -85,7 +85,7 @@ def generateId(identifier, metadata):
     # Dataset example: 'gass-yotc-mip.01_NASAGMAO_GEOS5.expt1.zg.v1'
     # File example: 'gass-yotc-mip.01_NASAGMAO_GEOS5.expt1.zg.GEOS5_AGCM.zg.1991010100-1991123118.nc.v1'
     instance_id = identifier
-    if VERSION in metadata:
+    if addVersion and VERSION in metadata:
         instance_id = "%s.%s" % (instance_id, metadata[VERSION][0])
 
     # 'id' is unique to each version and replica
