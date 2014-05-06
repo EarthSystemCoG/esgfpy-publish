@@ -26,7 +26,7 @@ def getMimeType(ext):
         return "image/tiff"
     elif ext=="nc":
         return "application/x-netcdf"
-    elif ext=="hdf":
+    elif ext=="hdf" or ext=="h5" or ext=="he5":
         return "application/x-hdf"
     elif ext=="xml":
         return "text/xml"

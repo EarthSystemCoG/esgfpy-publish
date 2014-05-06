@@ -189,6 +189,7 @@ class FileSystemIndexer(Indexer):
             # create list of one Dataset record
             datasetRecord = self.datasetRecordFactory.create(directory)
 
+
             # directory structure matches ones of the templates
             if datasetRecord is not None:
                 

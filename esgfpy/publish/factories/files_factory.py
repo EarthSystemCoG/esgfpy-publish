@@ -164,11 +164,15 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
     def _matches(self, filename):
         '''Returns True if the file name matches one of the configured file patterns.'''
         
+        match = False
         for pattern in self.filenamePatterns:
             match = re.match(pattern, filename)
             if match:
                 return True
             
+        if not match:
+            logging.debug('\tNo matching pattern found for filename: %s' % filename)
+
         return False
 
 def md5_for_file(path, block_size=256*128, hr=False):
