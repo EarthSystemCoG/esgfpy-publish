@@ -5,11 +5,15 @@ from esgfpy.publish.models import DatasetRecord
 from esgfpy.publish.parsers import XMLMetadataFileParser, DirectoryMetadataParser
 from esgfpy.publish.factories.utils import generateUrls
 from esgfpy.publish.factories.utils import generateId
+import abc
 
 
 class AbstractDatasetRecordFactory(object):
     """API for generating ESGF records of type Dataset."""
+    
+    __metaclass__ = abc.ABCMeta
 
+    @abc.abstractmethod
     def create(self, uri):
         """
         Generates a DatasetRecord from the given resource URI.
@@ -102,7 +106,6 @@ class DirectoryDatasetRecordFactory(AbstractDatasetRecordFactory):
 
                         # create and return one Dataset record
                         return DatasetRecord(id, title, metadata)
-
 
         # no Dataset record created - return None
         print "Directory %s does NOT match any sub-directory template" % directory

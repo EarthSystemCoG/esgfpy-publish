@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory,
                                 fileMetadataKeysToCopy=fileMetadataKeysToCopy, datasetMetadataKeysToCopy=datasetMetadataKeysToCopy)
-    maxRecords = 10 # FIXME
+    maxRecords = 100 # FIXME
     publisher = PublishingClient(indexer, SOLR_URL, maxRecords=maxRecords)
     startDirectory = os.path.join(ROOT_DIR, relativeDirectory)
 

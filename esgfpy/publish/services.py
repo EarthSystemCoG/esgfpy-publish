@@ -179,53 +179,48 @@ class FileSystemIndexer(Indexer):
         """
 
         records = {TYPE_DATASET:[], TYPE_FILE:[]}
-        dMetadata = {} # empty additional dataset-level metadata dictionary
-        fMetadata = {} # empty additional file-level metadata dictionary
         if not os.path.isdir(startDirectory):
             raise Exception("Wrong starting directory: %s" % startDirectory)
         else:
             print 'Start directory=%s' % startDirectory
-        for dir, subdirs, files in os.walk(startDirectory):
+            
+        for directory, subdirs, files in os.walk(startDirectory):
+            
+            # create list of one Dataset record
+            datasetRecord = self.datasetRecordFactory.create(directory)
 
-            # distinguish data and metadata files
-            datafiles = []
-            if len(files)>0:
-
+            # directory structure matches ones of the templates
+            if datasetRecord is not None:
+                
+                # loop over files in this directory
                 for file in files:
-                    if maxRecords < 0 or len(datafiles) < maxRecords-1:
+                    if maxRecords < 0 or len(records[TYPE_FILE]) < maxRecords-1:
                         # ignore hidden files and thumbnails
                         if not file[0] == '.' and not 'thumbnail' in file and not file.endswith('.xml'):
-                            filepath = os.path.join(dir, file)
-                            datafiles.append(filepath)
+                            
+                            filepath = os.path.join(directory, file)
+                            fileRecord = self.fileRecordFactory.create(datasetRecord, filepath)
+                            
+                            # file matches one of the patterns
+                            if fileRecord is not None:
+                                
+                                # copy metadata from File --> Dataset
+                                self._copyMetadata(self.fileMetadataKeysToCopy, fileRecord, datasetRecord)
+                                # copy metadata from Dataset --> File
+                                self._copyMetadata(self.datasetMetadataKeysToCopy, datasetRecord, fileRecord)
+                                
+                                # add this File record
+                                records[TYPE_FILE].append( fileRecord )
 
-            # create dataset containing these data files
-            if len(datafiles)>0:
-
-                # create list of one Dataset record
-                datasetRecord = self.datasetRecordFactory.create(dir)
-
-                # directory structure matches template
-                if datasetRecord is not None:
+                # dataset has files
+                if len(records[TYPE_FILE]) > 0 :
 
                     # add number of files
-                    datasetRecord.fields['number_of_files'] = [str(len(datafiles))]
-
-                    #print 'Walking dir=%s, subdirs=%s, files=%s' % (dir, subdirs, datafiles)
-
-                    # create list of multiple File records
-                    for datafile in datafiles:
-                        fileRecord = self.fileRecordFactory.create(datasetRecord, datafile)
-
-                        # copy metadata from File --> Dataset
-                        self._copyMetadata(self.fileMetadataKeysToCopy, fileRecord, datasetRecord)
-                        # copy metadata from Dataset --> File
-                        self._copyMetadata(self.datasetMetadataKeysToCopy, datasetRecord, fileRecord)
-
-                        # add this File record
-                        records[TYPE_FILE].append( fileRecord )
+                    datasetRecord.fields['number_of_files'] = [str( len(records[TYPE_FILE]) )]
 
                     # add this Dataset record
                     records[TYPE_DATASET].append( datasetRecord )
+
 
         return records
 
