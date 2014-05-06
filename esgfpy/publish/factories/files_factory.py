@@ -119,33 +119,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
     
                 # generate tracking ID ?
                 if self.generateTrackingId:
-                    metadata[TRACKING_ID] = [str(uuid4())]
-                    
-                # FIXME: remove when proper metadata is read from HDF files
-                if "acos" in filepath:
-                    yymmdd = metadata["yymmdd"][0]
-                    yyyymmdd = "20%s" % yymmdd
-                    startDate = dt.datetime.strptime(yyyymmdd, "%Y%m%d")
-                    del metadata["yymmdd"]
-                    
-                elif "AIRS" in filepath:
-                    yyyy = metadata["yyyy"][0]
-                    mm = metadata["mm"][0]
-                    dd = metadata["dd"][0]
-                    startDate = dt.datetime.strptime("%s%s%s" % (yyyy, mm, dd), "%Y%m%d")
-                    del metadata["yyyy"]
-                    del metadata["mm"]
-                    del metadata["dd"]
-                    
-                if "acos" in filepath or "AIRS" in filepath:
-                    stopDate = startDate + dt.timedelta(days=1)
-                    metadata["datetime_start"] = [ startDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-                    metadata["datetime_stop"] = [ stopDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-                        
-                    metadata["north_degrees"] = [90]
-                    metadata["south_degrees"] = [-90]
-                    metadata["west_degrees"] = [-180]
-                    metadata["east_degrees"] = [180]
+                    metadata[TRACKING_ID] = [str(uuid4())]                    
                     
                 # optional mapping of metadata values
                 if self.metadataMapper is not None:

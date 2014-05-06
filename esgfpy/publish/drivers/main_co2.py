@@ -30,7 +30,7 @@ from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 import logging
-from esgfpy.publish.parsers import FilenameMetadataParser, TesXmlMetadataFileParser
+from esgfpy.publish.parsers import FilenameMetadataParser, HdfMetadataFileParser, TesXmlMetadataFileParser
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -114,8 +114,9 @@ if __name__ == '__main__':
                                                     metadataMapper=metadataMapper
                                                     )
     # use special list of metadata parsers
-    myFileRecordFactory.metadataParsers = [ FilenameMetadataParser(myFileRecordFactory.filenamePatterns),
-                                            TesXmlMetadataFileParser() ]
+    myFileRecordFactory.metadataParsers = [HdfMetadataFileParser(),
+                                           #  FilenameMetadataParser(myFileRecordFactory.filenamePatterns),
+                                           TesXmlMetadataFileParser() ]
 
     # metadata fields to copy Dataset <--> File
     append=False
@@ -124,7 +125,7 @@ if __name__ == '__main__':
 
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory,
                                 fileMetadataKeysToCopy=fileMetadataKeysToCopy, datasetMetadataKeysToCopy=datasetMetadataKeysToCopy)
-    maxRecords = 100 # FIXME
+    maxRecords = 10 # FIXME
     publisher = PublishingClient(indexer, SOLR_URL, maxRecords=maxRecords)
     startDirectory = os.path.join(ROOT_DIR, relativeDirectory)
 
