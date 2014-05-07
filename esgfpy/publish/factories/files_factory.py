@@ -4,7 +4,7 @@ import re
 
 from esgfpy.publish.models import FileRecord
 from esgfpy.publish.consts import (FILE_SUBTYPES, SUBTYPE_IMAGE, THUMBNAIL_EXT,
-                                   CHECKSUM, CHECKSUM_TYPE, TRACKING_ID)
+                                   CHECKSUM, CHECKSUM_TYPE, TRACKING_ID, SIZE)
 
 from esgfpy.publish.factories.utils import generateUrls
 from esgfpy.publish.parsers import NetcdfMetadataFileParser, XMLMetadataFileParser, FilenameMetadataParser
@@ -108,6 +108,9 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
                 except KeyError:
                     pass
                 title = filename
+                
+                # file size
+                metadata[SIZE] = [ os.path.getsize(filepath) ]
     
                 # create Md5 checksum ?
                 if self.generateChecksum:

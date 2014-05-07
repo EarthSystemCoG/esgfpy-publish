@@ -5,6 +5,9 @@ Parses metadata from HDF files.
 from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
 import datetime as dt
 from dateutil.tz import tzutc
+from esgfpy.publish.consts import (DATETIME_START, DATETIME_STOP, GEO,
+                                   NORTH_DEGREES, SOUTH_DEGREES, EAST_DEGREES, WEST_DEGREES,
+                                   VARIABLE)
 
 class HdfMetadataFileParser(AbstractMetadataFileParser):
     '''Currently fake implementation: all metadata is hard-wired'''
@@ -55,15 +58,17 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
             maxLat = -10
             
         stopDate = startDate + dt.timedelta(days=1)
-        metadata["datetime_start"] = [ startDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-        metadata["datetime_stop"] = [ stopDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+        metadata[DATETIME_START] = [ startDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+        metadata[DATETIME_STOP] = [ stopDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
                 
-        metadata["north_degrees"] = [maxLat]
-        metadata["south_degrees"] = [minLat]
-        metadata["west_degrees"] = [minLon]
-        metadata["east_degrees"] = [maxLon]
+        metadata[NORTH_DEGREES] = [maxLat]
+        metadata[SOUTH_DEGREES] = [minLat]
+        metadata[WEST_DEGREES] = [minLon]
+        metadata[EAST_DEGREES] = [maxLon]
             
         # minX minY maxX maxY
-        metadata["geo"] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+        metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+        
+        metadata[VARIABLE] = ["xco2", "wind_speed"]
 
         return metadata

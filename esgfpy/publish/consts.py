@@ -58,3 +58,13 @@ MASTER_ID = 'master_id'
 CHECKSUM = 'checksum'
 CHECKSUM_TYPE = 'checksum_type'
 TRACKING_ID = 'tracking_id'
+SIZE = 'size'
+VARIABLE = 'variable'
+DATETIME_START = 'datetime_start'
+DATETIME_STOP = 'datetime_stop'
+GEO = 'geo'
+NORTH_DEGREES = "north_degrees"
+SOUTH_DEGREES = "south_degrees"
+EAST_DEGREES = "east_degrees"
+WEST_DEGREES = "west_degrees"
+

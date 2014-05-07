@@ -121,7 +121,7 @@ if __name__ == '__main__':
     # metadata fields to copy Dataset <--> File
     append=False
     fileMetadataKeysToCopy = {}
-    datasetMetadataKeysToCopy = {'project':append, 'instrument':append }
+    datasetMetadataKeysToCopy = {'project':append, 'instrument':append, 'version':append, "processing_level":append }
 
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory,
                                 fileMetadataKeysToCopy=fileMetadataKeysToCopy, datasetMetadataKeysToCopy=datasetMetadataKeysToCopy)
