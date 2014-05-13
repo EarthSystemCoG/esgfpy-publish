@@ -8,6 +8,8 @@ from dateutil.tz import tzutc
 from esgfpy.publish.consts import (DATETIME_START, DATETIME_STOP, GEO,
                                    NORTH_DEGREES, SOUTH_DEGREES, EAST_DEGREES, WEST_DEGREES,
                                    VARIABLE)
+import re
+import os
 
 class HdfMetadataFileParser(AbstractMetadataFileParser):
     '''Currently fake implementation: all metadata is hard-wired'''
@@ -19,7 +21,16 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
         # FIXME: remove when proper metadata is read from HDF files
         if "acos" in filepath:
             
-            startDate = dt.datetime(2000, 1, 1, tzinfo=tzutc())
+            # obtain filename from filepath
+            dir, filename = os.path.split(filepath)
+            pattern = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
+            match = re.match(pattern, filename)
+            if match:
+                yymmdd = match.group('yymmdd')
+                yyyy = 2000 + int(yymmdd[0:2])
+                mm = int(yymmdd[2:4])
+                dd = int(yymmdd[4:6])
+                startDate = dt.datetime(yyyy, mm, dd, tzinfo=tzutc())
             
             # N-W quadrant
             minLon = -60
