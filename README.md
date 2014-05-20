@@ -17,6 +17,8 @@ o netcdf4-python
 	python setup.py build
 	sudo python setup.py install
 	
+o h5py to parse metadata from HDF files
+	
 o xml.etree
   to parse metadata within XML files
   

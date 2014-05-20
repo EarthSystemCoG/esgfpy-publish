@@ -115,7 +115,7 @@ if __name__ == '__main__':
                                                     )
     # use special list of metadata parsers
     myFileRecordFactory.metadataParsers = [HdfMetadataFileParser(),
-                                           #  FilenameMetadataParser(myFileRecordFactory.filenamePatterns),
+                                           # FilenameMetadataParser(myFileRecordFactory.filenamePatterns),
                                            TesXmlMetadataFileParser() ]
 
     # metadata fields to copy Dataset <--> File

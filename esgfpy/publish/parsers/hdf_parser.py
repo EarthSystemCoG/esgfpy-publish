@@ -10,76 +10,71 @@ from esgfpy.publish.consts import (DATETIME_START, DATETIME_STOP, GEO,
                                    VARIABLE)
 import re
 import os
+import h5py
+import numpy as np
+import datetime as dt
+import logging
 
 class HdfMetadataFileParser(AbstractMetadataFileParser):
     '''Currently fake implementation: all metadata is hard-wired'''
+    
+  
         
     def parseMetadata(self, filepath):
         
+        logging.info("Parsing HDF file=%s" % filepath)
+        
         metadata = {} # empty metadata dictionary
         
-        # FIXME: remove when proper metadata is read from HDF files
-        if "acos" in filepath:
-            
-            # obtain filename from filepath
-            dir, filename = os.path.split(filepath)
-            pattern = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
-            match = re.match(pattern, filename)
-            if match:
-                yymmdd = match.group('yymmdd')
-                yyyy = 2000 + int(yymmdd[0:2])
-                mm = int(yymmdd[2:4])
-                dd = int(yymmdd[4:6])
-                startDate = dt.datetime(yyyy, mm, dd, tzinfo=tzutc())
-            
-            # N-W quadrant
-            minLon = -60
-            maxLon = -30
-            minLat = 10
-            maxLat = 30
-            
-        elif "AIRS" in filepath:
-            
-            startDate = dt.datetime(2001, 1, 1, tzinfo=tzutc())
-            
-            # N-E quadrant
-            minLon = 30
-            maxLon = 60
-            minLat = 10
-            maxLat = 30
-            
-        elif "TES" in filepath:
-            
-            startDate = dt.datetime(2002, 1, 1, tzinfo=tzutc())
-            
-            # S-E quadrant
-            minLon = 30
-            maxLon = 60
-            minLat = -30
-            maxLat = -10
+        # open HDF file
+        h5File = h5py.File(filepath,'r')
+        
+        # latitudes
+        lats = h5File['SoundingGeometry']['sounding_latitude'][:]
+        minLat = np.min(lats)
+        maxLat = np.max(lats)
+        logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
 
-        elif "OCO-2" in filepath:
-            
-            startDate = dt.datetime(2003, 1, 1, tzinfo=tzutc())
-            
-            # S-W quadrant
-            minLon = -60
-            maxLon = -30
-            minLat = -30
-            maxLat = -10
-            
-        stopDate = startDate + dt.timedelta(days=1)
-        metadata[DATETIME_START] = [ startDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-        metadata[DATETIME_STOP] = [ stopDate.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-                
+        # longitudes
+        lons = h5File['SoundingGeometry']['sounding_longitude'][:]
+        minLon = np.min(lons)
+        maxLon = np.max(lons)
+        logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+        
         metadata[NORTH_DEGREES] = [maxLat]
         metadata[SOUTH_DEGREES] = [minLat]
         metadata[WEST_DEGREES] = [minLon]
         metadata[EAST_DEGREES] = [maxLon]
-            
+
         # minX minY maxX maxY
         metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
         
-        metadata[VARIABLE] = ["xco2", "wind_speed"]
+        # datetimes
+        taiDateTimeStart = dt.datetime(1993, 1, 1, 0, 0, 0, tzinfo=tzutc())
+        seconds = h5File['RetrievalHeader']['sounding_time_tai93'][:]
+        minSecs = np.min(seconds)
+        maxSecs = np.max(seconds)
+        minDateTime = taiDateTimeStart + dt.timedelta(seconds=int(minSecs))
+        maxDateTime = taiDateTimeStart + dt.timedelta(seconds=int(maxSecs))
+        logging.debug("Datetime min=%s max=%s" % (minDateTime, maxDateTime))
+        metadata[DATETIME_START] = [ minDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+        metadata[DATETIME_STOP] = [ maxDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+        
+        # variables
+        variables = []
+        
+        # loop over HDF groups
+        for gname, gobj in h5File.items():
+            if gobj.__class__.__name__=='Group':
+
+                # loop over HDF datasets
+                for dname, dobj in gobj.items():
+                    if dobj.__class__.__name__ =='Dataset':
+                        variables.append("%s/%s" % (gname, dname))
+                        
+        metadata[VARIABLE] = variables
+        
+        # close HDF file
+        h5File.close()
 
         return metadata
