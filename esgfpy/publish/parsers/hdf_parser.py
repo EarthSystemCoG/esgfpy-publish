@@ -3,13 +3,10 @@ Parses metadata from HDF files.
 '''
 
 from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
-import datetime as dt
 from dateutil.tz import tzutc
 from esgfpy.publish.consts import (DATETIME_START, DATETIME_STOP, GEO,
                                    NORTH_DEGREES, SOUTH_DEGREES, EAST_DEGREES, WEST_DEGREES,
                                    VARIABLE)
-import re
-import os
 import h5py
 import numpy as np
 import datetime as dt
