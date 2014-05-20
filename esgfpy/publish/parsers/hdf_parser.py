@@ -3,75 +3,106 @@ Parses metadata from HDF files.
 '''
 
 from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
-from dateutil.tz import tzutc
 from esgfpy.publish.consts import (DATETIME_START, DATETIME_STOP, GEO,
                                    NORTH_DEGREES, SOUTH_DEGREES, EAST_DEGREES, WEST_DEGREES,
                                    VARIABLE)
 import h5py
 import numpy as np
-import datetime as dt
 import logging
+import abc
 
 class HdfMetadataFileParser(AbstractMetadataFileParser):
     '''Currently fake implementation: all metadata is hard-wired'''
     
-  
+    __metaclass__ = abc.ABCMeta
         
     def parseMetadata(self, filepath):
         
-        logging.info("Parsing HDF file=%s" % filepath)
+        if self.matches(filepath):
         
-        metadata = {} # empty metadata dictionary
-        
-        # open HDF file
-        h5File = h5py.File(filepath,'r')
-        
-        # latitudes
-        lats = h5File['SoundingGeometry']['sounding_latitude'][:]
-        minLat = np.min(lats)
-        maxLat = np.max(lats)
-        logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
+            logging.info("Parsing HDF file=%s" % filepath)
+            
+            metadata = {} # empty metadata dictionary
+            
+            # open HDF file
+            h5file = h5py.File(filepath,'r')
+            
+            # latitudes
+            lats = self.getLatitudes(h5file)
+            minLat = np.min(lats)
+            maxLat = np.max(lats)
+            logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
+    
+            # longitudes
+            lons = self.getLongitudes(h5file)
+            minLon = np.min(lons)
+            maxLon = np.max(lons)
+            logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+            
+            metadata[NORTH_DEGREES] = [maxLat]
+            metadata[SOUTH_DEGREES] = [minLat]
+            metadata[WEST_DEGREES] = [minLon]
+            metadata[EAST_DEGREES] = [maxLon]
+    
+            # minX minY maxX maxY
+            metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+            
+            # datetimes
+            times = self.getTimes(h5file)
+            minDateTime = np.min(times)
+            maxDateTime = np.max(times)
+            logging.debug("Datetime min=%s max=%s" % (minDateTime, maxDateTime))
+            metadata[DATETIME_START] = [ minDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+            metadata[DATETIME_STOP] = [ maxDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+            
+            # variables
+            variables = self.getVariables(h5file)
+            metadata[VARIABLE] = variables
+            
+            # close HDF file
+            h5file.close()
 
-        # longitudes
-        lons = h5File['SoundingGeometry']['sounding_longitude'][:]
-        minLon = np.min(lons)
-        maxLon = np.max(lons)
-        logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+        return metadata
+    
+    @abc.abstractmethod
+    def matches(self, filepath):
+        '''
+        Returns true if the file matches a regular expression,
+        and therefore needs to be parsed.
+        '''
+        pass
         
-        metadata[NORTH_DEGREES] = [maxLat]
-        metadata[SOUTH_DEGREES] = [minLat]
-        metadata[WEST_DEGREES] = [minLon]
-        metadata[EAST_DEGREES] = [maxLon]
+    @abc.abstractmethod
+    def getLatitudes(self, h5file):
+        '''Returns a numpy array of latitude values.'''
+        pass
 
-        # minX minY maxX maxY
-        metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
-        
-        # datetimes
-        taiDateTimeStart = dt.datetime(1993, 1, 1, 0, 0, 0, tzinfo=tzutc())
-        seconds = h5File['RetrievalHeader']['sounding_time_tai93'][:]
-        minSecs = np.min(seconds)
-        maxSecs = np.max(seconds)
-        minDateTime = taiDateTimeStart + dt.timedelta(seconds=int(minSecs))
-        maxDateTime = taiDateTimeStart + dt.timedelta(seconds=int(maxSecs))
-        logging.debug("Datetime min=%s max=%s" % (minDateTime, maxDateTime))
-        metadata[DATETIME_START] = [ minDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-        metadata[DATETIME_STOP] = [ maxDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-        
-        # variables
+    @abc.abstractmethod
+    def getLongitudes(self, h5file):
+        '''Returns a numpy array of longitude values.'''
+        pass
+    
+    @abc.abstractmethod
+    def getTimes(self, h5file):
+        '''Returns a numpy array of python datetime values.'''
+        pass
+    
+    def getVariables(self, h5file):
+        '''
+        Returns a list of variable names.
+        The default implementation looks for all Group/Dataset objects in the HDF file.
+        May be overwritten by subclasses.
+        '''
         variables = []
         
         # loop over HDF groups
-        for gname, gobj in h5File.items():
+        for gname, gobj in h5file.items():
             if gobj.__class__.__name__=='Group':
-
+    
                 # loop over HDF datasets
                 for dname, dobj in gobj.items():
                     if dobj.__class__.__name__ =='Dataset':
                         variables.append("%s/%s" % (gname, dname))
-                        
-        metadata[VARIABLE] = variables
-        
-        # close HDF file
-        h5File.close()
 
-        return metadata
+        return variables
+        

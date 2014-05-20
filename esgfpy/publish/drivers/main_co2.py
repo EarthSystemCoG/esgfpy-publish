@@ -30,7 +30,7 @@ from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 import logging
-from esgfpy.publish.parsers import FilenameMetadataParser, HdfMetadataFileParser, TesXmlMetadataFileParser
+from esgfpy.publish.parsers import AcosFileParser, TesXmlMetadataFileParser
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -114,7 +114,7 @@ if __name__ == '__main__':
                                                     metadataMapper=metadataMapper
                                                     )
     # use special list of metadata parsers
-    myFileRecordFactory.metadataParsers = [HdfMetadataFileParser(),
+    myFileRecordFactory.metadataParsers = [AcosFileParser(),
                                            # FilenameMetadataParser(myFileRecordFactory.filenamePatterns),
                                            TesXmlMetadataFileParser() ]
 

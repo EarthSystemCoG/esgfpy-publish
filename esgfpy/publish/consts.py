@@ -7,6 +7,9 @@ Constants used by esgfpy.publish module.
 @author: Luca Cinquini
 '''
 
+import datetime as dt
+from dateutil.tz import tzutc
+
 # Record types
 TYPE_DATASET = 'Dataset'
 TYPE_FILE = 'File'
@@ -67,4 +70,6 @@ NORTH_DEGREES = "north_degrees"
 SOUTH_DEGREES = "south_degrees"
 EAST_DEGREES = "east_degrees"
 WEST_DEGREES = "west_degrees"
+
+TAI93_DATETIME_START = dt.datetime(1993, 1, 1, 0, 0, 0, tzinfo=tzutc())
 
