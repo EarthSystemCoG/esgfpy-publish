@@ -8,6 +8,8 @@ from esgfpy.publish.parsers import HdfMetadataFileParser
 import os
 import re
 from dateutil.tz import tzutc
+import numpy as np
+from esgfpy.publish.consts import TAI93_DATETIME_START
 
 # oco2*L2Std*.h5
 FILENAME_PATTERN = "oco2.+L2Std.+\.h5"
@@ -29,3 +31,8 @@ class Oco2FileParser(HdfMetadataFileParser):
         dateStrings = h5file['RetrievalHeader']['retrieval_time_string'][:]
         datasetTimes = [ dt.datetime.strptime(x,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) for x in dateStrings ]
         return datasetTimes
+        #seconds = h5file['RetrievalHeader']['retrieval_time_tai93'][:]
+        #times = np.empty( len(seconds), dtype=dt.datetime)
+        #for i, secs in enumerate(seconds):
+        #    times[i] = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
+        #return times

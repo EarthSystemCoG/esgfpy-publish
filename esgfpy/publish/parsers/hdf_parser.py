@@ -31,29 +31,37 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
             lats = self.getLatitudes(h5file)
             minLat = np.min(lats)
             maxLat = np.max(lats)
-            logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
-    
-            # longitudes
-            lons = self.getLongitudes(h5file)
-            minLon = np.min(lons)
-            maxLon = np.max(lons)
-            logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+            if (minLat >= -90 and minLat <= 90) and (maxLat >= -90 and maxLat <= 90):
+                logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
+                
+                # longitudes
+                lons = self.getLongitudes(h5file)
+                # shift longitudes ?
+                if np.max(lons) > 180:
+                    lons = lons - 360
+                minLon = np.min(lons)
+                maxLon = np.max(lons)
+                if (minLon >= -180 and minLon <=180) and (maxLon >= -180 and maxLon <= 180):
+                    logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
             
-            metadata[NORTH_DEGREES] = [maxLat]
-            metadata[SOUTH_DEGREES] = [minLat]
-            metadata[WEST_DEGREES] = [minLon]
-            metadata[EAST_DEGREES] = [maxLon]
-    
-            # minX minY maxX maxY
-            metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+                    # store geographic bounds
+                    metadata[NORTH_DEGREES] = [maxLat]
+                    metadata[SOUTH_DEGREES] = [minLat]
+                    metadata[WEST_DEGREES] = [minLon]
+                    metadata[EAST_DEGREES] = [maxLon]            
+                    # minX minY maxX maxY
+                    metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
             
             # datetimes
-            times = self.getTimes(h5file)
-            minDateTime = np.min(times)
-            maxDateTime = np.max(times)
-            logging.debug("Datetime min=%s max=%s" % (minDateTime, maxDateTime))
-            metadata[DATETIME_START] = [ minDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-            metadata[DATETIME_STOP] = [ maxDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+            try:
+                times = self.getTimes(h5file)
+                minDateTime = np.min(times)
+                maxDateTime = np.max(times)
+                logging.debug("Datetime min=%s max=%s" % (minDateTime, maxDateTime))
+                metadata[DATETIME_START] = [ minDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+                metadata[DATETIME_STOP] = [ maxDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+            except ValueError as e:
+                logging.warn(e)
             
             # variables
             variables = self.getVariables(h5file)
