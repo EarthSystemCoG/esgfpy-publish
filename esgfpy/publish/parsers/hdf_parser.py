@@ -18,11 +18,11 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
         
     def parseMetadata(self, filepath):
         
+        metadata = {} # empty metadata dictionary
+        
         if self.matches(filepath):
         
             logging.info("Parsing HDF file=%s" % filepath)
-            
-            metadata = {} # empty metadata dictionary
             
             # open HDF file
             h5file = h5py.File(filepath,'r')

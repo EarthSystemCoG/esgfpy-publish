@@ -10,3 +10,4 @@ from directory_parser import DirectoryMetadataParser
 from tes_xml_parser import TesXmlMetadataFileParser
 from hdf_parser import HdfMetadataFileParser
 from acos_parser import AcosFileParser
+from oco2_parser import Oco2FileParser

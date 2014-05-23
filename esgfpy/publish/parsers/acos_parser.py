@@ -9,13 +9,14 @@ from esgfpy.publish.parsers import HdfMetadataFileParser
 from esgfpy.publish.consts import TAI93_DATETIME_START
 import os
 import re
+import abc
 
 FILENAME_PATTERN = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
 
 class AcosFileParser(HdfMetadataFileParser):
     
     def matches(self, filepath):
-        '''Example filename: acos_L2s_100129_16_Evaluation_v150151_L2s30400_r01_PolB_130904152222c.h5.'''
+        '''Example filename: acos_L2s_100129_16_Evaluation_v150151_L2s30400_r01_PolB_130904152222c.h5'''
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_PATTERN, filename)
     
