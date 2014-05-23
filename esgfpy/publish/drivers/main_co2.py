@@ -30,7 +30,7 @@ from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 import logging
-from esgfpy.publish.parsers import AcosFileParser, TesXmlMetadataFileParser, Oco2FileParser
+from esgfpy.publish.parsers import AcosFileParser, Oco2FileParser, TesFileParser
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -117,8 +117,7 @@ if __name__ == '__main__':
     # use special list of metadata parsers
     myFileRecordFactory.metadataParsers = [AcosFileParser(),
                                            Oco2FileParser(),
-                                           # FilenameMetadataParser(myFileRecordFactory.filenamePatterns),
-                                           TesXmlMetadataFileParser() ]
+                                           TesFileParser() ]
 
     # metadata fields to copy Dataset <--> File
     append=False

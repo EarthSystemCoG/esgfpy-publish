@@ -4,12 +4,10 @@ HDF parser specific to ACOS files.
 @author: Luca Cinquini
 '''
 import datetime as dt
-import numpy as np
 from esgfpy.publish.parsers import HdfMetadataFileParser
-from esgfpy.publish.consts import TAI93_DATETIME_START
+#from esgfpy.publish.consts import TAI93_DATETIME_START
 import os
 import re
-import abc
 from dateutil.tz import tzutc
 
 FILENAME_PATTERN = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"

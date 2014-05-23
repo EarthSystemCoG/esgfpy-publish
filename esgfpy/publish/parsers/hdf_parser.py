@@ -29,28 +29,32 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
             
             # latitudes
             lats = self.getLatitudes(h5file)
-            minLat = np.min(lats)
+            lats = lats[ np.where( lats >= -90) ] # exclude missing values
+            lats = lats[ np.where( lats <=  90 )] 
+            minLat = np.min(lats) 
             maxLat = np.max(lats)
-            if (minLat >= -90 and minLat <= 90) and (maxLat >= -90 and maxLat <= 90):
-                logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
+            logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
                 
-                # longitudes
-                lons = self.getLongitudes(h5file)
-                # shift longitudes ?
-                if np.max(lons) > 180:
-                    lons = lons - 360
-                minLon = np.min(lons)
-                maxLon = np.max(lons)
-                if (minLon >= -180 and minLon <=180) and (maxLon >= -180 and maxLon <= 180):
-                    logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+            # longitudes
+            lons = self.getLongitudes(h5file)
+            lons = lons[ np.where( lons >= -180) ] # exclude missing values
+            lons = lons[ np.where( lons <=  360) ] 
             
-                    # store geographic bounds
-                    metadata[NORTH_DEGREES] = [maxLat]
-                    metadata[SOUTH_DEGREES] = [minLat]
-                    metadata[WEST_DEGREES] = [minLon]
-                    metadata[EAST_DEGREES] = [maxLon]            
-                    # minX minY maxX maxY
-                    metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+            if np.max(lons) > 180: # shift longitudes ?
+                lons = lons - 360
+            minLon = np.min(lons)
+            maxLon = np.max(lons)
+            logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+            
+            if minLon >= -180 and maxLon<=180 and minLat>=-90 and maxLat<=90:
+                
+                # store geographic bounds
+                metadata[NORTH_DEGREES] = [maxLat]
+                metadata[SOUTH_DEGREES] = [minLat]
+                metadata[WEST_DEGREES] = [minLon]
+                metadata[EAST_DEGREES] = [maxLon]            
+                # minX minY maxX maxY
+                metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
             
             # datetimes
             try:
