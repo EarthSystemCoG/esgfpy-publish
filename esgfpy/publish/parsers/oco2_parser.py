@@ -28,11 +28,8 @@ class Oco2FileParser(HdfMetadataFileParser):
         return h5file['RetrievalGeometry']['retrieval_longitude'][:]
     
     def getTimes(self, h5file):
+        
+        # use UTC time
         dateStrings = h5file['RetrievalHeader']['retrieval_time_string'][:]
         datasetTimes = [ dt.datetime.strptime(x,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) for x in dateStrings ]
         return datasetTimes
-        #seconds = h5file['RetrievalHeader']['retrieval_time_tai93'][:]
-        #times = np.empty( len(seconds), dtype=dt.datetime)
-        #for i, secs in enumerate(seconds):
-        #    times[i] = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
-        #return times

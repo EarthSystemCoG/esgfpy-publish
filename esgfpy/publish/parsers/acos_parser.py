@@ -10,6 +10,7 @@ from esgfpy.publish.consts import TAI93_DATETIME_START
 import os
 import re
 import abc
+from dateutil.tz import tzutc
 
 FILENAME_PATTERN = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
 
@@ -27,8 +28,15 @@ class AcosFileParser(HdfMetadataFileParser):
         return h5file['SoundingGeometry']['sounding_longitude'][:]
     
     def getTimes(self, h5file):
-        seconds = h5file['RetrievalHeader']['sounding_time_tai93'][:]
-        times = np.empty( len(seconds), dtype=dt.datetime)
-        for i, secs in enumerate(seconds):
-            times[i] = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
-        return times
+        
+        # use TAI93 time
+        #seconds = h5file['RetrievalHeader']['sounding_time_tai93'][:]
+        #times = np.empty( len(seconds), dtype=dt.datetime)
+        #for i, secs in enumerate(seconds):
+        #    times[i] = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
+        #return times
+        
+        # use UTC time
+        dateStrings = h5file['RetrievalHeader']['sounding_time_string'][:]
+        datasetTimes = [dt.datetime.strptime(x[:19],"%Y-%m-%dT%H:%M:%S").replace(tzinfo=tzutc()) for x in dateStrings]
+        return datasetTimes
