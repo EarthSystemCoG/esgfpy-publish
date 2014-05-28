@@ -30,7 +30,7 @@ from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 import logging
-from esgfpy.publish.parsers import AcosFileParser, Oco2FileParser, TesFileParser
+from esgfpy.publish.parsers import AcosFileParser, AcosLiteFileParser, Oco2FileParser, TesFileParser
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -88,6 +88,8 @@ if __name__ == '__main__':
     # possible filename patterns
     FILENAME_PATTERNS = [ # acos_L2s_100131_30_Evaluation_v150151_L2s30400_r01_PolB_130904153155c.h5
                           "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5",
+                          # acos_b34_L2lite_20130129_r02c.nc
+                          "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc",
                           # AIRS.2010.01.01.031.L2.CO2_Std.v5.4.11.0.CO2.T10034082113.hdf
                           "AIRS\.(?P<yyyy>\d+)\.(?P<mm>\d+)\.(?P<dd>\d+)\..+\.hdf",
                           # TES-Aura_L2-CO2-Nadir_r0000015508_C01_F07_10.he5
@@ -115,7 +117,8 @@ if __name__ == '__main__':
                                                     metadataMapper=metadataMapper
                                                     )
     # use special list of metadata parsers
-    myFileRecordFactory.metadataParsers = [AcosFileParser(),
+    myFileRecordFactory.metadataParsers = [AcosLiteFileParser(),
+                                           AcosFileParser(),
                                            Oco2FileParser(),
                                            TesFileParser() ]
 
