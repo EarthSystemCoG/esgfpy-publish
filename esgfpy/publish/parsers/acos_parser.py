@@ -12,7 +12,8 @@ from dateutil.tz import tzutc
 import numpy as np
 
 FILENAME_PATTERN = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
-FILENAME_LITE_PATTERN = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc"
+FILENAME_LITE_PATTERN_R02 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc"
+FILENAME_LITE_PATTERN_R03 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc"
 
 class AcosFileParser(HdfMetadataFileParser):
     
@@ -41,12 +42,13 @@ class AcosFileParser(HdfMetadataFileParser):
         datasetTimes = [dt.datetime.strptime(x[:19],"%Y-%m-%dT%H:%M:%S").replace(tzinfo=tzutc()) for x in dateStrings]
         return datasetTimes
 
-class AcosLiteFileParser(HdfMetadataFileParser):
+class AcosLiteFileParser_r02(HdfMetadataFileParser):
     
     def matches(self, filepath):
         '''Example filename: acos_b34_L2lite_20090601_r02c.nc'''
+        
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_LITE_PATTERN, filename)
+        return re.match(FILENAME_LITE_PATTERN_R02, filename)
     
     def getLatitudes(self, h5file):
         return h5file['Sounding']['latitude'][:]
@@ -63,4 +65,26 @@ class AcosLiteFileParser(HdfMetadataFileParser):
         times = h5file['Sounding']['time'][:]
         for time in times:
             datasetTimes.append( dt.datetime(time[0], time[1], time[2], time[3], time[4], time[5], time[6]) )
+        return np.asarray( datasetTimes )
+
+class AcosLiteFileParser_r03(HdfMetadataFileParser):
+    
+    def matches(self, filepath):
+        '''Example filename: acos_b34_L2lite_20090601_r03n.nc'''
+        
+        dir, filename = os.path.split(filepath)
+        return re.match(FILENAME_LITE_PATTERN_R03, filename)
+    
+    def getLatitudes(self, h5file):
+        return h5file['latitude'][:]
+
+    def getLongitudes(self, h5file):
+        return h5file['longitude'][:]
+    
+    def getTimes(self, h5file):
+                
+        datasetTimes = []
+        times = h5file['time'][:]
+        for time in times:
+            datasetTimes.append( dt.datetime.utcfromtimestamp(time) )
         return np.asarray( datasetTimes )
