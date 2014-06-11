@@ -30,7 +30,7 @@ from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 import logging
-from esgfpy.publish.parsers import AcosFileParser, AcosLiteFileParser_r03, Oco2FileParser, TesFileParser
+from esgfpy.publish.parsers import AcosFileParser, AcosLiteFileParser_v34r03, Oco2FileParser, TesFileParser
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -86,7 +86,10 @@ if __name__ == '__main__':
                     "data_node":[HOSTNAME] }
 
     # possible filename patterns
-    FILENAME_PATTERNS = [ # acos_L2s_100131_30_Evaluation_v150151_L2s30400_r01_PolB_130904153155c.h5
+    FILENAME_PATTERNS = [ 
+                          # acos_L2s_130101_34_Production_v150151_L2s30300_r01_PolB_130225030149.h5
+                          "acos_L2s_(?P<yymmdd>\d+)_\d\d_Production_.+\.h5",
+                          # acos_L2s_100131_30_Evaluation_v150151_L2s30400_r01_PolB_130904153155c.h5
                           "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5",
                           # acos_b34_L2lite_20130129_r02c.nc
                           "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc",
@@ -119,7 +122,7 @@ if __name__ == '__main__':
                                                     metadataMapper=metadataMapper
                                                     )
     # use special list of metadata parsers
-    myFileRecordFactory.metadataParsers = [AcosLiteFileParser_r03(),
+    myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(),
                                            AcosFileParser(),
                                            Oco2FileParser(),
                                            TesFileParser() ]

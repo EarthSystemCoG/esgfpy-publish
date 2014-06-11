@@ -11,16 +11,18 @@ import re
 from dateutil.tz import tzutc
 import numpy as np
 
-FILENAME_PATTERN = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
-FILENAME_LITE_PATTERN_R02 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc"
-FILENAME_LITE_PATTERN_R03 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc"
+FILENAME_PATTERN_V33 = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Production_.+\.h5"
+FILENAME_PATTERN_V34 = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
+FILENAME_LITE_PATTERN_V34R02 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc"
+FILENAME_LITE_PATTERN_V34R03 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc"
 
 class AcosFileParser(HdfMetadataFileParser):
+    '''Works for: ACOSv3.3, ACOSv3.4_r01, ACOSv3.4_r02.'''
     
     def matches(self, filepath):
         '''Example filename: acos_L2s_100129_16_Evaluation_v150151_L2s30400_r01_PolB_130904152222c.h5'''
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_PATTERN, filename)
+        return re.match(FILENAME_PATTERN_V33, filename) or re.match(FILENAME_PATTERN_V34, filename)
     
     def getLatitudes(self, h5file):
         return h5file['SoundingGeometry']['sounding_latitude'][:]
@@ -42,13 +44,13 @@ class AcosFileParser(HdfMetadataFileParser):
         datasetTimes = [dt.datetime.strptime(x[:19],"%Y-%m-%dT%H:%M:%S").replace(tzinfo=tzutc()) for x in dateStrings]
         return datasetTimes
 
-class AcosLiteFileParser_r02(HdfMetadataFileParser):
+class AcosLiteFileParser_v34r02(HdfMetadataFileParser):
     
     def matches(self, filepath):
         '''Example filename: acos_b34_L2lite_20090601_r02c.nc'''
         
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_LITE_PATTERN_R02, filename)
+        return re.match(FILENAME_LITE_PATTERN_V34R02, filename)
     
     def getLatitudes(self, h5file):
         return h5file['Sounding']['latitude'][:]
@@ -67,13 +69,13 @@ class AcosLiteFileParser_r02(HdfMetadataFileParser):
             datasetTimes.append( dt.datetime(time[0], time[1], time[2], time[3], time[4], time[5], time[6]) )
         return np.asarray( datasetTimes )
 
-class AcosLiteFileParser_r03(HdfMetadataFileParser):
+class AcosLiteFileParser_v34r03(HdfMetadataFileParser):
     
     def matches(self, filepath):
         '''Example filename: acos_b34_L2lite_20090601_r03n.nc'''
         
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_LITE_PATTERN_R03, filename)
+        return re.match(FILENAME_LITE_PATTERN_V34R03, filename)
     
     def getLatitudes(self, h5file):
         return h5file['latitude'][:]
