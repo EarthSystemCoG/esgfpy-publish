@@ -90,3 +90,11 @@ class AcosLiteFileParser_v34r03(HdfMetadataFileParser):
         for time in times:
             datasetTimes.append( dt.datetime.utcfromtimestamp(time) )
         return np.asarray( datasetTimes )
+
+if __name__ == '__main__':
+    
+    #filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_44_Evaluation_v150151_L2s30400_r01_PolB_130914015757c.h5'
+    filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_06_Evaluation_v150151_L2s30400_r01_PolB_130904132249c.h5'
+    
+    parser = AcosFileParser()
+    parser.parseMetadata(filepath)
