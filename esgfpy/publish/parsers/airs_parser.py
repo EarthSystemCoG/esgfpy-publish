@@ -4,10 +4,9 @@ HDF parser specific to AIRS files.
 @author: Luca Cinquini
 '''
 
-from esgfpy.publish.parsers import HdfMetadataFileParser
-from esgfpy.publish.consts import (DATETIME_START, DATETIME_STOP, GEO,
-                                   NORTH_DEGREES, SOUTH_DEGREES, EAST_DEGREES, WEST_DEGREES,
-                                   VARIABLE)
+from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
+from esgfpy.publish.parsers.hdf_parser import storeMetadata
+
 import os
 import re
 import logging
@@ -26,7 +25,7 @@ except ImportError:
 FILENAME_PATTERN = "AIRS\.(?P<yyyy>\d+)\.(?P<mm>\d+)\.(?P<dd>\d+)\..+\.hdf"
 INVALID_VALUE = -9999.
 
-class AirsFileParser(HdfMetadataFileParser):
+class AirsFileParser(AbstractMetadataFileParser):
 
     def parseMetadata(self, filepath):
 
@@ -70,7 +69,7 @@ class AirsFileParser(HdfMetadataFileParser):
                         lats.append( lat[t,x] )
                         
             # store metadata values
-            self._storeMetadata(metadata, np.asarray(lons), np.asarray(lats), np.asarray(datetimes), variables)
+            storeMetadata(metadata, np.asarray(lons), np.asarray(lats), np.asarray(datetimes), variables)
 
             # close HDF file
             hdfFile.end()
