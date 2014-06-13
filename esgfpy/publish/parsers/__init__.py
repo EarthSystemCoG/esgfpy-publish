@@ -12,3 +12,4 @@ from hdf_parser import HdfMetadataFileParser
 from acos_parser import AcosFileParser, AcosLiteFileParser_v34r02, AcosLiteFileParser_v34r03
 from oco2_parser import Oco2FileParser
 from tes_parser import TesFileParser
+from airs_parser import AirsFileParser
