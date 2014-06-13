@@ -29,61 +29,70 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
             # open HDF file
             h5file = h5py.File(filepath,'r')
             
-            # latitudes
-            minLat = INVALID_VALUE
-            maxLat = INVALID_VALUE
+            # extract data from file
             lats = self.getLatitudes(h5file)
-            lats = lats[ np.where( lats >= -90) ] # exclude missing values
-            lats = lats[ np.where( lats <=  90 )] 
-            if len(lats)>0:
-                minLat = np.min(lats) 
-                maxLat = np.max(lats)
-                logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
-                
-            # longitudes
-            minLon = INVALID_VALUE
-            maxLon = INVALID_VALUE
             lons = self.getLongitudes(h5file)
-            lons = lons[ np.where( lons >= -180) ] # exclude missing values
-            lons = lons[ np.where( lons <=  360) ] 
-            if len(lons)>0:
-            
-                if np.max(lons) > 180: # shift longitudes ?
-                    lons = lons - 360
-                    
-                minLon = np.min(lons)
-                maxLon = np.max(lons)
-                logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
-            
-            if minLon >= -180 and maxLon<=180 and minLat>=-90 and maxLat<=90:
-                
-                # store geographic bounds
-                metadata[NORTH_DEGREES] = [maxLat]
-                metadata[SOUTH_DEGREES] = [minLat]
-                metadata[WEST_DEGREES] = [minLon]
-                metadata[EAST_DEGREES] = [maxLon]            
-                # minX minY maxX maxY
-                metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
-            
-            # datetimes
-            try:
-                times = self.getTimes(h5file)
-                minDateTime = np.min(times)
-                maxDateTime = np.max(times)
-                logging.debug("Datetime min=%s max=%s" % (minDateTime, maxDateTime))
-                metadata[DATETIME_START] = [ minDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-                metadata[DATETIME_STOP] = [ maxDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
-            except ValueError as e:
-                logging.warn(e)
-            
-            # variables
+            datetimes = self.getTimes(h5file)
             variables = self.getVariables(h5file)
-            metadata[VARIABLE] = variables
+            
+            # store metadata
+            self._storeMetadata(metadata, lons, lats, datetimes, variables)
             
             # close HDF file
             h5file.close()
 
         return metadata
+    
+    def _storeMetadata(self, metadata, lons, lats, datetimes, variables):
+        '''Internal method to process the numeric arrays and extract metadata values to store.'''
+        
+        # latitudes
+        minLat = INVALID_VALUE
+        maxLat = INVALID_VALUE
+        lats = lats[ np.where( lats >= -90) ] # exclude missing values
+        lats = lats[ np.where( lats <=  90 )] 
+        if len(lats)>0:
+            minLat = np.min(lats) 
+            maxLat = np.max(lats)
+            logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
+            
+        # longitudes
+        minLon = INVALID_VALUE
+        maxLon = INVALID_VALUE
+        lons = lons[ np.where( lons >= -180) ] # exclude missing values
+        lons = lons[ np.where( lons <=  360) ] 
+        if len(lons)>0:
+        
+            if np.max(lons) > 180: # shift longitudes ?
+                lons = lons - 360
+                
+            minLon = np.min(lons)
+            maxLon = np.max(lons)
+            logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+        
+        if minLon >= -180 and maxLon<=180 and minLat>=-90 and maxLat<=90:
+            
+            # store geographic bounds
+            metadata[NORTH_DEGREES] = [maxLat]
+            metadata[SOUTH_DEGREES] = [minLat]
+            metadata[WEST_DEGREES] = [minLon]
+            metadata[EAST_DEGREES] = [maxLon]            
+            # minX minY maxX maxY
+            metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+        
+        # datetimes
+        try:
+            minDateTime = np.min(datetimes)
+            maxDateTime = np.max(datetimes)
+            logging.debug("Datetime min=%s max=%s" % (minDateTime, maxDateTime))
+            metadata[DATETIME_START] = [ minDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+            metadata[DATETIME_STOP] = [ maxDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') ]
+        except ValueError as e:
+            logging.warn(e)
+        
+        # variables
+        metadata[VARIABLE] = variables
+        
     
     @abc.abstractmethod
     def matches(self, filepath):
