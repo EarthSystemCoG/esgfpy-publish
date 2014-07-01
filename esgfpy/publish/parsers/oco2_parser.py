@@ -23,22 +23,31 @@ class Oco2L1FileParser(HdfMetadataFileParser):
         return re.match(FILENAME_PATTERN_L1, filename)
     
     def getLatitudes(self, h5file):
-        return h5file['SoundingGeometry']['sounding_latitude'][:]
+        try:
+            return h5file['SoundingGeometry']['sounding_latitude'][:]
+        except:
+            return []
 
     def getLongitudes(self, h5file):
-        return h5file['SoundingGeometry']['sounding_longitude'][:]
+        try:
+            return h5file['SoundingGeometry']['sounding_longitude'][:]
+        except:
+            return []
     
     def getTimes(self, h5file):
         
         # use UTC time
         datasetTimes = []
-        dateStrings = h5file['SoundingGeometry']['sounding_time_string'][:]
-        for values in dateStrings:
-            for value in values:
-                try:
-                    datasetTimes.append( dt.datetime.strptime(value,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) )
-                except:
-                    pass # ignore one bad time stamp
+        try:
+            dateStrings = h5file['SoundingGeometry']['sounding_time_string'][:]
+            for values in dateStrings:
+                for value in values:
+                    try:
+                        datasetTimes.append( dt.datetime.strptime(value,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) )
+                    except:
+                        pass # ignore one bad time stamp
+        except:
+            pass # ignore
         return datasetTimes
         
 class Oco2L2FileParser(HdfMetadataFileParser):

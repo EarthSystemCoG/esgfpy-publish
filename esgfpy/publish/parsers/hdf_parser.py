@@ -91,26 +91,28 @@ def storeMetadata(metadata, lons, lats, datetimes, variables):
     # latitudes
     minLat = INVALID_VALUE
     maxLat = INVALID_VALUE
-    lats = lats[ np.where( lats >= -90) ] # exclude missing values
-    lats = lats[ np.where( lats <=  90 )] 
     if len(lats)>0:
-        minLat = np.min(lats) 
-        maxLat = np.max(lats)
-        logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
+        lats = lats[ np.where( lats >= -90) ] # exclude missing values
+        lats = lats[ np.where( lats <=  90 )] 
+        if len(lats)>0:
+            minLat = np.min(lats) 
+            maxLat = np.max(lats)
+            logging.debug("Latitude min=%s max=%s" % (minLat, maxLat))
         
     # longitudes
     minLon = INVALID_VALUE
     maxLon = INVALID_VALUE
-    lons = lons[ np.where( lons >= -180) ] # exclude missing values
-    lons = lons[ np.where( lons <=  360) ] 
     if len(lons)>0:
-    
-        if np.max(lons) > 180: # shift longitudes ?
-            lons = lons - 360
-            
-        minLon = np.min(lons)
-        maxLon = np.max(lons)
-        logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
+        lons = lons[ np.where( lons >= -180) ] # exclude missing values
+        lons = lons[ np.where( lons <=  360) ] 
+        if len(lons)>0:
+        
+            if np.max(lons) > 180: # shift longitudes ?
+                lons = lons - 360
+                
+            minLon = np.min(lons)
+            maxLon = np.max(lons)
+            logging.debug("Longitude min=%s max=%s" % (minLon, maxLon))
     
     if minLon >= -180 and maxLon<=180 and minLat>=-90 and maxLat<=90:
         
