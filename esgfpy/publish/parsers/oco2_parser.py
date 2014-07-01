@@ -30,25 +30,17 @@ class Oco2L1FileParser(HdfMetadataFileParser):
     
     def getTimes(self, h5file):
         
-                #seconds = h5file['RetrievalHeader']['sounding_time_tai93'][:]
-        #times = np.empty( len(seconds), dtype=dt.datetime)
-        #for i, secs in enumerate(seconds):
-        #    times[i] = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
-        #return times
-
-        
-        # use TAI93 times because 'sounding_time_string' causes segmentation fault
+        # use UTC time
         datasetTimes = []
-        tai93Times = h5file['SoundingGeometry']['sounding_time_tai93'][:]
-        for timeArray in tai93Times:
-            for secs in timeArray:
+        dateStrings = h5file['SoundingGeometry']['sounding_time_string'][:]
+        for values in dateStrings:
+            for value in values:
                 try:
-                    dateTime = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
-                    datasetTimes.append( dateTime.replace(tzinfo=tzutc()) )
+                    datasetTimes.append( dt.datetime.strptime(value,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) )
                 except:
-                    pass # ignore one bad values
+                    pass # ignore one bad time stamp
         return datasetTimes
-    
+        
 class Oco2L2FileParser(HdfMetadataFileParser):
     
     def matches(self, filepath):
