@@ -30,7 +30,8 @@ from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 import logging
-from esgfpy.publish.parsers import AcosFileParser, AcosLiteFileParser_v34r03, Oco2FileParser, TesFileParser, AirsFileParser
+from esgfpy.publish.parsers import (AcosFileParser, AcosLiteFileParser_v34r03, Oco2L1FileParser, 
+                                    Oco2L2FileParser, TesFileParser, AirsFileParser)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -78,8 +79,7 @@ if __name__ == '__main__':
     # constant dataset-level metadata
     datasetFields = { "project": [PROJECT],
                       "index_node": [HOSTNAME],
-                      "data_node":[HOSTNAME],
-                      "processing_level":["L2"] }
+                      "data_node":[HOSTNAME] }
 
     # constant file-level metadata
     fileFields = {  "index_node": [HOSTNAME],
@@ -102,7 +102,9 @@ if __name__ == '__main__':
                           # oco2_L1bScND_89012a_100909_B3500_140205015904n.h5
                           #"oco2_L2IDP.+.h5", "oco2_L2Std.+.h5", "oco2_L2Dia.+.h5",
                           "oco2_L2Std.+.h5",
-                        ]
+                          # oco2_L1bScGL_89234a_100924_B3500_140205015904n.h5
+                          "oco2_L1b.+\.h5",
+                       ]
 
 
     # Dataset records factory
@@ -122,9 +124,8 @@ if __name__ == '__main__':
                                                     metadataMapper=metadataMapper
                                                     )
     # use special list of metadata parsers
-    myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(),
-                                           AcosFileParser(),
-                                           Oco2FileParser(),
+    myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(), AcosFileParser(),
+                                           Oco2L1FileParser(), Oco2L2FileParser(),
                                            TesFileParser(),
                                            AirsFileParser() ]
 
