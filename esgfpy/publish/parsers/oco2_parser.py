@@ -8,7 +8,6 @@ from esgfpy.publish.parsers import HdfMetadataFileParser
 import os
 import re
 from dateutil.tz import tzutc
-import numpy as np
 from esgfpy.publish.consts import TAI93_DATETIME_START
 
 # oco2*L2Std*.h5
@@ -31,14 +30,23 @@ class Oco2L1FileParser(HdfMetadataFileParser):
     
     def getTimes(self, h5file):
         
-        # use UTC time
+                #seconds = h5file['RetrievalHeader']['sounding_time_tai93'][:]
+        #times = np.empty( len(seconds), dtype=dt.datetime)
+        #for i, secs in enumerate(seconds):
+        #    times[i] = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
+        #return times
+
+        
+        # use TAI93 times because 'sounding_time_string' causes segmentation fault
         datasetTimes = []
-        dateStrings = h5file['SoundingGeometry']['sounding_time_string'][:]
-        for x in dateStrings:
-            try:
-                datasetTimes.append( dt.datetime.strptime(x,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) )
-            except:
-                pass # ignore one bad time stamp
+        tai93Times = h5file['SoundingGeometry']['sounding_time_tai93'][:]
+        for timeArray in tai93Times:
+            for secs in timeArray:
+                try:
+                    dateTime = TAI93_DATETIME_START + dt.timedelta(seconds=int(secs))
+                    datasetTimes.append( dateTime.replace(tzinfo=tzutc()) )
+                except:
+                    pass # ignore one bad values
         return datasetTimes
     
 class Oco2L2FileParser(HdfMetadataFileParser):
