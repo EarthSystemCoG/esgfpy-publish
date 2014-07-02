@@ -104,7 +104,7 @@ if __name__ == '__main__':
                           #"oco2_L2IDP.+.h5", "oco2_L2Std.+.h5", "oco2_L2Dia.+.h5",
                           "oco2_L2Std.+.h5",
                           # oco2_L1bScGL_89234a_100924_B3500_140205015904n.h5
-                          #"oco2_L1b.+\.h5",
+                          "oco2_L1b.+\.h5",
                        ]
 
 
