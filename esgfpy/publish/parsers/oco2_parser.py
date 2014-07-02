@@ -8,55 +8,17 @@ from esgfpy.publish.parsers import HdfMetadataFileParser
 import os
 import re
 from dateutil.tz import tzutc
-from esgfpy.publish.consts import TAI93_DATETIME_START
 
 # oco2*L2Std*.h5
-FILENAME_PATTERN_L1 = "oco2_L1b.+\.h5"    # oco2_L1bScGL_89234a_100924_B3500_140205015904n.h5
-FILENAME_PATTERN_L2 = "oco2.+L2Std.+\.h5" # oco2_L2StdGL_89234a_100924_B3500_140205185958n.h5
-
-class Oco2L1FileParser(HdfMetadataFileParser):
-    
-    def matches(self, filepath):
-        ''' Example filename: oco2_L1bScGL_89234a_100924_B3500_140205015904n.h5 '''
+FILENAME_PATTERN = "oco2.+L2Std.+\.h5" # oco2_L2StdGL_89234a_100924_B3500_140205185958n.h5
         
-        dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_PATTERN_L1, filename)
-    
-    def getLatitudes(self, h5file):
-        try:
-            return h5file['SoundingGeometry']['sounding_latitude'][:]
-        except:
-            return []
-
-    def getLongitudes(self, h5file):
-        try:
-            return h5file['SoundingGeometry']['sounding_longitude'][:]
-        except:
-            return []
-    
-    def getTimes(self, h5file):
-        
-        # use UTC time
-        datasetTimes = []
-        try:
-            dateStrings = h5file['SoundingGeometry']['sounding_time_string'][:]
-            for values in dateStrings:
-                for value in values:
-                    try:
-                        datasetTimes.append( dt.datetime.strptime(value,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) )
-                    except:
-                        pass # ignore one bad time stamp
-        except:
-            pass # ignore
-        return datasetTimes
-        
-class Oco2L2FileParser(HdfMetadataFileParser):
+class Oco2FileParser(HdfMetadataFileParser):
     
     def matches(self, filepath):
         '''Example filename: oco2_L2StdGL_89234a_100924_B3500_140205185958n.h5'''
         
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_PATTERN_L2, filename)
+        return re.match(FILENAME_PATTERN, filename)
     
     def getLatitudes(self, h5file):
         return h5file['RetrievalGeometry']['retrieval_latitude'][:]
