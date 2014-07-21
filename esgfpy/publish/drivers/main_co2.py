@@ -116,13 +116,15 @@ if __name__ == '__main__':
                                                            )
 
     # Files records factory
+    maxDaysPast = int(os.getenv('MAX_DAYS_PAST', -1)) # optional environment to harvest only the most recent files
     myFileRecordFactory = FilepathFileRecordFactory(fields=fileFields,
                                                     rootDirectory=ROOT_DIR,
                                                     filenamePatterns=FILENAME_PATTERNS,
                                                     baseUrls={ SERVICE_HTTP    : BASE_URL_HTTP,
                                                                SERVICE_OPENDAP : BASE_URL_OPENDAP },
                                                     generateChecksum=False,
-                                                    metadataMapper=metadataMapper
+                                                    metadataMapper=metadataMapper,
+                                                    maxDaysPast=maxDaysPast
                                                     )
     # use special list of metadata parsers
     myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(), AcosFileParser(),
@@ -143,7 +145,7 @@ if __name__ == '__main__':
     startDirectory = os.path.join(ROOT_DIR, relativeDirectory)
 
     if publish:
-        print 'Publishing...'
+        print 'Publishing...(maxDaysPast=%s)' % maxDaysPast
         publisher.publish(startDirectory)
     else:
         print 'Un-Publishing...'
