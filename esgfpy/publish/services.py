@@ -13,7 +13,7 @@ import os
 from xml.etree.ElementTree import Element, SubElement, tostring
 import logging
 
-from .consts import TYPE_DATASET, TYPE_FILE, SOLR_CORES
+from esgfpy.publish.consts import TYPE_DATASET, TYPE_FILE, SOLR_CORES
 
 class PublishingClient(object):
     """

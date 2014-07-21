@@ -10,8 +10,8 @@ Module containing classes representing ESGF searchable metadata records.
 
 from xml.etree.ElementTree import Element, SubElement
 
-from .consts import TYPE_DATASET, TYPE_FILE, TYPE_AGGREGATION, SOLR_CORES
-from .utils import isNull
+from esgfpy.publish.consts import TYPE_DATASET, TYPE_FILE, TYPE_AGGREGATION, SOLR_CORES
+from esgfpy.publish.utils import isNull
 
 class Record(object):
     """
