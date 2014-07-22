@@ -7,9 +7,11 @@ Module containing service classes for publishing/unpublishing metadata records t
 @author: Luca Cinquini
 '''
 
+import urllib
 import urllib2
 import string
 import os
+import json
 from xml.etree.ElementTree import Element, SubElement, tostring
 import logging
 
@@ -57,7 +59,10 @@ class PublishingClient(object):
 
         # then Files
         self._post( records[TYPE_FILE], TYPE_FILE )
-
+        
+        # update datasets
+        self._update( records[TYPE_DATASET] )
+        
     def unpublish(self, uri):
         """
         Method to unpublish records from a metadata repository to the ESGF publishing service.
@@ -73,6 +78,37 @@ class PublishingClient(object):
 
         # then unpublish Datasets
         self._post( records[TYPE_DATASET], TYPE_DATASET, publish=False )
+        
+    def _update(self, datasetRecords):
+        ''' Updates the "number_of_files" field for each dataset (in one cumulative request).'''
+        
+        # <add>...</add>
+        rootEl = Element("add")
+        for datasetRecord in datasetRecords:
+            
+            solr_url = build_solr_query_url(self.publishing_service_url, TYPE_FILE)
+            jobj = self._query_json(solr_url, {"q":"dataset_id:%s" % datasetRecord.id} )
+            numberOfFiles = jobj["response"]["numFound"]
+            
+            # <doc>...</doc>
+            docEl = SubElement(rootEl, "doc")
+            
+            # <field name="id>$dataset_id</field>
+            fieldIdEl = SubElement(docEl, "field")
+            fieldIdEl.attrib["name"] = "id"
+            fieldIdEl.text = "%s" % datasetRecord.id
+            
+            # <field name="number_of_files" update="set">$number_of_files</update>
+            fieldNumEl = SubElement(docEl, "field")
+            fieldNumEl.attrib["name"] = "number_of_files"
+            fieldNumEl.attrib["update"] = "set"
+            fieldNumEl.text = "%s" % numberOfFiles
+            print "Updating dataset=%s number of files=%s" % (datasetRecord.id, numberOfFiles)
+            
+        xml = tostring(rootEl, encoding="UTF-8")
+        solr_url = build_solr_update_url(self.publishing_service_url, TYPE_DATASET)
+        self._post_xml(solr_url, xml)
+        self._commit(TYPE_DATASET)
 
     def _post(self, records, record_type, publish=True):
         """Method to publish/unpublish a list of records of the same type to the publishing service."""
@@ -111,14 +147,13 @@ class PublishingClient(object):
                 # remove all children
                 rootEl.clear()
 
-        # post remaining records
         if len(list(rootEl)) > 0:
             #logging.debug("Posting XML:\n%s" % tostring(rootEl, encoding="UTF-8") )
             self._post_xml(solr_url, tostring(rootEl, encoding="UTF-8") )
 
         # commit all records of this type at once
         self._commit(record_type)
-
+        
     def _post_xml(self, url, xml):
         """Method to post an XML document to the publishing service."""
 
@@ -128,6 +163,16 @@ class PublishingClient(object):
                                   headers={'Content-Type': 'text/xml; charset=UTF-8'})
         response = urllib2.urlopen(request)
         response.read()
+        
+    def _query_json(self, url, params):
+        '''Executes HTTP GET request and return results as json object.'''
+        
+        url = url+"?"+"wt=json&"+urllib.urlencode(params)
+        #print 'Solr search URL=%s' % url
+        fh = urllib2.urlopen( url )
+        jdoc = fh.read().decode("UTF-8")
+        jobj = json.loads(jdoc)
+        return jobj
 
     def _commit(self, record_type):
 
@@ -249,3 +294,12 @@ def build_solr_update_url(solr_base_url, record_type):
         raise Exception('Record type: %s is not supported' % record_type )
 
     return "%s/%s/update" % (solr_base_url, core)
+
+def build_solr_query_url(solr_base_url, record_type):
+
+    try:
+        core = SOLR_CORES[string.capitalize(record_type)]
+    except KeyError:
+        raise Exception('Record type: %s is not supported' % record_type )
+
+    return "%s/%s/select" % (solr_base_url, core)
