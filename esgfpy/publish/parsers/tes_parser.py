@@ -12,7 +12,7 @@ import numpy as np
 from esgfpy.publish.consts import TAI93_DATETIME_START
 
 # TES-Aura_L2-CO2-Nadir_r0000015508_C01_F07_10.he5
-FILENAME_PATTERN = "TES-Aura_L2-CO2-Nadir_.+\.he5"
+FILENAME_PATTERN = "TES-Aura_L2-CO2-Nadir_.+10\.he5"
 
 class TesFileParser(HdfMetadataFileParser):
     
