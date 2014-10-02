@@ -41,8 +41,14 @@ class AcosFileParser(HdfMetadataFileParser):
         
         # use UTC time
         dateStrings = h5file['RetrievalHeader']['sounding_time_string'][:]
-        datasetTimes = [dt.datetime.strptime(x[:19],"%Y-%m-%dT%H:%M:%S").replace(tzinfo=tzutc()) for x in dateStrings]
+        datasetTimes = []
+        for x in dateStrings:
+            try:
+                datasetTimes.append( dt.datetime.strptime(x[:19],"%Y-%m-%dT%H:%M:%S").replace(tzinfo=tzutc()) )
+            except:
+                pass  # bad date
         return datasetTimes
+
 
 class AcosLiteFileParser_v34r02(HdfMetadataFileParser):
     
