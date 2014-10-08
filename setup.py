@@ -13,8 +13,9 @@ setup(
     description = ("Python client-side package for publishing data to the Earth System Grid Federation (ESGF)"),
     license = "ASF",
     keywords = "python publishing client ESGF earth system grid federation",
-    url = "http://packages.python.org/esgfpy-publish",
+    url = "https://github.com/EarthSystemCoG/esgfpy-publish",
     packages=find_packages(),
+    install_requires=['python-dateutil', 'pil', 'h5py', 'netCDF4'],
     long_description=read('README'),
     classifiers=[
         "Development Status :: 4 - Beta",
