@@ -61,7 +61,8 @@ class PublishingClient(object):
         self._post( records[TYPE_FILE], TYPE_FILE )
         
         # update datasets
-        self._update( records[TYPE_DATASET] )
+        # NOTE: atomic updates only supported in Solr 4
+        #self._update( records[TYPE_DATASET] )
         
     def unpublish(self, uri):
         """
