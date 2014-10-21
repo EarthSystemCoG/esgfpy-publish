@@ -22,7 +22,7 @@ o h5py to parse metadata from HDF files
 o xml.etree
   to parse metadata within XML files
   
-o python-dateutils
+o python-dateutil
   to parse a large set of date formats from NetCDF global attribute values
 
 Quick startup instructions:
