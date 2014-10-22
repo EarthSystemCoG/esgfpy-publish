@@ -35,7 +35,7 @@ class FilepathFileRecordFactory(AbstractFileRecordFactory):
     """Class that generates FileRecord objects from a filepath in the local file system."""
 
     def __init__(self, fields={}, rootDirectory=None, filenamePatterns=[], baseUrls={},
-                 generateThumbnails=False, generateChecksum=False, generateTrackingId=True, metadataMapper=None,
+                 generateThumbnails=False, generateChecksum=False, generateTrackingId=False, metadataMapper=None,
                  maxDaysPast=-1):
         """
         :param fields: constants metadata fields as (key, values) pairs

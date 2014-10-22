@@ -90,7 +90,8 @@ if __name__ == '__main__':
                     "version":[VERSION] }
 
     # possible filename patterns
-    FILENAME_PATTERNS = [ "(?P<numbers>\d+)\.nc", # 1429012000012.nc
+    FILENAME_PATTERNS = [ "(?P<numbers>\d+)\.nc", # spp/netcdf/1429012000012.nc
+                          "(?P<numbers>\d+)",     # fim9z/0p125/dup1/1429100000002
                         ] #
 
 

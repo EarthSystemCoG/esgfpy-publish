@@ -37,7 +37,9 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
                         # IMPORTANT: the variable arrays must have the same number of entries
                         self._addMetadata(metadata, 'variable', key)
                         self._addMetadata(metadata, 'variable_long_name', getattr(variable, 'long_name', None) )
-                        self._addMetadata(metadata, 'cf_standard_name', getattr(variable, 'stanadard_name', None) )
+                        cf_standard_name = getattr(variable, 'stanadard_name', None)
+                        if cf_standard_name is not None:
+                            self._addMetadata(metadata, 'cf_standard_name', getattr(variable, 'stanadard_name', None) )
                         self._addMetadata(metadata, 'units', getattr(variable, 'units', None) )
     
             except Exception as e:
