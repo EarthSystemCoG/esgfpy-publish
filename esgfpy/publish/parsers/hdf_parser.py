@@ -6,7 +6,10 @@ from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
 from esgfpy.publish.consts import (DATETIME_START, DATETIME_STOP, GEO,
                                    NORTH_DEGREES, SOUTH_DEGREES, EAST_DEGREES, WEST_DEGREES,
                                    VARIABLE)
-import h5py
+try:
+    import h5py
+except ImportError:
+    pass
 import numpy as np
 import logging
 import abc
