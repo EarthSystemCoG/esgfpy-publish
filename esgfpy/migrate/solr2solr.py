@@ -33,8 +33,20 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY):
         numRecords += len(response.results)
         start += len(response.results)
         logging.debug("Response: current number of records=%s total number of records=%s" % (numRecords, numFound))
+        
+        # FIX broken dataset records
+        if core=='datasets':
+            for result in response.results:
+                for field in ['height_bottom', 'height_top']:
+                    try:
+                        value = result.get(field, None)
+                        if value:
+                            result[field] = float(value)
+                    except KeyError:
+                            result[field] = 0.
+        
         s2.add_many(response.results, commit=True)
-
+        
     # optimize full index
     s2.optimize()
     
