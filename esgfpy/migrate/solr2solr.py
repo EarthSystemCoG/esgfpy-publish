@@ -38,11 +38,11 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY):
         if core=='datasets':
             for result in response.results:
                 for field in ['height_bottom', 'height_top']:
-                    try:
-                        value = result.get(field, None)
-                        if value:
+                    value = result.get(field, None)
+                    if value:
+                        try:
                             result[field] = float(value)
-                    except KeyError:
+                        except ValueError:
                             result[field] = 0.
         
         s2.add_many(response.results, commit=True)
