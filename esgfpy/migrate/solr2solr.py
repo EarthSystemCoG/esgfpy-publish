@@ -13,7 +13,7 @@ MAX_RECORDS_PER_REQUEST = 100
 DEFAULT_QUERY='*:*'
 logging.basicConfig(level=logging.DEBUG)
 
-def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY):
+def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0):
     
     surl = (sourceSolrUrl +"/" + core if core is not None else sourceSolrUrl)
     turl = (targetSolrUrl +"/" + core if core is not None else targetSolrUrl)
@@ -23,9 +23,8 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY):
     s1 = solr.Solr(surl)
     s2 = solr.Solr(turl)
 
-    start = 0
-    numFound = 1
-    numRecords = 0
+    numRecords = start
+    numFound = numRecords+1
     while numRecords < numFound:
         logging.debug("Request: start record=%s max records per request=%s" % (start, MAX_RECORDS_PER_REQUEST) )
         response = s1.select(query, start=start, rows=MAX_RECORDS_PER_REQUEST)
@@ -64,11 +63,12 @@ if __name__ == '__main__':
     # parse command line arguments
     parser = argparse.ArgumentParser(description="Migration tool for Solr indexes")
     parser.add_argument('sourceSolrUrl', type=str, help="URL of source Solr (example: http://localhost:8983/solr)")
-    parser.add_argument('targetSolrUrl', type=str, help="URL of target Solr' (example: http://localhost:8984/solr)")
+    parser.add_argument('targetSolrUrl', type=str, help="URL of target Solr (example: http://localhost:8984/solr)")
     parser.add_argument('--core', dest='core', type=str, help="URL of target Solr (example: --core datasets)", default=None)
     parser.add_argument('--query', dest='query', type=str, help="Optional query to sub-select records (example: --query project:xyz)", default=DEFAULT_QUERY)
+    parser.add_argument('--start', dest='start', type=int, help="Optional first record to be migrated (example: --start 1000000)", default=0)
     args_dict = vars( parser.parse_args() )
     
     # execute migration
     migrate(args_dict['sourceSolrUrl'], args_dict['targetSolrUrl'], 
-            core=args_dict['core'], query=args_dict['query'])
+            core=args_dict['core'], query=args_dict['query'], start=args_dict['start'])
