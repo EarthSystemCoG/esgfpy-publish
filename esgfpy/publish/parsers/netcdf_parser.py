@@ -21,9 +21,12 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
                 for attname in nc.ncattrs():
                     attvalue = getattr(nc, attname)
                     if 'date' in attname.lower():
-                        # must format dates in Solr format
-                        solrDateTime = parse(attvalue)
-                        self._addMetadata(metadata, attname, solrDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') )
+                        # must format dates in Solr format, if possible
+                        try:
+                            solrDateTime = parse(attvalue)
+                            self._addMetadata(metadata, attname, solrDateTime.strftime('%Y-%m-%dT%H:%M:%SZ') )
+                        except:
+                            pass # disregard this attribute
                     else:
                         self._addMetadata(metadata, attname, attvalue )
                     
