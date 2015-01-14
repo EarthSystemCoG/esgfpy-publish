@@ -88,8 +88,10 @@ class XMLMetadataFileParser(AbstractMetadataFileParser):
                     (head, tail) = os.path.split(path)
                     xmlFiles.append( os.path.join(path, tail+".xml") )
                                  
-        # for files: <filepath>+".xml
+        # for files: <filepath>+".xml, <filename>+".xml"
         else:
             xmlFiles.append( filepath +".xml" )
+            (filename, extension) = os.path.splitext(filepath)
+            xmlFiles.append( filename + ".xml" )
             
         return xmlFiles
