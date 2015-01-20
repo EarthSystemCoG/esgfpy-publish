@@ -23,28 +23,27 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
     s1 = solr.Solr(surl)
     s2 = solr.Solr(turl)
 
-    numRecords = start
-    numFound = numRecords+1
-    while numRecords < numFound:
-        logging.debug("Request: start record=%s max records per request=%s" % (start, MAX_RECORDS_PER_REQUEST) )
-        response = s1.select(query, start=start, rows=MAX_RECORDS_PER_REQUEST)
-        numFound = response.numFound
-        numRecords += len(response.results)
-        start += len(response.results)
-        logging.debug("Response: current number of records=%s total number of records=%s" % (numRecords, numFound))
-        
-        # FIX broken dataset records
-        if core=='datasets':
-            for result in response.results:
-                for field in ['height_bottom', 'height_top']:
-                    value = result.get(field, None)
-                    if value:
-                        try:
-                            result[field] = float(value)
-                        except ValueError:
-                            result[field] = 0.
-        
-        s2.add_many(response.results, commit=True)
+    numFound = start+1
+    while start < numFound:
+                
+        # try migrating MAX_RECORDS_PER_REQUEST records at once
+        try:
+            (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, MAX_RECORDS_PER_REQUEST)
+            numFound = _numFound
+            start += _numRecords
+    
+        # migrate 1 record at a time
+        except:
+            for i in range(MAX_RECORDS_PER_REQUEST):
+                if start < numFound:
+                    try:
+                        (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, 1)
+                    except Exception as e:
+                        print 'ERROR: %s' % e
+                    start += 1
+                    
+
+               
         
     # optimize full index
     s2.optimize()
@@ -54,8 +53,34 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
     s2.close()
     
     t2 = datetime.datetime.now()
-    logging.info("Total number of records migrated: %s" % numRecords)
+    logging.info("Total number of records migrated: %s" % start)
     logging.info("Total elapsed time: %s" % (t2-t1))
+    
+def _migrate(s1, s2, query, core, start, howManyMax):
+    '''Migrates 'howManyMax' records starting at 'start'.'''
+    
+    logging.debug("Request: start record=%s max records per request=%s" % (start, howManyMax) )
+    
+    response = s1.select(query, start=start, rows=howManyMax)
+    _numFound = response.numFound
+    _numRecords = len(response.results)
+    
+    # FIX broken dataset records
+    if core=='datasets':
+        for result in response.results:
+            for field in ['height_bottom', 'height_top']:
+                value = result.get(field, None)
+                if value:
+                    try:
+                        result[field] = float(value)
+                    except ValueError:
+                        result[field] = 0.
+    
+    s2.add_many(response.results, commit=True)
+    
+    logging.debug("Response: current number of records=%s total number of records=%s" % (start+_numRecords, _numFound))
+    return (_numFound, _numRecords)
+    
     
 
 if __name__ == '__main__':
