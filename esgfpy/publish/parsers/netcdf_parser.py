@@ -10,7 +10,7 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
         
         metadata = {} # empty metadata dictionary
         
-        if filepath.endswith("nc"):
+        if filepath.endswith("nc") or filepath.endswith("nc4"):
             logging.debug('NetcdfMetadataFileParser: parsing filepath=%s' % filepath)
         
             try:
