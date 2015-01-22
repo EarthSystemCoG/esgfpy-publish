@@ -24,7 +24,7 @@ def getMimeType(ext):
         return "image/png"
     elif ext=="tiff" or ext=="tif":
         return "image/tiff"
-    elif ext=="nc":
+    elif ext=="nc" or ext=="nc4":
         return "application/x-netcdf"
     elif ext=="hdf" or ext=="h5" or ext=="he5":
         return "application/x-hdf"
