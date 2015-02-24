@@ -114,7 +114,7 @@ if __name__ == '__main__':
                                                     filenamePatterns=FILENAME_PATTERNS,
                                                     baseUrls={ SERVICE_HTTP    : BASE_URL_HTTP,
                                                                SERVICE_OPENDAP : BASE_URL_OPENDAP },
-                                                    generateChecksum=True
+                                                    generateChecksum=False
                                                     )
 
     # metadata fields to copy Dataset <--> File
