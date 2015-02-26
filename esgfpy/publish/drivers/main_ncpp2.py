@@ -100,7 +100,8 @@ if __name__ == '__main__':
                                                     rootDirectory=ROOT_DIR,
                                                     filenamePatterns=FILENAME_PATTERNS,
                                                     baseUrls={ SERVICE_HTTP    : BASE_URL_HTTP },
-                                                    generateChecksum=True
+                                                    generateChecksum=True,
+                                                    metadataMapper=metadataMapper,
                                                     )
 
     # metadata fields to copy Dataset <--> File
