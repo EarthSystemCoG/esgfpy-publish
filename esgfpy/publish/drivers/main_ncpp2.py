@@ -107,6 +107,7 @@ if __name__ == '__main__':
     append=False
     fileMetadataKeysToCopy = {'variable_long_name':append, 'variable':append, 'units':append, 'season':append,
                               'month':append, 'index_group':append, 'driving_model_id':append, 'model_id':append,
+                              'month_longname':append, 'season_longname':append,
                               'data_type':append, 'experiment_id':append, 'resolution_id':append }
     datasetMetadataKeysToCopy = {'project':append, 'model':append, 'experiment':append }
 
