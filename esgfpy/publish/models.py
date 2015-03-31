@@ -86,6 +86,9 @@ class DatasetRecord(Record):
         """
         super(DatasetRecord,self).__init__(id, title, TYPE_DATASET, fields)
         
+        # start with empty files list
+        self.files = []
+        
 class FileRecord(Record):
     """Class representing an ESGF metadata record of type 'File'."""
     
@@ -100,6 +103,10 @@ class FileRecord(Record):
         
         # store parent dataset
         self.datasetId = datasetRecord.id
+        
+        # update dataset-file relationships
+        self.dataset = datasetRecord
+        datasetRecord.files.append(self)
         
     def toXML(self):
         """Overridden superclass method to serialize File specific metadata."""

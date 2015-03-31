@@ -124,14 +124,19 @@ class PublishingClient(object):
             rootEl = Element("delete")
 
         # loop over records, publish/unpublish "MAX_RECORDS_PER_REQUEST" records at once
-        print "Number of %s records: %s" % (record_type, len(records))
+        print "Total number of %s records: %s" % (record_type, len(records))
         for i, record in enumerate(records):
 
             # add/delete this record
             if publish:
-                print "Adding record: type=%s id=%s" % (record.type, record.id)
-                #print tostring(record.toXML(), encoding="UTF-8")
-                rootEl.append(record.toXML())
+                
+                # only pubilsh datasets if they contain files
+                if (record.type != TYPE_DATASET) or (record.type == TYPE_DATASET and len(record.files) > 0):
+                    print "Adding record: type=%s id=%s" % (record.type, record.id)
+                    #print tostring(record.toXML(), encoding="UTF-8")
+                    rootEl.append(record.toXML())
+                else:
+                    print 'Skipping record type=%s id=%s because it contains no files' % (record.type, record.id)
             else:
                 print "Deleting record: type=%s id=%s" % (record.type, record.id)
                 queryEl = SubElement(rootEl, "query")
