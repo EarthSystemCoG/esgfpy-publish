@@ -101,9 +101,8 @@ if __name__ == '__main__':
                           "AIRS\.(?P<yyyy>\d+)\.(?P<mm>\d+)\.(?P<dd>\d+)\..+\.hdf",
                           # TES-Aura_L2-CO2-Nadir_r0000015508_C01_F07_10.he5
                           "TES-Aura_L2-CO2-Nadir_.+\.he5",
-                          # oco2_L1bScND_89012a_100909_B3500_140205015904n.h5
-                          #"oco2_L2IDP.+.h5", "oco2_L2Std.+.h5", "oco2_L2Dia.+.h5",
-                          "oco2_L2Std.+.h5",
+                          # oco2_L2StdGL_03783a_150319_B6000r_150328205055.h5
+                          "oco2_L2StdGL.+.h5", "oco2_L2StdND.+.h5", "oco2_L2StdTG.+.h5", 
                           # oco2_L1bScGL_89234a_100924_B3500_140205015904n.h5
                           #"oco2_L1b.+\.h5",
                           # oco2_L2Daily_141127_B5000_150116014823s.nc4
