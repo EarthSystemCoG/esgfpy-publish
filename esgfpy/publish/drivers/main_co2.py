@@ -31,7 +31,7 @@ import sys, os
 import ConfigParser
 import logging
 from esgfpy.publish.parsers import (AcosFileParser, AcosLiteFileParser_v34r03,
-                                    Oco2FileParser, Oco2LiteFileParser,
+                                    Oco2L2StdFileParser, Oco2L2LiteFileParser, Oco2L2IDPFileParser,
                                     TesFileParser, AirsFileParser)
 
 logging.basicConfig(level=logging.DEBUG)
@@ -103,6 +103,8 @@ if __name__ == '__main__':
                           "TES-Aura_L2-CO2-Nadir_.+\.he5",
                           # oco2_L2StdGL_03783a_150319_B6000r_150328205055.h5
                           "oco2_L2StdGL.+.h5", "oco2_L2StdND.+.h5", "oco2_L2StdTG.+.h5", 
+                          # oco2_L2IDPGL_03783a_150319_B6000r_150328142340.h5
+                          "oco2_L2IDPGL.+.h5", "oco2_L2IDPND.+.h5", "oco2_L2IDPTG.+.h5", 
                           # oco2_L1bScGL_89234a_100924_B3500_140205015904n.h5
                           #"oco2_L1b.+\.h5",
                           # oco2_L2Daily_141127_B5000_150116014823s.nc4
@@ -130,7 +132,7 @@ if __name__ == '__main__':
                                                     )
     # use special list of metadata parsers
     myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(), AcosFileParser(),
-                                           Oco2FileParser(), Oco2LiteFileParser(),
+                                           Oco2L2StdFileParser(), Oco2L2IDPFileParser(), Oco2L2LiteFileParser(),
                                            TesFileParser(),
                                            AirsFileParser() ]
 
