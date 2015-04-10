@@ -17,8 +17,26 @@ FILENAME_PATTERN_STD = "oco2_L2Std.+\.h5" # oco2_L2StdGL_89234a_100924_B3500_140
 FILENAME_PATTERN_IDP = "oco2_L2IDP.+\.h5" # oco2_L2IDPGL_03783a_150319_B6000r_150328142340.h5
 # Lite L2 files (NetCDF4)
 FILENAME_PATTERN_LTE = "oco2_L2.+\.nc4" # oco2_L2Daily_141127_B5000_150116014823s.nc4
+
+AQUISITION_MODE = "AquisitionMode"
+
+class Oco2FileParser(HdfMetadataFileParser):
+    '''Base class for all OCO2 HDF file parsers.'''
+    
+    def parseMetadata(self, filepath):
         
-class Oco2L2StdFileParser(HdfMetadataFileParser):
+        metadata = super(Oco2FileParser, self).parseMetadata(filepath)
+        
+        if 'GL_' in filepath:
+            metadata[AQUISITION_MODE] = ['GL']
+        elif 'ND_' in filepath:
+            metadata[AQUISITION_MODE] = ['ND']
+        elif 'TG_' in filepath:
+            metadata[AQUISITION_MODE] = ['TG']
+        
+        return metadata
+        
+class Oco2L2StdFileParser(Oco2FileParser):
     '''Parser for OCO-2 L2 Standard files (HDF5 format)'''
     
     def matches(self, filepath):
@@ -45,7 +63,7 @@ class Oco2L2StdFileParser(HdfMetadataFileParser):
                 pass # ignore one bad time stamp
         return datasetTimes
     
-class Oco2L2IDPFileParser(HdfMetadataFileParser):
+class Oco2L2IDPFileParser(Oco2FileParser):
     ''' Parser for OCO-2 Level 2 IMAP-DOAS preprocessor products, 
         including Solar Induced Fluorescence (SIF) fields)  
         (HDF5 format)'''
@@ -89,7 +107,7 @@ class Oco2L2IDPFileParser(HdfMetadataFileParser):
         
         return datasetTimes
     
-class Oco2L2LiteFileParser(HdfMetadataFileParser):
+class Oco2L2LiteFileParser(Oco2FileParser):
     '''Parser for OCO-2 L2 Lite files (NetCDF4 format)'''
     
     def matches(self, filepath):
