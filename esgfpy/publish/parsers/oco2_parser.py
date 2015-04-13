@@ -18,7 +18,7 @@ FILENAME_PATTERN_IDP = "oco2_L2IDP.+\.h5" # oco2_L2IDPGL_03783a_150319_B6000r_15
 # Lite L2 files (NetCDF4)
 FILENAME_PATTERN_LTE = "oco2_L2.+\.nc4" # oco2_L2Daily_141127_B5000_150116014823s.nc4
 
-AQUISITION_MODE = "AquisitionMode"
+AQUISITION_MODE = "AcquisitionMode"
 
 class Oco2FileParser(HdfMetadataFileParser):
     '''Base class for all OCO2 HDF file parsers.'''
