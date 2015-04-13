@@ -109,7 +109,7 @@ if __name__ == '__main__':
     fileMetadataKeysToCopy = {'variable_long_name':append, 'variable':append, 'units':append, 'season':append,
                               'month':append, 'index_group':append, 'driving_model_id':append, 'model_id':append,
                               'month_longname':append, 'season_longname':append,
-                              'data_type':append, 'experiment_id':append, 'resolution_id':append }
+                              'data_type':append, 'experiment_id':append, 'resolution_id':append, 'base_series_longname':append }
     datasetMetadataKeysToCopy = {'project':append, 'model':append, 'experiment':append }
 
     indexer = FileSystemIndexer(myDatasetRecordFactory, myFileRecordFactory,
