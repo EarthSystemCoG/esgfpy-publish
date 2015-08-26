@@ -133,7 +133,7 @@ class PublishingClient(object):
                 # only pubilsh datasets if they contain files
                 if (record.type != TYPE_DATASET) or (record.type == TYPE_DATASET and len(record.files) > 0):
                     print "Adding record: type=%s id=%s" % (record.type, record.id)
-                    #print tostring(record.toXML(), encoding="UTF-8")
+                    print tostring(record.toXML(), encoding="UTF-8")
                     rootEl.append(record.toXML())
                 else:
                     print 'Skipping record type=%s id=%s because it contains no files' % (record.type, record.id)
