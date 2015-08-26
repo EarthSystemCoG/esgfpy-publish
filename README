@@ -1,1 +1,9 @@
 Python package containing client-side functionality to publish resources to ESGF.
+
+Requirements:
+python 2.7.9+
+python-dateutil
+pil
+h5py 
+netCDF4
+solrpy
