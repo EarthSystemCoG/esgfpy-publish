@@ -77,9 +77,15 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
         '''
         variables = []
         
-        # loop over HDF groups
+        # loop over HDF datasets/groups
         for gname, gobj in h5file.items():
-            if gobj.__class__.__name__=='Group':
+                    
+            # top-level dataset    
+            if gobj.__class__.__name__=='Dataset':
+                variables.append("%s" % gname)
+            
+            # group/dataset
+            elif gobj.__class__.__name__=='Group':
     
                 # loop over HDF datasets
                 for dname, dobj in gobj.items():
