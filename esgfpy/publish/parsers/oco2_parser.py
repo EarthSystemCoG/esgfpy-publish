@@ -18,7 +18,8 @@ FILENAME_PATTERN_IDP = "oco2_L2IDP.+\.h5" # oco2_L2IDPGL_03783a_150319_B6000r_15
 # Lite L2 files (NetCDF4)
 #FILENAME_PATTERN_LTE = "oco2_L2.+\.nc4" # oco2_L2Daily_141127_B5000_150116014823s.nc4
 # FIXME
-FILENAME_PATTERN_LTE = ".+\.nc\d*" # test_oco2_b70_20150704.nc4, OCO2-SIF-L2-150317-B7000r-fv1.nc
+FILENAME_PATTERN_LTCO2 = ".+\.nc4" # test_oco2_b70_20150704.nc4, 
+FILENAME_PATTERN_LTSIF = ".+\.nc" # OCO2-SIF-L2-150317-B7000r-fv1.nc
 
 AQUISITION_MODE = "AcquisitionMode"
 
@@ -65,22 +66,20 @@ class Oco2L2StdFileParser(Oco2FileParser):
                 pass # ignore one bad time stamp
         return datasetTimes
     
-class Oco2L2IDPFileParser(Oco2FileParser):
-    ''' Parser for OCO-2 Level 2 IMAP-DOAS preprocessor products, 
-        including Solar Induced Fluorescence (SIF) fields)  
-        (HDF5 format)'''
+class Oco2LtSIFFileParser(Oco2FileParser):
+    ''' Parser for OCO-2 Level 2 Lite SIF files (NetCDF)'''
     
     def matches(self, filepath):
-        '''Example filename: oco2_L2IDPGL_03783a_150319_B6000r_150328142340.h5'''
+        '''Example filename: OCO2-SIF-L2-150317-B7000r-fv1.nc'''
         
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_PATTERN_IDP, filename)
+        return re.match(FILENAME_PATTERN_LTSIF, filename)
     
     def getLatitudes(self, h5file):
-        return h5file['SoundingGeometry']['sounding_latitude'][:]
+        return h5file['latitude'][:]
 
     def getLongitudes(self, h5file):
-        return h5file['SoundingGeometry']['sounding_longitude'][:]
+        return h5file['longitude'][:]
     
     def getTimes(self, h5file):
         
@@ -88,35 +87,22 @@ class Oco2L2IDPFileParser(Oco2FileParser):
         
         # use TAI93 time
         # string sounding_time_string(phony_dim_16, phony_dim_17) ;
-        seconds = h5file['SoundingGeometry']['sounding_time_tai93'][:]
+        seconds = h5file['time'][:]
 
         # loop over data points
-        for i in range(0, seconds.shape[0]):
-            
-            secs = seconds[i,:]  # slice
-            _secs = secs[ np.where( secs != -999999.) ]
-            if len(_secs) > 0:
-                time_tai93 = np.mean( _secs )
-                datasetTimes.append(TAI93_DATETIME_START + dt.timedelta(seconds=int(time_tai93)) ) 
-                
-        # use UTC time
-        #dateStrings = h5file['SoundingGeometry']['sounding_time_string'][:]
-        #for x in dateStrings:
-        #    try:
-        #        datasetTimes.append( dt.datetime.strptime(x,"%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=tzutc()) )
-        #    except:
-        #        pass # ignore one bad time stamp
-        
+        for secs in seconds:
+            datasetTimes.append(TAI93_DATETIME_START + dt.timedelta(seconds=int(secs)) ) 
+                                    
         return datasetTimes
     
-class Oco2L2LiteFileParser(Oco2FileParser):
+class Oco2LtCO2FileParser(Oco2FileParser):
     '''Parser for OCO-2 L2 Lite files (NetCDF4 format)'''
     
     def matches(self, filepath):
         '''Example filename: oco2_L2Daily_141127_B5000_150116014823s.nc4'''
         
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_PATTERN_LTE, filename)
+        return re.match(FILENAME_PATTERN_LTCO2, filename)
     
     def getLatitudes(self, h5file):
         return h5file['latitude'][:]
