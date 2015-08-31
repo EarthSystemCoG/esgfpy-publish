@@ -27,7 +27,7 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
         
         if self.matches(filepath):
         
-            logging.info("Parsing HDF file=%s" % filepath)
+            logging.info("Parsing file=%s" % filepath)
             
             # open HDF file
             h5file = h5py.File(filepath,'r')

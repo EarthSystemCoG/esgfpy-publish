@@ -18,8 +18,8 @@ FILENAME_PATTERN_IDP = "oco2_L2IDP.+\.h5" # oco2_L2IDPGL_03783a_150319_B6000r_15
 # Lite L2 files (NetCDF4)
 #FILENAME_PATTERN_LTE = "oco2_L2.+\.nc4" # oco2_L2Daily_141127_B5000_150116014823s.nc4
 # FIXME
-FILENAME_PATTERN_LTCO2 = ".+\.nc4" # test_oco2_b70_20150704.nc4, 
-FILENAME_PATTERN_LTSIF = ".+\.nc" # OCO2-SIF-L2-150317-B7000r-fv1.nc
+FILENAME_PATTERN_LTCO2 = ".+\.nc4$" # test_oco2_b70_20150704.nc4, 
+FILENAME_PATTERN_LTSIF = ".+\.nc$" # OCO2-SIF-L2-150317-B7000r-fv1.nc
 
 AQUISITION_MODE = "AcquisitionMode"
 
@@ -117,7 +117,8 @@ class Oco2LtCO2FileParser(Oco2FileParser):
         seconds = h5file['time'][:]
         for x in seconds:
             try:
-                datasetTimes.append( dt.datetime.fromtimestamp(x).replace(tzinfo=tzutc()) )
+                datasetTimes.append( dt.datetime.utcfromtimestamp(int(x)).replace(tzinfo=tzutc()) )
             except:
                 pass # ignore one bad time stamp
+            
         return datasetTimes
