@@ -109,8 +109,10 @@ if __name__ == '__main__':
                           #"oco2_L1b.+\.h5",
                           # oco2_L2Daily_141127_B5000_150116014823s.nc4
                           "oco2_L2Std.+\.nc4",
-                          # FIXME
-                          "test_oco2.+\.nc4",
+                          # test_oco2_b70_20150704.nc4
+                          ".*oco2.+\.nc4",
+                          # OCO2-SIF-L2-150317-B7000r-fv1.nc
+                          ".*SIF.+\.nc",
                        ]
 
 
