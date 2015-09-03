@@ -18,8 +18,8 @@ FILENAME_PATTERN_IDP = "oco2_L2IDP.+\.h5" # oco2_L2IDPGL_03783a_150319_B6000r_15
 # Lite L2 files (NetCDF4)
 #FILENAME_PATTERN_LTE = "oco2_L2.+\.nc4" # oco2_L2Daily_141127_B5000_150116014823s.nc4
 # FIXME
-FILENAME_PATTERN_LTCO2 = ".+\.nc4$" # test_oco2_b70_20150704.nc4, 
-FILENAME_PATTERN_LTSIF = ".+\.nc$" # OCO2-SIF-L2-150317-B7000r-fv1.nc
+FILENAME_PATTERN_LTCO2 = "oco2_LtCO2.+\.nc4$" # test_oco2_b70_20150704.nc4, 
+FILENAME_PATTERN_LTSIF = "oco2_LtSIF.+\.nc4$" # OCO2-SIF-L2-150317-B7000r-fv1.nc
 
 AQUISITION_MODE = "AcquisitionMode"
 
@@ -70,7 +70,7 @@ class Oco2LtSIFFileParser(Oco2FileParser):
     ''' Parser for OCO-2 Level 2 Lite SIF files (NetCDF)'''
     
     def matches(self, filepath):
-        '''Example filename: OCO2-SIF-L2-150317-B7000r-fv1.nc'''
+        '''Example filename: oco2_LtSIF_150831_B7101_150903013836s.nc4'''
         
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_PATTERN_LTSIF, filename)
@@ -99,7 +99,7 @@ class Oco2LtCO2FileParser(Oco2FileParser):
     '''Parser for OCO-2 L2 Lite files (NetCDF4 format)'''
     
     def matches(self, filepath):
-        '''Example filename: oco2_L2Daily_141127_B5000_150116014823s.nc4'''
+        '''Example filename: oco2_LtCO2_150831_B7101A_150903021130s.nc4'''
         
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_PATTERN_LTCO2, filename)
