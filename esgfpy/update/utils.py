@@ -14,6 +14,8 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
     Example of updateDict:
     setDict = { 'id:test.test.v1.testData.nc|esgf-dev.jpl.nasa.gov': 
                 {'xlink':['http://esg-datanode.jpl.nasa.gov/.../zosTechNote_AVISO_L4_199210-201012.pdf|AVISO Sea Surface Height Technical Note|summary']}}
+                
+    Note: multiple query constraints can be combined with '&', for example: 'id:obs4MIPs.NASA-JPL.AIRS.mon.v1|esgf-node.jpl.nasa.gov&variable:hus*'
 
     Example od returned document:
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -27,16 +29,20 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
     
     solr_server = solr.SolrConnection(solr_url+"/"+solr_core)
     
+    # root of global update document
+    rootEl = Element("add")
+    
     # loop over query expressions
     for query, fieldDict in updateDict.items():
         
         # execute query to Solr
-        response = solr_server.query('*:*', fq=[query], start=0)
-        logging.info("\nExecuting query=%s number of records found: %s" % (query, response.numFound))
+        queries = query.split('&')
+        response = solr_server.query('*:*', fq=queries, start=0)
+        logging.info("Executing query=%s number of records found: %s" % (query, response.numFound))
         
         # update all records matching the query
         # <add>
-        rootEl = Element("add")
+        
         for result in response.results:
             logging.debug("Updating record id=%s" % result['id'])
             
@@ -51,10 +57,11 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
                     # <field name="id">test.test.v1.testData.nc|esgf-dev.jpl.nasa.gov</field>
                     el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
                     el.text = str(fieldValue)
-            
-        xmlstr = tostring(rootEl)
-        logging.debug(xmlstr)
-        return xmlstr
+
+    # serialize document from all queries            
+    xmlstr = tostring(rootEl)
+    logging.debug(xmlstr)
+    return xmlstr
     
 
 def sendSolrXml(xmlDoc, solr_url='http://localhost:8984/solr', solr_core='datasets'):
