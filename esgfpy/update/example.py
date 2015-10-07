@@ -1,4 +1,7 @@
-from esgfpy.update.utils import buildSolrXml, sendSolrXml
+import logging
+from esgfpy.update.utils import sendSolrXml, buildSolrXml
+
+logging.basicConfig(level=logging.DEBUG)
 
 # dictionary containing fields to be "set" (i.e. will override fields with the same name)
 myDict = {'id:test.test.v1.testData.nc|esgf-dev.jpl.nasa.gov': 

@@ -1,5 +1,8 @@
 import urllib2
 import solr
+from xml.etree.ElementTree import Element, SubElement, tostring
+
+import logging
 
 def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr', solr_core='datasets'):
     '''
@@ -29,27 +32,30 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
         
         # execute query to Solr
         response = solr_server.query('*:*', fq=[query], start=0)
-        print "\nExecuting query=%s number of records found: %s" % (query, response.numFound)
+        logging.info("\nExecuting query=%s number of records found: %s" % (query, response.numFound))
         
         # update all records matching the query
-        xmlDoc = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>'
-        xmlDoc += '<add>'
+        # <add>
+        rootEl = Element("add")
         for result in response.results:
-            print "\nUpdating record id=%s" % result['id']
-            xmlDoc += "<doc>"
-            xmlDoc += '<field name="id">%s</field>' % result['id']
+            logging.debug("Updating record id=%s" % result['id'])
+            
+            # <doc>
+            docEl = SubElement(rootEl, "doc")
+            el = SubElement(docEl, "field", attrib={ "name": 'id' })
+            el.text = str(result['id'])
             
             # loop over fields to be updates
             for fieldName, fieldValues in fieldDict.items():
                 for fieldValue in fieldValues:
-                    xmlDoc += '<field name="%s" update="set">%s</field>' % (fieldName, fieldValue)
-            xmlDoc += "</doc>"
+                    # <field name="id">test.test.v1.testData.nc|esgf-dev.jpl.nasa.gov</field>
+                    el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
+                    el.text = str(fieldValue)
+            
+        xmlstr = tostring(rootEl)
+        logging.debug(xmlstr)
+        return xmlstr
     
-    # end XML document
-    xmlDoc += '</add>'
-    
-    print xmlDoc
-    return xmlDoc
 
 def sendSolrXml(xmlDoc, solr_url='http://localhost:8984/solr', solr_core='datasets'):
     '''Method to send a Solr/XML update document to a specific Solr server and core.'''
@@ -62,5 +68,4 @@ def sendSolrXml(xmlDoc, solr_url='http://localhost:8984/solr', solr_core='datase
                          headers={'Content-Type': 'application/xml'})
     u = urllib2.urlopen(r)
     response = u.read()
-    print response
-
+    logging.info(response)
