@@ -20,8 +20,6 @@ myDict = {'dataset_id:obs4MIPs.NASA-JPL.AIRS.mon.v1|esgf-node.jpl.nasa.gov&varia
             {'xlink':['https://earthsystemcog.org/site_media/projects/obs4mips/husTechNote_AIRS_L3_RetStd-v5_200209-201105.pdf|AIRS Specific Humidity Technical Note|technote']},
           }
 
-print myDict.keys()
-
 xmlDoc  = buildSolrXml(myDict, update='set', solr_url=SOLR_URL, solr_core='files')
 sendSolrXml(xmlDoc, solr_url=SOLR_URL, solr_core='files')
 

@@ -16,6 +16,8 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
                 {'xlink':['http://esg-datanode.jpl.nasa.gov/.../zosTechNote_AVISO_L4_199210-201012.pdf|AVISO Sea Surface Height Technical Note|summary']}}
                 
     Note: multiple query constraints can be combined with '&', for example: 'id:obs4MIPs.NASA-JPL.AIRS.mon.v1|esgf-node.jpl.nasa.gov&variable:hus*'
+    
+    Note: to remove a field, set its value to None or to an empty list, for example: 'xlink':None or 'xlink':[]
 
     Example od returned document:
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -48,15 +50,21 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
             
             # <doc>
             docEl = SubElement(rootEl, "doc")
+            # <field name="id">obs4MIPs.NASA-JPL.AIRS.mon.v1.taStderr_AIRS_L3_RetStd-v5_200209-201105.nc|esgf-node.jpl.nasa.gov</field>
             el = SubElement(docEl, "field", attrib={ "name": 'id' })
             el.text = str(result['id'])
             
             # loop over fields to be updates
             for fieldName, fieldValues in fieldDict.items():
-                for fieldValue in fieldValues:
-                    # <field name="id">test.test.v1.testData.nc|esgf-dev.jpl.nasa.gov</field>
-                    el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
-                    el.text = str(fieldValue)
+                
+                if fieldValues is not None and len(fieldValues)>0:
+                    for fieldValue in fieldValues:
+                        #<field name="xlink" update="set">https://earthsystemcog.org/.../taTechNote_AIRS_L3_RetStd-v5_200209-201105.pdf|AIRS Air Temperature Technical Note|technote</field>
+                        el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
+                        el.text = str(fieldValue)
+                else:
+                    # <field name="xlink" update="set" null="true"/>
+                    el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update, 'null':'true' })
 
     # serialize document from all queries            
     xmlstr = tostring(rootEl)
