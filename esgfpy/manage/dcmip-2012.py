@@ -22,7 +22,7 @@ if __name__ == '__main__':
         
         # create sub-directory 
         # cam-fv/42/medium/L30/latlon/hydro/2nd_order_div_damping
-        subdir = filename.replace('.nc','').replace('.txt','').replace('.','/')
+        subdir = filename.replace('.nc','').replace('.','/')
         
         # must add equation='default' if missing from filename
         # uzim/51/ultra/L30/interp_latlon/hydro
