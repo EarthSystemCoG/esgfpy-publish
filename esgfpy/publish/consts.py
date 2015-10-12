@@ -75,6 +75,7 @@ TAI93_DATETIME_START = dt.datetime(1993, 1, 1, 0, 0, 0, tzinfo=tzutc())
 
 COORDINATES = ['longitude', 'lon', 'grid_center_lon', 'grid_corner_lon',
                'latitude', 'lat', 'grid_center_lat', 'grid_corner_lat',
-               'altitude', 'alt', 'level', 'levels', 'lev', 'pressure', 'p',
+               'altitude', 'alt', 'level', 'levels', 'lev', 'ilev',
+               'pressure', 'p', 'ps',
                'time', 'char_time',
                'grid_dims', 'period_length']
