@@ -48,7 +48,7 @@ def generateUrls(baseUrls, rootDirectory, filepath, isImage=False):
     relativeUrl = filepath
     if rootDirectory is not None:
         relativeUrl = relativeUrl.replace(rootDirectory,"")
-    if relativeUrl[0] == '/': # remove leading  '/'
+    if len(relativeUrl)>0 and relativeUrl[0] == '/': # remove leading  '/'
         relativeUrl = relativeUrl[1:]
 
     dir, filename = os.path.split(filepath)

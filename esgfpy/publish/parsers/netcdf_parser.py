@@ -1,7 +1,7 @@
 from esgfpy.publish.parsers.abstract_parser import AbstractMetadataFileParser
 from netCDF4 import Dataset
 import logging
-from dateutil.parser import *
+from esgfpy.publish.consts import COORDINATES    
 
 class NetcdfMetadataFileParser(AbstractMetadataFileParser):
     '''Parses metadata from NetCDF files.'''
@@ -40,9 +40,7 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
                         # IMPORTANT: the variable arrays must have the same number of entries
                         self._addMetadata(metadata, 'variable', key)
                         self._addMetadata(metadata, 'variable_long_name', getattr(variable, 'long_name', None) )
-                        cf_standard_name = getattr(variable, 'stanadard_name', None)
-                        if cf_standard_name is not None:
-                            self._addMetadata(metadata, 'cf_standard_name', getattr(variable, 'stanadard_name', None) )
+                        self._addMetadata(metadata, 'cf_standard_name', getattr(variable, 'stanadard_name', None) )
                         self._addMetadata(metadata, 'units', getattr(variable, 'units', None) )
     
             except Exception as e:
@@ -56,7 +54,4 @@ class NetcdfMetadataFileParser(AbstractMetadataFileParser):
         return metadata
     
     def _isCoordinate(self, key):
-        return (   key.lower()=='longitude' or key.lower()=='lon' 
-                or key.lower()=='latitude' or key.lower()=='lat' 
-                or key.lower()=='altitude' or key.lower()=='time' 
-                or key.lower()=='level' or key.lower()=='altitude' or key.lower()=='alt')
+        return key.lower() in COORDINATES
