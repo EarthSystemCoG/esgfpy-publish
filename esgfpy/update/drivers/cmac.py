@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 SOLR_URL = 'http://esgf-node.jpl.nasa.gov:8982/solr'
 
-myDict = {'project:CMAC': {'index_node':['esgf_node.jpl.nasa.gov'] } }
+myDict = {'project:CMAC': {'index_node':['esgf-node.jpl.nasa.gov'] } }
 
 for core in ['datasets','files']:
     xmlDoc  = buildSolrXml(myDict, update='set', solr_url=SOLR_URL, solr_core=core)
