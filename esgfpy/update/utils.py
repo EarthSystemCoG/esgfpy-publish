@@ -39,7 +39,7 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
         
         # execute query to Solr
         queries = query.split('&')
-        response = solr_server.query('*:*', fq=queries, start=0)
+        response = solr_server.query('*:*', fq=queries, start=0, rows=1000)
         logging.info("Executing query=%s number of records found: %s" % (query, response.numFound))
         
         # update all records matching the query
