@@ -4,6 +4,8 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 
 import logging
 
+MAX_ROWS = 10000 # maximum number of records returned by a Solr query
+
 def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr', solr_core='datasets'):
     '''
     Method to build a Solr/XML update document.
@@ -39,7 +41,7 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
         
         # execute query to Solr
         queries = query.split('&')
-        response = solr_server.query('*:*', fq=queries, start=0, rows=1000)
+        response = solr_server.query('*:*', fq=queries, start=0, rows=MAX_ROWS, fl=['id'])
         logging.info("Executing query=%s number of records found: %s" % (query, response.numFound))
         
         # update all records matching the query
