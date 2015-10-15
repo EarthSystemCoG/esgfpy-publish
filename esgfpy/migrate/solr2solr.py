@@ -82,10 +82,10 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
                 if hasattr(value, "__iter__"):
                     result[key] = []
                     for _value in value:
-                        result[key].append(value)
+                        result[key].append(_replaceValue(value, replacements))
                 # single value
                 else:
-                    result[key] = value
+                    result[key] = _replaceValue(value, replacements)
     
     # FIX broken dataset records
     if core=='datasets':
@@ -103,7 +103,13 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
     logging.debug("Response: current number of records=%s total number of records=%s" % (start+_numRecords, _numFound))
     return (_numFound, _numRecords)
     
+def _replaceValue(value, replacements):
+    '''Apply dictionary of 'replacements' patterns to the string 'value'.'''
     
+    for oldValue, newValue in replacements.items():
+        value = value.replace(oldValue, newValue)
+        
+    return value    
 
 if __name__ == '__main__':
     
