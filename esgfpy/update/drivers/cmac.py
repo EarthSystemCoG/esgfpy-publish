@@ -12,13 +12,16 @@ logging.basicConfig(level=logging.DEBUG)
 
 SOLR_URL = 'http://esgf-node.jpl.nasa.gov:8982/solr'
 
-# 1) set index_node=esgf-node.jpl.nasa.gov for all datasets, files
+# set index_node=esgf-node.jpl.nasa.gov for all datasets, files
 #myDict = {'project:CMAC': {'index_node':['esgf-node.jpl.nasa.gov'] } }
 #for core in ['datasets','files']:
 #    xmlDoc  = buildSolrXml(myDict, update='set', solr_url=SOLR_URL, solr_core=core)
 #    sendSolrXml(xmlDoc, solr_url=SOLR_URL, solr_core=core)
 
-# 2) set shard=localhost:8982 for all datasets
-myDict = {'project:CMAC': {'shard':['localhost:8982'] } }
+# update datasets metadata 
+myDict = {'project:CMAC': {'shard':['localhost:8982'] },
+          'id:CMAC.NASA-GSFC.MODIS.mon.v1|esgf-node.jpl.nasa.gov': { 'number_of_files':['10'] },
+          'id:CMAC.NASA-GSFC.AIRS.mon.v1|esgf-node.jpl.nasa.gov': { 'number_of_files':['24'] },
+          }
 xmlDoc  = buildSolrXml(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
 sendSolrXml(xmlDoc, solr_url=SOLR_URL, solr_core='datasets')
