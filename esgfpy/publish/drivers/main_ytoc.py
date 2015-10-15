@@ -65,6 +65,9 @@ if __name__ == '__main__':
         # NOTE: must NOT end in '/'
         #! TODO: replace with ESGF publishing service
         SOLR_URL = config.get(project, "SOLR_URL")
+        # local shard address
+        #SHARD = SOLR_URL.replace('http://','').replace('/solr','')
+        SHARD = config.get(project, "SHARD")
         # [['activity', 'evaluation_data', 'variable', 'metric', 'frequency', 'period', 'region'],
         #  ['activity', 'comparison_data', 'evaluation_data', 'comparison_metric', 'parameter', 'metric', 'frequency', 'period', 'region']]
         SUBDIRS = [template.split(",") for template in config.get(project, "SUBDIRS").replace(" ","").replace("\n","").split("|")]
@@ -82,7 +85,8 @@ if __name__ == '__main__':
                       "index_node": [HOSTNAME],
                       "metadata_format":["THREDDS"], # currently needed by ESGF web-fe to add datasets to data cart
                       "data_node":[HOSTNAME],
-                      "version":[VERSION] }
+                      "version":[VERSION],
+                      "shard": [SHARD]  }
 
     # constant file-level metadata
     fileFields = {  "index_node": [HOSTNAME],
