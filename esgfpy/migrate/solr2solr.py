@@ -77,8 +77,15 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
     # apply replacement patterns
     if len(replacements) > 0:
         for result in response.results:
-            for field, values in result.items():
-                print field, values
+            for key, value in result.items():
+                # multiple values
+                if hasattr(value, "__iter__"):
+                    result[key] = []
+                    for _value in value:
+                        result[key].append(value)
+                # single value
+                else:
+                    result[key] = value
     
     # FIX broken dataset records
     if core=='datasets':
