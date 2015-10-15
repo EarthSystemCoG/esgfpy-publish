@@ -83,6 +83,7 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
                     result[key] = []
                     for _value in value:
                         result[key].append(_replaceValue(_value, replacements))
+                        
                 # single value
                 else:
                     result[key] = _replaceValue(value, replacements)
