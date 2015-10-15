@@ -13,10 +13,19 @@ MAX_RECORDS_PER_REQUEST = 100
 DEFAULT_QUERY='*:*'
 logging.basicConfig(level=logging.DEBUG)
 
-def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0):
+def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0, replace=None):
     
     surl = (sourceSolrUrl +"/" + core if core is not None else sourceSolrUrl)
     turl = (targetSolrUrl +"/" + core if core is not None else targetSolrUrl)
+    
+    replacements = {}
+    if replace is not None and len(replace)>0:
+        replaces = replace.split(":\s+")
+        for _replace in replaces:
+            print _replace
+            (oldValue, newValue) = _replace.split(':')
+            replacements[oldValue] = newValue
+            logging.debug("Replacing metadata: %s --> %s" % (oldValue, newValue))
         
     t1 = datetime.datetime.now()
         
@@ -28,7 +37,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
                 
         # try migrating MAX_RECORDS_PER_REQUEST records at once
         try:
-            (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, MAX_RECORDS_PER_REQUEST)
+            (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, MAX_RECORDS_PER_REQUEST, replacements)
             numFound = _numFound
             start += _numRecords
     
@@ -37,7 +46,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
             for i in range(MAX_RECORDS_PER_REQUEST):
                 if start < numFound:
                     try:
-                        (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, 1)
+                        (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, 1, replacements)
                     except Exception as e:
                         print 'ERROR: %s' % e
                     start += 1
@@ -56,7 +65,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
     logging.info("Total number of records migrated: %s" % start)
     logging.info("Total elapsed time: %s" % (t2-t1))
     
-def _migrate(s1, s2, query, core, start, howManyMax):
+def _migrate(s1, s2, query, core, start, howManyMax, replacements):
     '''Migrates 'howManyMax' records starting at 'start'.'''
     
     logging.debug("Request: start record=%s max records per request=%s" % (start, howManyMax) )
@@ -64,6 +73,12 @@ def _migrate(s1, s2, query, core, start, howManyMax):
     response = s1.select(query, start=start, rows=howManyMax)
     _numFound = response.numFound
     _numRecords = len(response.results)
+    
+    # apply replacement patterns
+    if len(replacements) > 0:
+        for result in response.results:
+            for field, values in result.items():
+                print field, values
     
     # FIX broken dataset records
     if core=='datasets':
@@ -92,8 +107,9 @@ if __name__ == '__main__':
     parser.add_argument('--core', dest='core', type=str, help="URL of target Solr (example: --core datasets)", default=None)
     parser.add_argument('--query', dest='query', type=str, help="Optional query to sub-select records (example: --query project:xyz)", default=DEFAULT_QUERY)
     parser.add_argument('--start', dest='start', type=int, help="Optional first record to be migrated (example: --start 1000000)", default=0)
+    parser.add_argument('--replace', dest='replace', type=str, help="Optional string replacements for all field (example: --replace old_value_1:new_value_1,old_value_2:new_value_2)", default=None)
     args_dict = vars( parser.parse_args() )
     
     # execute migration
     migrate(args_dict['sourceSolrUrl'], args_dict['targetSolrUrl'], 
-            core=args_dict['core'], query=args_dict['query'], start=args_dict['start'])
+            core=args_dict['core'], query=args_dict['query'], start=args_dict['start'], replace=args_dict['replace'])
