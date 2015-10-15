@@ -74,16 +74,22 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
     _numFound = response.numFound
     _numRecords = len(response.results)
     
-    # apply replacement patterns
-    if len(replacements) > 0:
-        for result in response.results:
+    
+    # process records
+    for result in response.results:
+        
+        # remove "_version_" field since it will cause a conflict between Solr indexes
+        if result.get("_version_", None):
+            del result['_version_']
+            
+        # apply replacement patterns
+        if len(replacements) > 0:
             for key, value in result.items():
                 # multiple values
                 if hasattr(value, "__iter__"):
                     result[key] = []
                     for _value in value:
                         result[key].append(_replaceValue(_value, replacements))
-                        
                 # single value
                 else:
                     result[key] = _replaceValue(value, replacements)
