@@ -82,7 +82,7 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
                 if hasattr(value, "__iter__"):
                     result[key] = []
                     for _value in value:
-                        result[key].append(_replaceValue(value, replacements))
+                        result[key].append(_replaceValue(_value, replacements))
                 # single value
                 else:
                     result[key] = _replaceValue(value, replacements)
@@ -106,8 +106,9 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
 def _replaceValue(value, replacements):
     '''Apply dictionary of 'replacements' patterns to the string 'value'.'''
     
-    for oldValue, newValue in replacements.items():
-        value = value.replace(oldValue, newValue)
+    if isinstance(value, basestring): # 'basestring' is the superclass of both 'str' and 'unicode'
+        for oldValue, newValue in replacements.items():
+            value = value.replace(oldValue, newValue)
         
     return value    
 
