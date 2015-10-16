@@ -4,11 +4,12 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 
 import logging
 
-MAX_ROWS = 10000 # maximum number of records returned by a Solr query
+# FIXME
+MAX_ROWS = 10 # maximum number of records returned by a Solr query
 
-def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr', solr_core='datasets'):
+def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', solr_core='datasets'):
     '''
-    Method to build a Solr/XML update document.
+    Method to bulk-update all matching records in a Solr index.
     
     updateDict: dictionary of Solr queries to map of field name and values to be updated for all matching results
     update='set' to override the previous values of that field, update'add' to add new values to that field
@@ -33,6 +34,25 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
     
     solr_server = solr.SolrConnection(solr_url+"/"+solr_core)
     
+    start = 0
+    numFound = start+1
+    while start < numFound:
+
+        # query Solr, construct update document
+        (xmlDoc, numFound, numRecords) = _buildSolrXml(solr_server, updateDict, update=update, solr_core=solr_core, start=start)
+        
+        print xmlDoc
+        
+        # send update document to Solr
+        _sendSolrXml(xmlDoc, solr_url=solr_url, solr_core=solr_core)
+        
+        # increase starting record locator
+        start += numRecords
+            
+            
+    
+def _buildSolrXml(solr_server, updateDict, update='set', solr_core='datasets', start=0):
+    
     # root of global update document
     rootEl = Element("add")
     
@@ -41,8 +61,10 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
         
         # execute query to Solr
         queries = query.split('&')
-        response = solr_server.query('*:*', fq=queries, start=0, rows=MAX_ROWS, fl=['id'])
-        logging.info("Executing query=%s number of records found: %s" % (query, response.numFound))
+        response = solr_server.query('*:*', fq=queries, start=start, rows=MAX_ROWS, fl=['id'])
+        numFound = response.numFound
+        numRecords = len(response.results)
+        logging.info("Executing query=%s start=%s total number of records found: %s number of records returned: %s" % (query, start, numFound, numRecords))
         
         # update all records matching the query
         # <add>
@@ -71,10 +93,10 @@ def buildSolrXml(updateDict, update='set', solr_url='http://localhost:8984/solr'
     # serialize document from all queries            
     xmlstr = tostring(rootEl)
     logging.debug(xmlstr)
-    return xmlstr
+    return (xmlstr, numFound, numRecords)
     
 
-def sendSolrXml(xmlDoc, solr_url='http://localhost:8984/solr', solr_core='datasets'):
+def _sendSolrXml(xmlDoc, solr_url='http://localhost:8984/solr', solr_core='datasets'):
     '''Method to send a Solr/XML update document to a specific Solr server and core.'''
     
     #

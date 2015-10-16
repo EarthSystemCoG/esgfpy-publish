@@ -6,7 +6,7 @@ to:
 '''
 
 import logging
-from esgfpy.update.utils import sendSolrXml, buildSolrXml
+from esgfpy.update.utils import updateSolr
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -23,5 +23,4 @@ myDict = {'project:CMAC': {'shard':['localhost:8982'] },
           'id:CMAC.NASA-GSFC.MODIS.mon.v1|esgf-node.jpl.nasa.gov': { 'number_of_files':['10'] },
           'id:CMAC.NASA-GSFC.AIRS.mon.v1|esgf-node.jpl.nasa.gov': { 'number_of_files':['24'] },
           }
-xmlDoc  = buildSolrXml(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
-sendSolrXml(xmlDoc, solr_url=SOLR_URL, solr_core='datasets')
+updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')

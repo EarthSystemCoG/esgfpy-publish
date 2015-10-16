@@ -1,5 +1,5 @@
 import logging
-from esgfpy.update.utils import sendSolrXml, buildSolrXml
+from esgfpy.update.utils import updateSolr
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -26,8 +26,7 @@ myDict = {'id:obs4MIPs.NASA-JPL.AIRS.mon.v1|esgf-node.jpl.nasa.gov':
             {'xlink':['https://earthsystemcog.org/site_media/projects/obs4mips/tro3TechNote_TES_L3_tbd_200507-200912.pdf|TES Ozone Technical Note|technote']},
           }
 
-xmlDoc  = buildSolrXml(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
-sendSolrXml(xmlDoc, solr_url=SOLR_URL, solr_core='datasets')
+updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
 
 # associate tech note to files
 myDict = {'dataset_id:obs4MIPs.NASA-JPL.AIRS.mon.v1|esgf-node.jpl.nasa.gov&variable:ta*': 
@@ -54,6 +53,5 @@ myDict = {'dataset_id:obs4MIPs.NASA-JPL.AIRS.mon.v1|esgf-node.jpl.nasa.gov&varia
             {'xlink':['https://earthsystemcog.org/site_media/projects/obs4mips/tro3TechNote_TES_L3_tbd_200507-200912.pdf|TES Ozone Technical Note|technote']},
           }
 
-xmlDoc  = buildSolrXml(myDict, update='set', solr_url=SOLR_URL, solr_core='files')
-sendSolrXml(xmlDoc, solr_url=SOLR_URL, solr_core='files')
+updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='files')
 
