@@ -5,7 +5,7 @@ import urllib2
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 
-MAX_ROWS = 10 # maximum number of records returned by a Solr query
+MAX_ROWS = 1000 # maximum number of records returned by a Solr query
 
 def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', solr_core='datasets'):
     '''
