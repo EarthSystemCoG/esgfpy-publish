@@ -1,10 +1,10 @@
+import json
+import logging
+import urllib
 import urllib2
-import solr
 from xml.etree.ElementTree import Element, SubElement, tostring
 
-import logging
 
-# FIXME
 MAX_ROWS = 10 # maximum number of records returned by a Solr query
 
 def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', solr_core='datasets'):
@@ -32,63 +32,80 @@ def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', 
     </add>
     '''
     
-    solr_server = solr.SolrConnection(solr_url+"/"+solr_core)
+    solr_core_url = solr_url+"/"+solr_core
     
-    start = 0
-    numFound = start+1
-    while start < numFound:
+    # process each query separately
+    for query, fieldDict in updateDict.items():
+        logging.info("SOLR QUERY: %s" % query)
+        queries = query.split('&')
+    
+        # VERY IMPORTANT: MUST FIRST CREATE ALL THE UPDATE DOCUMENTS, 
+        # THEN SENDING THEM WITH A commit=True STATEMENT
+        # OTHERWISE PAGINATION OF RESULTS DOES NOT WORK
+        xmlDocs = [] # list of XML update documents
+        start = 0
+        numFound = start+1
+        while start < numFound:
+    
+            # query Solr, construct update document
+            (xmlDoc, numFound, numRecords) = _buildSolrXml(solr_core_url, queries, fieldDict, update=update, start=start)
+            
+            xmlDocs.append(xmlDoc)
+                        
+            # increase starting record locator
+            start += numRecords
 
-        # query Solr, construct update document
-        (xmlDoc, numFound, numRecords) = _buildSolrXml(solr_server, updateDict, update=update, solr_core=solr_core, start=start)
-        
-        print xmlDoc
-        
-        # send update document to Solr
-        _sendSolrXml(xmlDoc, solr_url=solr_url, solr_core=solr_core)
-        
-        # increase starting record locator
-        start += numRecords
-            
-            
+        # SEND ALL UPDATES, COMMIT EACH TIME
+        for xmlDoc in xmlDocs:
+            _sendSolrXml(solr_core_url, xmlDoc)
+
     
-def _buildSolrXml(solr_server, updateDict, update='set', solr_core='datasets', start=0):
+def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
     
+    # /select URL
+    # https://esgf-node.jpl.nasa.gov/solr/datasets/select?q=*%3A*&wt=json&indent=true
+    url = solr_core_url + "/select"
+    params = [ ('q','*:*'), ('fl', 'id'), ('wt','json'), ('indent','true'),
+              ('start', start), ('rows', MAX_ROWS) ]
+    for query in queries:
+        params.append( ('fq',query) )
+        
+    # execute query to Solr
+    url = url + "?"+urllib.urlencode(params)
+    logging.info('Executing Solr search URL=%s' % url)
+    fh = urllib2.urlopen( url )
+    response = fh.read().decode("UTF-8")
+    jobj = json.loads(response)
+    
+    numFound = jobj['response']['numFound']
+    numRecords = len( jobj['response']['docs'] )
+    logging.info("Total number of records found: %s number of records returned: %s" % (numFound, numRecords))
+                
+    # update all records matching the query
+    # <add>
     # root of global update document
     rootEl = Element("add")
-    
-    # loop over query expressions
-    for query, fieldDict in updateDict.items():
-        
-        # execute query to Solr
-        queries = query.split('&')
-        response = solr_server.query('*:*', fq=queries, start=start, rows=MAX_ROWS, fl=['id'])
-        numFound = response.numFound
-        numRecords = len(response.results)
-        logging.info("Executing query=%s start=%s total number of records found: %s number of records returned: %s" % (query, start, numFound, numRecords))
-        
-        # update all records matching the query
-        # <add>
-        
-        for result in response.results:
-            logging.debug("Updating record id=%s" % result['id'])
-            
-            # <doc>
-            docEl = SubElement(rootEl, "doc")
-            # <field name="id">obs4MIPs.NASA-JPL.AIRS.mon.v1.taStderr_AIRS_L3_RetStd-v5_200209-201105.nc|esgf-node.jpl.nasa.gov</field>
-            el = SubElement(docEl, "field", attrib={ "name": 'id' })
-            el.text = str(result['id'])
-            
-            # loop over fields to be updates
-            for fieldName, fieldValues in fieldDict.items():
+   
+    for result in jobj['response']['docs']:
+        logging.debug("Updating record id=%s" % result['id'])
                 
-                if fieldValues is not None and len(fieldValues)>0:
-                    for fieldValue in fieldValues:
-                        #<field name="xlink" update="set">https://earthsystemcog.org/.../taTechNote_AIRS_L3_RetStd-v5_200209-201105.pdf|AIRS Air Temperature Technical Note|technote</field>
-                        el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
-                        el.text = str(fieldValue)
-                else:
-                    # <field name="xlink" update="set" null="true"/>
-                    el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update, 'null':'true' })
+        # <doc>
+        docEl = SubElement(rootEl, "doc")
+        # <field name="id">obs4MIPs.NASA-JPL.AIRS.mon.v1.taStderr_AIRS_L3_RetStd-v5_200209-201105.nc|esgf-node.jpl.nasa.gov</field>
+        el = SubElement(docEl, "field", attrib={ "name": 'id' })
+        el.text = str(result['id'])
+        
+        # loop over fields to be updates
+        for fieldName, fieldValues in fieldDict.items():
+            
+            if fieldValues is not None and len(fieldValues)>0:
+                for fieldValue in fieldValues:
+                    #<field name="xlink" update="set">https://earthsystemcog.org/.../taTechNote_AIRS_L3_RetStd-v5_200209-201105.pdf|AIRS Air Temperature Technical Note|technote</field>
+                    el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
+                    el.text = str(fieldValue)
+            else:
+                # <field name="xlink" update="set" null="true"/>
+                el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update, 'null':'true' })
 
     # serialize document from all queries            
     xmlstr = tostring(rootEl)
@@ -96,11 +113,11 @@ def _buildSolrXml(solr_server, updateDict, update='set', solr_core='datasets', s
     return (xmlstr, numFound, numRecords)
     
 
-def _sendSolrXml(xmlDoc, solr_url='http://localhost:8984/solr', solr_core='datasets'):
+def _sendSolrXml(solr_core_url, xmlDoc):
     '''Method to send a Solr/XML update document to a specific Solr server and core.'''
     
-    #
-    url = solr_url + "/" + solr_core + '/update?commit=true'
+    # update URL
+    url = solr_core_url + '/update?commit=true'
     
     # send XML document
     r = urllib2.Request(url, data=xmlDoc,
