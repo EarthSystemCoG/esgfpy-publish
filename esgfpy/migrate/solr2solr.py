@@ -78,7 +78,8 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
     # process records
     for result in response.results:
         
-        # remove "_version_" field since it will cause a conflict between Solr indexes
+        # remove "_version_" field otherwise Solr will return an HTTP 409 error (Conflict)
+        # by design, "_version_" > 0 will only insert the document if it exists already with the same _version_
         if result.get("_version_", None):
             del result['_version_']
             
