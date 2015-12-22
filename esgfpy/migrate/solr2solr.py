@@ -22,7 +22,6 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
     if replace is not None and len(replace)>0:
         replaces = replace.split(":\s+")
         for _replace in replaces:
-            print _replace
             (oldValue, newValue) = _replace.split(':')
             replacements[oldValue] = newValue
             logging.debug("Replacing metadata: %s --> %s" % (oldValue, newValue))
@@ -50,9 +49,6 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
                     except Exception as e:
                         print 'ERROR: %s' % e
                     start += 1
-                    
-
-               
         
     # optimize full index
     s2.optimize()
@@ -73,7 +69,6 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
     response = s1.select(query, start=start, rows=howManyMax)
     _numFound = response.numFound
     _numRecords = len(response.results)
-    
     
     # process records
     for result in response.results:
