@@ -14,7 +14,7 @@ MAX_RECORDS_TOTAL = 9999999 # total maxRecords number of records to be migrated
 DEFAULT_QUERY='*:*'
 logging.basicConfig(level=logging.DEBUG)
 
-def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0, maxRecords=MAX_RECORDS_TOTAL, replace=None):
+def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0, maxRecords=MAX_RECORDS_TOTAL, replace=None, suffix=''):
     
     surl = (sourceSolrUrl +"/" + core if core is not None else sourceSolrUrl)
     turl = (targetSolrUrl +"/" + core if core is not None else targetSolrUrl)
@@ -39,7 +39,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
         # try migrating MAX_RECORDS_PER_REQUEST records at once
         try:
             _maxRecords = min(maxRecords-numRecords, MAX_RECORDS_PER_REQUEST) # do NOT migrate more records than this number
-            (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, _maxRecords, replacements)
+            (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, _maxRecords, replacements, suffix)
             numFound = _numFound
             start += _numRecords
             numRecords += _numRecords
@@ -49,7 +49,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
             for i in range(MAX_RECORDS_PER_REQUEST):
                 if start < numFound and numRecords < maxRecords:
                     try:
-                        (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, 1, replacements)
+                        (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, 1, replacements, suffix)
                     except Exception as e:
                         print 'ERROR: %s' % e
                     start += 1
@@ -66,7 +66,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
     logging.info("Total number of records migrated: %s" % numRecords)
     logging.info("Total elapsed time: %s" % (t2-t1))
     
-def _migrate(s1, s2, query, core, start, howManyMax, replacements):
+def _migrate(s1, s2, query, core, start, howManyMax, replacements, suffix):
     '''Migrates 'howManyMax' records starting at 'start'.'''
     
     logging.debug("Request: start record=%s max records per request=%s" % (start, howManyMax) )
@@ -82,6 +82,13 @@ def _migrate(s1, s2, query, core, start, howManyMax, replacements):
         # by design, "_version_" > 0 will only insert the document if it exists already with the same _version_
         if result.get("_version_", None):
             del result['_version_']
+            
+        # append suffix to all ID fields
+        result['id'] = result['id'] + suffix
+        result['master_id'] = result['master_id'] + suffix
+        result['instance_id'] = result['instance_id'] + suffix
+        if result.get("dataset_id", None):
+            result['dataset_id'] = result['dataset_id'] + suffix
             
         # apply replacement patterns
         if len(replacements) > 0:
@@ -131,9 +138,10 @@ if __name__ == '__main__':
     parser.add_argument('--start', dest='start', type=int, help="Optional first record to be migrated (example: --start 1000)", default=0)
     parser.add_argument('--replace', dest='replace', type=str, help="Optional string replacements for all field (example: --replace old_value_1:new_value_1,old_value_2:new_value_2)", default=None)
     parser.add_argument('--max', dest='max', type=int, help="Optional maxRecords number of records to be migrated (example: --max 1000)", default=MAX_RECORDS_TOTAL)
+    parser.add_argument('--suffix', dest='suffix', type=str, help="Optional suffix string to append to all record ids (example: --suffix abc)", default='')
     args_dict = vars( parser.parse_args() )
     
     # execute migration
     migrate(args_dict['sourceSolrUrl'], args_dict['targetSolrUrl'], 
             core=args_dict['core'], query=args_dict['query'], start=args_dict['start'], replace=args_dict['replace'],
-            maxRecords=args_dict['max'])
+            maxRecords=args_dict['max'], suffix=args_dict['suffix'])
