@@ -16,8 +16,8 @@ if __name__ == '__main__':
     #replace = "pcmdi9.llnl.gov:others"
     
     # total number of records indexed = maxRecords * numIterations * replacements
-    maxRecords = 10000    # maximum number of records per migration
-    numIterations = 1000  # number of migrations
+    maxRecords = 1000000    # maximum number of records per migration
+    numIterations = 10      # number of migrations
     
     replacements = ["pcmdi9.llnl.gov:esgf-node.jpl.nasa.gov",
                     "pcmdi9.llnl.gov:pcmdi9.llnl.gov",
