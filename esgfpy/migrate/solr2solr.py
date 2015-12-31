@@ -14,7 +14,8 @@ MAX_RECORDS_TOTAL = 9999999 # total maxRecords number of records to be migrated
 DEFAULT_QUERY='*:*'
 logging.basicConfig(level=logging.DEBUG)
 
-def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0, maxRecords=MAX_RECORDS_TOTAL, replace=None, suffix=''):
+def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0, maxRecords=MAX_RECORDS_TOTAL, 
+            replace=None, suffix='', optimize=True):
     
     surl = (sourceSolrUrl +"/" + core if core is not None else sourceSolrUrl)
     turl = (targetSolrUrl +"/" + core if core is not None else targetSolrUrl)
@@ -56,7 +57,8 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
                     numRecords += 1
         
     # optimize full index
-    s2.optimize()
+    if optimize:
+        s2.optimize()
     
     # close connections
     s1.close()

@@ -16,8 +16,8 @@ if __name__ == '__main__':
     #replace = "pcmdi9.llnl.gov:others"
     
     # total number of records indexed = maxRecords * numIterations * replacements
-    maxRecords = 1000000    # maximum number of records per migration
-    numIterations = 10      # number of migrations
+    maxRecords = 20000    # maximum number of records per migration
+    numIterations = 250   # number of migrations
     
     replacements = ["pcmdi9.llnl.gov:esgf-node.jpl.nasa.gov",
                     "pcmdi9.llnl.gov:pcmdi9.llnl.gov",
@@ -34,7 +34,13 @@ if __name__ == '__main__':
                 
         for i in range(1, 1+numIterations):
             
+            # only optimize index after the very last iteration (for each replacement)
+            if i==numIterations:
+                optimize = True
+            else:
+                optimize = False
+            
             print "Executing iteration #: %s for replacement=%s" % (i, replace)
             suffix = ".%s" % i
             migrate(sourceSolrUrl, targetSolrUrl, core, maxRecords=maxRecords, suffix=suffix, replace=replace, 
-                    query='index_node:pcmdi9.llnl.gov')
+                    query='index_node:pcmdi9.llnl.gov', optimize=optimize)
