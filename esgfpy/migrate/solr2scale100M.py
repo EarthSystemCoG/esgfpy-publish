@@ -32,10 +32,11 @@ if __name__ == '__main__':
     
     for replace in replacements:
                 
-        for i in range(1, 1+numIterations):
+        #for i in range(1, 1+numIterations):
+        for i in range(1+numIterations, 1+2*numIterations):
             
             # only optimize index after the very last iteration (for each replacement)
-            if i==numIterations:
+            if i==2*numIterations:
                 optimize = True
             else:
                 optimize = False
