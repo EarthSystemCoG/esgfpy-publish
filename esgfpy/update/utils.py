@@ -22,7 +22,7 @@ def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', 
     
     Note: to remove a field, set its value to None or to an empty list, for example: 'xlink':None or 'xlink':[]
 
-    Example od returned document:
+    Example of returned document:
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
     <add>
         <doc>
