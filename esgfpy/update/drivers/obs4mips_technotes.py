@@ -4,7 +4,7 @@ from esgfpy.update.utils import updateSolr
 logging.basicConfig(level=logging.DEBUG)
 
 # FIXME: esgf-node
-SOLR_URL = 'http://esgf-node.jpl.nasa.gov:8984/solr'
+SOLR_URL = 'http://esgf-dev.jpl.nasa.gov:8984/solr'
 
 # FIXME: esgf-data
 # associate tech note to datasets
