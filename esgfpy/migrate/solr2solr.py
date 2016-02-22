@@ -14,7 +14,8 @@ MAX_RECORDS_TOTAL = 9999999 # total maxRecords number of records to be migrated
 DEFAULT_QUERY='*:*'
 logging.basicConfig(level=logging.DEBUG)
 
-def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=0, maxRecords=MAX_RECORDS_TOTAL, 
+def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=None,
+            start=0, maxRecords=MAX_RECORDS_TOTAL, 
             replace=None, suffix='', optimize=True):
     
     surl = (sourceSolrUrl +"/" + core if core is not None else sourceSolrUrl)
@@ -40,7 +41,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
         # try migrating MAX_RECORDS_PER_REQUEST records at once
         try:
             _maxRecords = min(maxRecords-numRecords, MAX_RECORDS_PER_REQUEST) # do NOT migrate more records than this number
-            (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, _maxRecords, replacements, suffix)
+            (_numFound, _numRecords) = _migrate(s1, s2, query, fq, core, start, _maxRecords, replacements, suffix)
             numFound = _numFound
             start += _numRecords
             numRecords += _numRecords
@@ -50,7 +51,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
             for i in range(MAX_RECORDS_PER_REQUEST):
                 if start < numFound and numRecords < maxRecords:
                     try:
-                        (_numFound, _numRecords) = _migrate(s1, s2, query, core, start, 1, replacements, suffix)
+                        (_numFound, _numRecords) = _migrate(s1, s2, query, fq, core, start, 1, replacements, suffix)
                     except Exception as e:
                         print 'ERROR: %s' % e
                     start += 1
@@ -68,12 +69,15 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, start=
     logging.info("Total number of records migrated: %s" % numRecords)
     logging.info("Total elapsed time: %s" % (t2-t1))
     
-def _migrate(s1, s2, query, core, start, howManyMax, replacements, suffix):
+def _migrate(s1, s2, query, fq, core, start, howManyMax, replacements, suffix):
     '''Migrates 'howManyMax' records starting at 'start'.'''
     
     logging.debug("Request: start record=%s max records per request=%s" % (start, howManyMax) )
     
-    response = s1.select(query, start=start, rows=howManyMax)
+    fquery=[] # empty
+    if fq is not None:
+        fquery = [fq]
+    response = s1.select(query, start=start, rows=howManyMax, fq=fquery)
     _numFound = response.numFound
     _numRecords = len(response.results)
     
