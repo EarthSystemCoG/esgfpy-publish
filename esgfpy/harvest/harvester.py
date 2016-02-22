@@ -82,6 +82,13 @@ def _query_solr_stats(solr_base_url, core, query, fq):
     # return output
     return [counts, timestamp_min, timestamp_max, timestamp_mean]
 
+def delete_solr_records(solr_base_url, core, query):
+    
+    solr_url = solr_base_url +"/" + core
+    solr_server = solr.Solr(solr_url)
+    solr_server.delete_query(query)
+    #solr_server.optimize()
+
 def main():
 
     # parameters
@@ -101,8 +108,14 @@ def main():
     else:
         
         # use largest possible datetime interval
-        datetime_max = dateutil.parser.parse(max(timestamp_max1, timestamp_max2))  
-        datetime_min = dateutil.parser.parse(min(timestamp_min1, timestamp_min2))
+        if timestamp_max2 is not None:
+            datetime_max = dateutil.parser.parse(max(timestamp_max1, timestamp_max2))  
+        else:
+            datetime_max = dateutil.parser.parse(timestamp_max1)
+        if timestamp_min2 is not None:
+            datetime_min = dateutil.parser.parse(min(timestamp_min1, timestamp_min2))
+        else:
+            datetime_min = dateutil.parser.parse(timestamp_min1)
         logging.info("Syncing the Solr servers between overall time interval: start=%s stop= %s " % (datetime_min, datetime_max))
     
         # loop backward one day at a time
@@ -129,6 +142,12 @@ def main():
             # migrate records source_solr --> target_solr
             if not sync_status:
                 logging.info("\tMUST EXECUTE SYNCHRONIZATON: between times start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, counts1, counts2))
+                
+                # first delete all records in timestamp bin from target solr
+                delete_query = "(%s)AND(%s)" % (index_query, timestamp_query)
+                delete_solr_records(target_solr_base_url, 'datasets', delete_query)
+                
+                # then migrate records from source solr
                 migrate(source_solr_base_url, target_solr_base_url, core='datasets', query=index_query, fq=timestamp_query)
         
     
