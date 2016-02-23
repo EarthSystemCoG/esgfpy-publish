@@ -20,14 +20,6 @@ CORE_FILES = 'files'
 CORE_AGGREGATIONS = 'aggregations'
 TIMEDELTA = timedelta(seconds=1) # FIXME
 
-
-def delete_solr_records(solr_base_url, core, query):
-    
-    solr_url = solr_base_url +"/" + core
-    solr_server = solr.Solr(solr_url)
-    solr_server.delete_query(query)
-    #solr_server.optimize()
-
 def sync_solrs(source_solr_base_url, target_solr_base_url, core=None, query=DEFAULT_QUERY):
     '''Method to sync two Solr servers.'''
     
@@ -139,6 +131,11 @@ def _query_solr_stats(solr_base_url, core, query, fq):
     # return output
     return [counts, timestamp_min, timestamp_max, timestamp_mean]
 
+def delete_solr_records(solr_base_url, core=None, query=DEFAULT_QUERY):
+    
+    solr_url = (solr_base_url +"/" + core if core is not None else solr_base_url)
+    solr_server = solr.Solr(solr_url)
+    solr_server.delete_query(query)
         
 if __name__ == '__main__':
     
