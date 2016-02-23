@@ -4,15 +4,18 @@ Created on Feb 22, 2016
 @author: cinquini
 '''
 
-import solr
 import logging
+logging.basicConfig(level=logging.INFO)
+
+import solr
 import urllib, urllib2
 import json
 import dateutil.parser
 from datetime import timedelta
 from esgfpy.migrate.solr2solr import migrate
 
-logging.basicConfig(level=logging.DEBUG)
+
+
 
 DEFAULT_QUERY = "*:*"
 CORE_DATASETS = 'datasets'
@@ -47,7 +50,7 @@ class Harvester(object):
                 datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
             else:
                 datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
-            logging.info("Syncing the Solr servers between overall time interval: start=%s stop= %s " % (datetime_min, datetime_max))
+            logging.info("Syncing Solrs: full time interval start=%s stop= %s " % (datetime_min, datetime_max))
         
             # loop backward one TIMEDELTA at a time
             datetime_stop = datetime_max
@@ -67,7 +70,7 @@ class Harvester(object):
                 
                 # migrate records source_solr --> target_solr
                 if not retDict['status']:
-                    logging.info("\tMUST EXECUTE SYNCHRONIZATON between times start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, 
+                    logging.info("\tSyncing Solrs: time bin start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, 
                                                                                                                                       retDict['source']['counts'], retDict['target']['counts']))
                     
                     # first delete all records in timestamp bin from target solr
@@ -76,6 +79,13 @@ class Harvester(object):
                     
                     # then migrate records from source solr
                     migrate(source_solr_base_url, target_solr_base_url, core=CORE_DATASETS, query=query, fq=timestamp_query)
+                    
+                    # check global sync again to determine whether the process can be stopped
+                    retDict = self._check_sync(core=core, query=query)
+                    if retDict['status']:
+                        logging.info("Solr servers are now in sync, no further time bin synchronization is necessary")
+                        break # out of the time bin loop
+                    
         
     def _check_sync(self, core=None, query=DEFAULT_QUERY, fq="_timestamp:[* TO *]"):
         '''
