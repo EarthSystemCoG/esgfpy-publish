@@ -30,23 +30,22 @@ def delete_solr_records(solr_base_url, core, query):
 def sync_solrs(source_solr_base_url, target_solr_base_url, core=None, query=DEFAULT_QUERY):
     '''Method to sync two Solr servers.'''
     
-    [sync_status, counts1, timestamp_min1, timestamp_max1, timestamp_mean1, 
-                  counts2, timestamp_min2, timestamp_max2, timestamp_mean2] = check_sync(source_solr_base_url, target_solr_base_url, core=core, query=index_query)
+    retDict = check_sync(source_solr_base_url, target_solr_base_url, core=core, query=index_query)
     
-    if sync_status:
+    if retDict['status']:
         logging.info("Solr servers are in sync, no further action necessary")
         
     else:
         
         # use largest possible datetime interval
-        if timestamp_max2 is not None:
-            datetime_max = dateutil.parser.parse(max(timestamp_max1, timestamp_max2))  
+        if retDict['target']['timestamp_max'] is not None:
+            datetime_max = dateutil.parser.parse(max(retDict['source']['timestamp_max'], retDict['target']['timestamp_max']))  
         else:
-            datetime_max = dateutil.parser.parse(timestamp_max1)
-        if timestamp_min2 is not None:
-            datetime_min = dateutil.parser.parse(min(timestamp_min1, timestamp_min2))
+            datetime_max = dateutil.parser.parse(retDict['source']['timestamp_max'])
+        if retDict['target']['timestamp_min'] is not None:
+            datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
         else:
-            datetime_min = dateutil.parser.parse(timestamp_min1)
+            datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
         logging.info("Syncing the Solr servers between overall time interval: start=%s stop= %s " % (datetime_min, datetime_max))
     
         # loop backward one day at a time
@@ -67,12 +66,12 @@ def sync_solrs(source_solr_base_url, target_solr_base_url, core=None, query=DEFA
             #logging.info('Using datetime ISO strings start=%s and stop=%s' % (datetime_start_string, datetime_stop_string))
             timestamp_query = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
             
-            [sync_status, counts1, timestamp_min1, timestamp_max1, timestamp_mean1, 
-                          counts2, timestamp_min2, timestamp_max2, timestamp_mean2]= check_sync(source_solr_base_url, target_solr_base_url, core=core, query=index_query, fq=timestamp_query)
+            retDict = check_sync(source_solr_base_url, target_solr_base_url, core=core, query=index_query, fq=timestamp_query)
             
             # migrate records source_solr --> target_solr
-            if not sync_status:
-                logging.info("\tMUST EXECUTE SYNCHRONIZATON: between times start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, counts1, counts2))
+            if not retDict['status']:
+                logging.info("\tMUST EXECUTE SYNCHRONIZATON: between times start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, 
+                                                                                                                                  retDict['source']['counts'], retDict['target']['counts']))
                 
                 # first delete all records in timestamp bin from target solr
                 delete_query = "(%s)AND(%s)" % (index_query, timestamp_query)
@@ -90,10 +89,15 @@ def check_sync(source_solr_base_url, target_solr_base_url, core=None, query=DEFA
     [counts1, timestamp_min1, timestamp_max1, timestamp_mean1] = _query_solr_stats(source_solr_base_url, core, query, fq)
     [counts2, timestamp_min2, timestamp_max2, timestamp_mean2] = _query_solr_stats(target_solr_base_url, core, query, fq)
     
+    retDict = { 'source': {'counts':counts1, 'timestamp_min':timestamp_min1, 'timestamp_max':timestamp_max1, 'timestamp_mean':timestamp_mean1 },
+                'target': {'counts':counts2, 'timestamp_min':timestamp_min2, 'timestamp_max':timestamp_max2, 'timestamp_mean':timestamp_mean2 }  }
+    
     if counts1==counts2 and timestamp_min1 == timestamp_min2 and timestamp_max1==timestamp_max2 and timestamp_mean1 == timestamp_mean2:
-        return [True,  counts1, timestamp_min1, timestamp_max1, timestamp_mean1, counts2, timestamp_min2, timestamp_max2, timestamp_mean2]
+        retDict['status'] = True
     else:
-        return [False, counts1, timestamp_min1, timestamp_max1, timestamp_mean1, counts2, timestamp_min2, timestamp_max2, timestamp_mean2]
+        retDict['status'] = False
+    
+    return retDict
     
 def _query_solr_stats(solr_base_url, core, query, fq):
     '''Query Solr stats.
