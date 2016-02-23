@@ -14,23 +14,77 @@ from esgfpy.migrate.solr2solr import migrate
 
 logging.basicConfig(level=logging.DEBUG)
 
-def query_solrxx(solr_base_url, core, query, rows=0, start=0, fq=None):
+DEFAULT_QUERY = "*:*"
+CORE_DATASETS = 'datasets'
+CORE_FILES = 'files'
+CORE_AGGREGATIONS = 'aggregations'
+
+
+def delete_solr_records(solr_base_url, core, query):
     
-    solr_url = solr_base_url + '/' + core
+    solr_url = solr_base_url +"/" + core
     solr_server = solr.Solr(solr_url)
-    #params = { 'stats':'true', 'stats_field':'_timestamp' }
-    logging.debug("Solr query: %s/select?q=%s&fq=%s&rows=%s&start=%s" % (solr_url, query, fq[0], rows, start))
-    response = solr_server.select(query, rows=rows, start=start, fq=fq)
-    #print response
-    #print response['stats']
-    return response.numFound
+    solr_server.delete_query(query)
+    #solr_server.optimize()
 
-
-
-def solr_are_synced(source_solr_base_url, target_solr_base_url, core, query="*:*", fq="_timestamp:[* TO *]"):
+def sync_solrs(source_solr_base_url, target_solr_base_url, core=None, query=DEFAULT_QUERY):
+    '''Method to sync two Solr servers.'''
+    
+    [sync_status, counts1, timestamp_min1, timestamp_max1, timestamp_mean1, 
+                  counts2, timestamp_min2, timestamp_max2, timestamp_mean2] = check_sync(source_solr_base_url, target_solr_base_url, core=core, query=index_query)
+    
+    if sync_status:
+        logging.info("Solr servers are in sync, no further action necessary")
+        
+    else:
+        
+        # use largest possible datetime interval
+        if timestamp_max2 is not None:
+            datetime_max = dateutil.parser.parse(max(timestamp_max1, timestamp_max2))  
+        else:
+            datetime_max = dateutil.parser.parse(timestamp_max1)
+        if timestamp_min2 is not None:
+            datetime_min = dateutil.parser.parse(min(timestamp_min1, timestamp_min2))
+        else:
+            datetime_min = dateutil.parser.parse(timestamp_min1)
+        logging.info("Syncing the Solr servers between overall time interval: start=%s stop= %s " % (datetime_min, datetime_max))
+    
+        # loop backward one day at a time
+        datetime_stop = datetime_max
+        datetime_start = datetime_max
+        #datetime_start = datetime_max - timedelta(days=1)
+        while datetime_stop > datetime_min:
+            
+            datetime_stop = datetime_start
+            datetime_start = datetime_stop - timedelta(seconds=1) # FIXME: use days
+            logging.debug("Checking Solr synchronization within time bin from: %s to: %s" % (datetime_start, datetime_stop))
+            
+            # use specific time limits
+            datetime_start_string = datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            datetime_stop_string = datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            #datetime_start_string = datetime_start.isoformat()
+            #datetime_stop_string = datetime_stop.isoformat()
+            #logging.info('Using datetime ISO strings start=%s and stop=%s' % (datetime_start_string, datetime_stop_string))
+            timestamp_query = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
+            
+            [sync_status, counts1, timestamp_min1, timestamp_max1, timestamp_mean1, 
+                          counts2, timestamp_min2, timestamp_max2, timestamp_mean2]= check_sync(source_solr_base_url, target_solr_base_url, core=core, query=index_query, fq=timestamp_query)
+            
+            # migrate records source_solr --> target_solr
+            if not sync_status:
+                logging.info("\tMUST EXECUTE SYNCHRONIZATON: between times start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, counts1, counts2))
+                
+                # first delete all records in timestamp bin from target solr
+                delete_query = "(%s)AND(%s)" % (index_query, timestamp_query)
+                delete_solr_records(target_solr_base_url, 'datasets', delete_query)
+                
+                # then migrate records from source solr
+                migrate(source_solr_base_url, target_solr_base_url, core='datasets', query=index_query, fq=timestamp_query)
+        
+def check_sync(source_solr_base_url, target_solr_base_url, core=None, query=DEFAULT_QUERY, fq="_timestamp:[* TO *]"):
     '''
-    Determines whether two Solr servers are synchronized between the given datetimes, 
-    or over all times if no specific datetimes are provided
+    Method to assert whether two Solr servers are synchronized between the datetimes included in the query, 
+    or over all times if no specific datetime query is provided.
     '''
             
     [counts1, timestamp_min1, timestamp_max1, timestamp_mean1] = _query_solr_stats(source_solr_base_url, core, query, fq)
@@ -82,79 +136,14 @@ def _query_solr_stats(solr_base_url, core, query, fq):
     # return output
     return [counts, timestamp_min, timestamp_max, timestamp_mean]
 
-def delete_solr_records(solr_base_url, core, query):
-    
-    solr_url = solr_base_url +"/" + core
-    solr_server = solr.Solr(solr_url)
-    solr_server.delete_query(query)
-    #solr_server.optimize()
-
-def main():
-
-    # parameters
-    source_index_node = 'esgf-node.jpl.nasa.gov'
-    source_solr_base_url = 'http://%s/solr' % source_index_node
-    target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
-    
-    core = 'datasets'
-    index_query = 'index_node:%s' % source_index_node
-    
-    [sync_status, counts1, timestamp_min1, timestamp_max1, timestamp_mean1, 
-                  counts2, timestamp_min2, timestamp_max2, timestamp_mean2] = solr_are_synced(source_solr_base_url, target_solr_base_url, core, index_query)
-    
-    if sync_status:
-        logging.info("Solr servers are in sync, no further action necessary")
         
-    else:
-        
-        # use largest possible datetime interval
-        if timestamp_max2 is not None:
-            datetime_max = dateutil.parser.parse(max(timestamp_max1, timestamp_max2))  
-        else:
-            datetime_max = dateutil.parser.parse(timestamp_max1)
-        if timestamp_min2 is not None:
-            datetime_min = dateutil.parser.parse(min(timestamp_min1, timestamp_min2))
-        else:
-            datetime_min = dateutil.parser.parse(timestamp_min1)
-        logging.info("Syncing the Solr servers between overall time interval: start=%s stop= %s " % (datetime_min, datetime_max))
-    
-        # loop backward one day at a time
-        datetime_stop = datetime_max
-        datetime_start = datetime_max
-        #datetime_start = datetime_max - timedelta(days=1)
-        while datetime_stop > datetime_min:
-            
-            datetime_stop = datetime_start
-            datetime_start = datetime_stop - timedelta(seconds=1) # FIXME: use days
-            logging.debug("Checking Solr synchronization within time bin from: %s to: %s" % (datetime_start, datetime_stop))
-            
-            # use specific time limits
-            datetime_start_string = datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-            datetime_stop_string = datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-            #datetime_start_string = datetime_start.isoformat()
-            #datetime_stop_string = datetime_stop.isoformat()
-            #logging.info('Using datetime ISO strings start=%s and stop=%s' % (datetime_start_string, datetime_stop_string))
-            timestamp_query = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
-            
-            [sync_status, counts1, timestamp_min1, timestamp_max1, timestamp_mean1, 
-                          counts2, timestamp_min2, timestamp_max2, timestamp_mean2]= solr_are_synced(source_solr_base_url, target_solr_base_url, core, query=index_query, fq=timestamp_query)
-            
-            # migrate records source_solr --> target_solr
-            if not sync_status:
-                logging.info("\tMUST EXECUTE SYNCHRONIZATON: between times start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, counts1, counts2))
-                
-                # first delete all records in timestamp bin from target solr
-                delete_query = "(%s)AND(%s)" % (index_query, timestamp_query)
-                delete_solr_records(target_solr_base_url, 'datasets', delete_query)
-                
-                # then migrate records from source solr
-                migrate(source_solr_base_url, target_solr_base_url, core='datasets', query=index_query, fq=timestamp_query)
-        
-    
-    #last_day = 0
-    #fq = "_timestamp:[%s-%sDAY TO %s-%sDAY]" % (timestamp_max1, (last_day+1), timestamp_max1, last_day)
-    #source_counts = query_solr(source_solr_base_url, core, query, fq=fq)
-    #print 'SOURCE COUNTS=%s' % source_counts
-    
 if __name__ == '__main__':
-    main()
+    
+    #  arguments
+    source_solr_base_url = 'http://esgf-node.jpl.nasa.gov/solr'
+    target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
+    source_index_node = 'esgf-node.jpl.nasa.gov'
+    core = CORE_DATASETS
+    index_query = 'index_node:%s' % source_index_node
+
+    sync_solrs(source_solr_base_url, target_solr_base_url, core=core, query=index_query)
