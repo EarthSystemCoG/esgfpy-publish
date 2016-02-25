@@ -5,7 +5,7 @@ Created on Feb 22, 2016
 '''
 
 import logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 import solr
 import urllib, urllib2
@@ -14,14 +14,11 @@ import dateutil.parser
 from datetime import timedelta
 from esgfpy.migrate.solr2solr import migrate
 
-
-
-
 DEFAULT_QUERY = "*:*"
 CORE_DATASETS = 'datasets'
 CORE_FILES = 'files'
 CORE_AGGREGATIONS = 'aggregations'
-TIMEDELTA = timedelta(seconds=1) # FIXME
+TIMEDELTA = timedelta(minutes=1) # FIXME
 
 class Harvester(object):
     '''Class that harvests records from a source Solr server into a target Solr server.'''
@@ -74,11 +71,15 @@ class Harvester(object):
                                                                                                                                       retDict['source']['counts'], retDict['target']['counts']))
                     
                     # first delete all records in timestamp bin from target solr
+                    # will NOT commit the changes yet
                     delete_query = "(%s)AND(%s)" % (query, timestamp_query)
                     self._delete_solr_records(target_solr_base_url, 'datasets', delete_query)
                     
                     # then migrate records from source solr
-                    migrate(source_solr_base_url, target_solr_base_url, core=CORE_DATASETS, query=query, fq=timestamp_query)
+                    # commit the changes after all these records have been migrated
+                    # do NOT optimize the index yet
+                    migrate(source_solr_base_url, target_solr_base_url, core=CORE_DATASETS, query=query, fq=timestamp_query,
+                            commit=True, optimize=False)
                     
                     # check global sync again to determine whether the process can be stopped
                     retDict = self._check_sync(core=core, query=query)
@@ -86,7 +87,10 @@ class Harvester(object):
                         logging.info("Solr servers are now in sync, no further time bin synchronization is necessary")
                         break # out of the time bin loop
                     
-        
+            # optimize the target index
+            self._optimize_solr(self.target_solr_base_url, core=CORE_DATASETS)
+            
+            
     def _check_sync(self, core=None, query=DEFAULT_QUERY, fq="_timestamp:[* TO *]"):
         '''
         Method that asserts whether the source and target Solrs are synchronized between the datetimes included in the query, 
@@ -154,6 +158,16 @@ class Harvester(object):
         solr_url = (solr_base_url +"/" + core if core is not None else solr_base_url)
         solr_server = solr.Solr(solr_url)
         solr_server.delete_query(query)
+        solr_server.close()
+        
+    def _optimize_solr(self, solr_base_url, core=None):
+        
+        solr_url = (solr_base_url +"/" + core if core is not None else solr_base_url)
+        logging.info("Optimizing target Solr index: %s" % solr_url
+                     )
+        solr_server = solr.Solr(solr_url)
+        solr_server.optimize()
+        solr_server.close()
         
 if __name__ == '__main__':
     

@@ -16,7 +16,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=None,
             start=0, maxRecords=MAX_RECORDS_TOTAL, 
-            replace=None, suffix='', optimize=True):
+            replace=None, suffix='', commit=True, optimize=True):
+    '''
+    By default, it commits the changes and optimizes the index.
+    '''
     
     surl = (sourceSolrUrl +"/" + core if core is not None else sourceSolrUrl)
     turl = (targetSolrUrl +"/" + core if core is not None else targetSolrUrl)
@@ -57,9 +60,12 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=Non
                     start += 1
                     numRecords += 1
         
-    # optimize full index
+    # optimize full index (optimize=True implies commit=True)
     if optimize:
         s2.optimize()
+    # just commit the changes but do not optimize
+    elif commit:
+        s2.commit()
     
     # close connections
     s1.close()
@@ -70,7 +76,11 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=Non
     logging.info("Total elapsed time: %s" % (t2-t1))
     
 def _migrate(s1, s2, query, fq, core, start, howManyMax, replacements, suffix):
-    '''Migrates 'howManyMax' records starting at 'start'.'''
+    '''
+    Migrates 'howManyMax' records starting at 'start'.
+    By default, it commits the changes after this howManyRecords have been migrated,
+    but does NOT optimize the index.
+    '''
     
     logging.debug("Request: start record=%s max records per request=%s" % (start, howManyMax) )
     
@@ -119,7 +129,7 @@ def _migrate(s1, s2, query, fq, core, start, howManyMax, replacements, suffix):
                     except ValueError:
                         result[field] = 0.
     
-    s2.add_many(response.results, commit=True)
+    s2.add_many(response.results, commit=False) # will NOT commit these changes
     
     logging.debug("Response: current number of records=%s total number of records=%s" % (start+_numRecords, _numFound))
     return (_numFound, _numRecords)
