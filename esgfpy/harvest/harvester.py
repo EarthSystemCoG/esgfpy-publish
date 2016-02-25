@@ -18,7 +18,7 @@ DEFAULT_QUERY = "*:*"
 CORE_DATASETS = 'datasets'
 CORE_FILES = 'files'
 CORE_AGGREGATIONS = 'aggregations'
-TIMEDELTA = timedelta(minutes=1) # FIXME
+TIMEDELTA = timedelta(days=1) # FIXME
 
 class Harvester(object):
     '''Class that harvests records from a source Solr server into a target Solr server.'''
@@ -47,7 +47,8 @@ class Harvester(object):
                 datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
             else:
                 datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
-            logging.info("Syncing Solrs: full time interval start=%s stop= %s " % (datetime_min, datetime_max))
+            logging.info("Syncing Solrs: full time interval start=%s stop= %s" % (datetime_min, datetime_max))
+            logging.info("Syncing Solrs: num source records=%s num target records= %s" % (retDict['source']['counts'], retDict['target']['counts']))
         
             # loop backward one TIMEDELTA at a time
             datetime_stop = datetime_max
@@ -172,12 +173,12 @@ class Harvester(object):
 if __name__ == '__main__':
     
     # source and target Solrs
-    source_solr_base_url = 'http://esgf-node.jpl.nasa.gov/solr'
+    source_solr_base_url = 'http://pcmdi.llnl.gov/solr'
     target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
     harvester = Harvester(source_solr_base_url, target_solr_base_url)
     
     # specific query to sub-select the records to sync
-    source_index_node = 'esgf-node.jpl.nasa.gov'
+    source_index_node = 'pcmdi.llnl.gov'
     core = CORE_DATASETS
     index_query = 'index_node:%s' % source_index_node
     harvester.sync(core=core, query=index_query)
