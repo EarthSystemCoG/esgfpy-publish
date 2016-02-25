@@ -15,10 +15,14 @@ from datetime import timedelta
 from esgfpy.migrate.solr2solr import migrate
 
 DEFAULT_QUERY = "*:*"
+
 CORE_DATASETS = 'datasets'
 CORE_FILES = 'files'
 CORE_AGGREGATIONS = 'aggregations'
-TIMEDELTA = timedelta(days=1) # FIXME
+#CORES = [CORE_DATASETS, CORE_FILES, CORE_AGGREGATIONS]
+CORES = [CORE_DATASETS, CORE_FILES] # FIXME
+
+TIMEDELTA = timedelta(days=1) 
 
 class Harvester(object):
     '''Class that harvests records from a source Solr server into a target Solr server.'''
@@ -28,68 +32,96 @@ class Harvester(object):
         self.source_solr_base_url = source_solr_base_url
         self.target_solr_base_url = target_solr_base_url
 
-    def sync(self, core=None, query=DEFAULT_QUERY):
+    def sync(self, query=DEFAULT_QUERY):
         '''Main method to sync from the source Solr to the target Solr.'''
         
-        retDict = self._check_sync(core=core, query=query)
+        # flag to trigger commit/harvest
+        synced = False
+        numRecordsSynced = { CORE_DATASETS:0, CORE_FILES:0, CORE_AGGREGATIONS: 0}
         
-        if retDict['status']:
-            logging.info("Solr servers are in sync, no further action necessary")
+        for core in CORES:
             
-        else:
+            retDict = self._check_sync(core=core, query=query)
             
-            # use largest possible datetime interval
-            if retDict['target']['timestamp_max'] is not None:
-                datetime_max = dateutil.parser.parse(max(retDict['source']['timestamp_max'], retDict['target']['timestamp_max']))  
+            if retDict['status']:
+                logging.info("Solr cores '%s' are in sync, no further action necessary" % core)
+                
             else:
-                datetime_max = dateutil.parser.parse(retDict['source']['timestamp_max'])
-            if retDict['target']['timestamp_min'] is not None:
-                datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
-            else:
-                datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
-            logging.info("Syncing Solrs: full time interval start=%s stop= %s" % (datetime_min, datetime_max))
-            logging.info("Syncing Solrs: num source records=%s num target records= %s" % (retDict['source']['counts'], retDict['target']['counts']))
+                
+                # must issue commit/optimize before existing
+                synced = True
+                
+                # use largest possible datetime interval
+                if retDict['target']['timestamp_max'] is not None:
+                    datetime_max = dateutil.parser.parse(max(retDict['source']['timestamp_max'], retDict['target']['timestamp_max']))  
+                else:
+                    datetime_max = dateutil.parser.parse(retDict['source']['timestamp_max'])
+                if retDict['target']['timestamp_min'] is not None:
+                    datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
+                else:
+                    datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
+                
+                # enlarge [datetime_min, datetime_max] to an integer number of days
+                datetime_max = datetime_max + TIMEDELTA
+                datetime_max = datetime_max.replace(hour=0, minute=0, second=0, microsecond=0) # beginning of next day
+                datetime_min = datetime_min.replace(hour=0, minute=0, second=0, microsecond=0) # beginning of that day
+                logging.info("Syncing Solr core %s: full time interval start=%s stop= %s" % (core, datetime_min, datetime_max))
+                logging.info("Syncing Solr core %s: num source records=%s num target records= %s" % (core, retDict['source']['counts'], retDict['target']['counts']))
+            
+                # loop backward one TIMEDELTA at a time
+                datetime_stop = datetime_max
+                datetime_start = datetime_max
+                while datetime_stop > datetime_min:
+                    
+                    datetime_stop = datetime_start
+                    datetime_start = datetime_stop - TIMEDELTA
+                    logging.debug("Checking Solr core=%s synchronization within time bin from: %s to: %s" % (core, datetime_start, datetime_stop))
+                    
+                    # use specific time limits
+                    datetime_start_string = datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                    datetime_stop_string = datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                    timestamp_query = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
+                    
+                    retDict = self._check_sync(core=core, query=query, fq=timestamp_query)
+                    
+                    # migrate records source_solr --> target_solr
+                    if not retDict['status']:
+                        logging.info("\tSyncing Solr core=%s: time bin start=%s stop=%s source counts=%s target counts=%s" % (core, 
+                                                                                                                              datetime_start_string, datetime_stop_string,
+                                                                                                                              retDict['source']['counts'], retDict['target']['counts']))
+                        
+                        # first delete all records in timestamp bin from target solr
+                        # will NOT commit the changes yet
+                        delete_query = "(%s)AND(%s)" % (query, timestamp_query)
+                        self._delete_solr_records(target_solr_base_url, core, delete_query)
+                        
+                        # then migrate records from source solr
+                        # do NOT commit changes untill all cores are processed
+                        # do NOT optimize the index yet
+                        numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query,
+                                             commit=False, optimize=False)
+                        numRecordsSynced[core] += numRecords
+                        
+                        # check global sync again to determine whether the process can be stopped
+                        retDict = self._check_sync(core=core, query=query)
+                        if retDict['status']:
+                            logging.info("Solr servers are now in sync, no further time bin synchronization is necessary")
+                            break # out of the time bin loop
+                        
+        # if any synchronization took place
+        if synced:
+            
+            # commit changes and optimize the target index
+            self._commit_solr(self.target_solr_base_url)
+            self._optimize_solr(self.target_solr_base_url)
         
-            # loop backward one TIMEDELTA at a time
-            datetime_stop = datetime_max
-            datetime_start = datetime_max
-            while datetime_stop > datetime_min:
-                
-                datetime_stop = datetime_start
-                datetime_start = datetime_stop - TIMEDELTA
-                logging.debug("Checking Solr synchronization within time bin from: %s to: %s" % (datetime_start, datetime_stop))
-                
-                # use specific time limits
-                datetime_start_string = datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                datetime_stop_string = datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                timestamp_query = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
-                
-                retDict = self._check_sync(core=core, query=query, fq=timestamp_query)
-                
-                # migrate records source_solr --> target_solr
-                if not retDict['status']:
-                    logging.info("\tSyncing Solrs: time bin start=%s stop=%s source counts=%s target counts=%s" % (datetime_start_string, datetime_stop_string, 
-                                                                                                                                      retDict['source']['counts'], retDict['target']['counts']))
-                    
-                    # first delete all records in timestamp bin from target solr
-                    # will NOT commit the changes yet
-                    delete_query = "(%s)AND(%s)" % (query, timestamp_query)
-                    self._delete_solr_records(target_solr_base_url, 'datasets', delete_query)
-                    
-                    # then migrate records from source solr
-                    # commit the changes after all these records have been migrated
-                    # do NOT optimize the index yet
-                    migrate(source_solr_base_url, target_solr_base_url, core=CORE_DATASETS, query=query, fq=timestamp_query,
-                            commit=True, optimize=False)
-                    
-                    # check global sync again to determine whether the process can be stopped
-                    retDict = self._check_sync(core=core, query=query)
-                    if retDict['status']:
-                        logging.info("Solr servers are now in sync, no further time bin synchronization is necessary")
-                        break # out of the time bin loop
-                    
-            # optimize the target index
-            self._optimize_solr(self.target_solr_base_url, core=CORE_DATASETS)
+            # check status before existing    
+            for core in CORES:
+                logging.info("Core=%s number of records migrated=%s" % (core, numRecordsSynced[core]))
+                retDict = self._check_sync(core=core, query=query)
+                logging.info("Core=%s sync status=%s number of source records=%s number of target records=%s" % (core, retDict['status'], 
+                                                                                                                 retDict['source']['counts'],
+                                                                                                                 retDict['target']['counts']))
             
             
     def _check_sync(self, core=None, query=DEFAULT_QUERY, fq="_timestamp:[* TO *]"):
@@ -161,24 +193,37 @@ class Harvester(object):
         solr_server.delete_query(query)
         solr_server.close()
         
-    def _optimize_solr(self, solr_base_url, core=None):
+    def _optimize_solr(self, solr_base_url):
         
-        solr_url = (solr_base_url +"/" + core if core is not None else solr_base_url)
-        logging.info("Optimizing target Solr index: %s" % solr_url
-                     )
-        solr_server = solr.Solr(solr_url)
-        solr_server.optimize()
-        solr_server.close()
+        for core in CORES:
+        
+            solr_url = solr_base_url +"/" + core
+            logging.info("Optimizing Solr index: %s" % solr_url)
+            solr_server = solr.Solr(solr_url)
+            solr_server.optimize()
+            solr_server.close()
+            
+    def _commit_solr(self, solr_base_url):
+        
+        for core in CORES:
+        
+            solr_url = solr_base_url +"/" + core
+            logging.info("Committing to Solr index: %s" % solr_url)
+            solr_server = solr.Solr(solr_url)
+            solr_server.commit()
+            solr_server.close()
         
 if __name__ == '__main__':
     
     # source and target Solrs
     source_solr_base_url = 'http://pcmdi.llnl.gov/solr'
+    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov/solr'
     target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
     harvester = Harvester(source_solr_base_url, target_solr_base_url)
     
     # specific query to sub-select the records to sync
     source_index_node = 'pcmdi.llnl.gov'
-    core = CORE_DATASETS
+    #source_index_node = 'esgf-node.jpl.nasa.gov'
+    
     index_query = 'index_node:%s' % source_index_node
-    harvester.sync(core=core, query=index_query)
+    harvester.sync(query=index_query)

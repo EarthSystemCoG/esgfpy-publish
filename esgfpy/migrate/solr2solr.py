@@ -75,6 +75,8 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=Non
     logging.info("Total number of records migrated: %s" % numRecords)
     logging.info("Total elapsed time: %s" % (t2-t1))
     
+    return numRecords
+    
 def _migrate(s1, s2, query, fq, core, start, howManyMax, replacements, suffix):
     '''
     Migrates 'howManyMax' records starting at 'start'.
