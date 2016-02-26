@@ -5,7 +5,7 @@ Created on Feb 22, 2016
 '''
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 import solr
 import urllib, urllib2
@@ -22,7 +22,8 @@ CORE_AGGREGATIONS = 'aggregations'
 #CORES = [CORE_DATASETS, CORE_FILES, CORE_AGGREGATIONS]
 CORES = [CORE_DATASETS, CORE_FILES] # FIXME
 
-TIMEDELTA = timedelta(days=1) 
+TIMEDELTA_DAY = timedelta(days=1) 
+TIMEDELTA_HOUR = timedelta(hours=1) 
 
 class Harvester(object):
     '''Class that harvests records from a source Solr server into a target Solr server.'''
@@ -62,51 +63,78 @@ class Harvester(object):
                     datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
                 
                 # enlarge [datetime_min, datetime_max] to an integer number of days
-                datetime_max = datetime_max + TIMEDELTA
+                datetime_max = datetime_max + TIMEDELTA_DAY
                 datetime_max = datetime_max.replace(hour=0, minute=0, second=0, microsecond=0) # beginning of next day
                 datetime_min = datetime_min.replace(hour=0, minute=0, second=0, microsecond=0) # beginning of that day
-                logging.info("Syncing Solr core %s: full time interval start=%s stop= %s" % (core, datetime_min, datetime_max))
-                logging.info("Syncing Solr core %s: num source records=%s num target records= %s" % (core, retDict['source']['counts'], retDict['target']['counts']))
+                logging.info("SYNCING: CORE=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_min, datetime_max,
+                             retDict['source']['counts'], retDict['target']['counts']))
             
                 # loop backward one TIMEDELTA at a time
                 datetime_stop = datetime_max
                 datetime_start = datetime_max
-                while datetime_stop > datetime_min:
+                while datetime_stop > (datetime_min + TIMEDELTA_DAY):
                     
                     datetime_stop = datetime_start
-                    datetime_start = datetime_stop - TIMEDELTA
-                    logging.debug("Checking Solr core=%s synchronization within time bin from: %s to: %s" % (core, datetime_start, datetime_stop))
-                    
+                    datetime_start = datetime_stop - TIMEDELTA_DAY  
+                    logging.info("\tDAY check: start=%s stop=%s" % (datetime_start, datetime_stop))
+                  
+
                     # use specific time limits
                     datetime_start_string = datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
                     datetime_stop_string = datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                    timestamp_query = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
+                    timestamp_query_day = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
                     
-                    retDict = self._check_sync(core=core, query=query, fq=timestamp_query)
+                    retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
                     
                     # migrate records source_solr --> target_solr
                     if not retDict['status']:
-                        logging.info("\tSyncing Solr core=%s: time bin start=%s stop=%s source counts=%s target counts=%s" % (core, 
-                                                                                                                              datetime_start_string, datetime_stop_string,
-                                                                                                                              retDict['source']['counts'], retDict['target']['counts']))
+                        logging.info("\tDAY sync=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_start, datetime_stop,
+                                     retDict['source']['counts'], retDict['target']['counts']))
                         
-                        # first delete all records in timestamp bin from target solr
-                        # will NOT commit the changes yet
-                        delete_query = "(%s)AND(%s)" % (query, timestamp_query)
-                        self._delete_solr_records(target_solr_base_url, core, delete_query)
+                        # divide into one-hour bins
+                        _datetime_stop = datetime_stop
+                        _datetime_start = datetime_stop
+                        while _datetime_stop > (datetime_start + TIMEDELTA_HOUR):
+                            
+                            _datetime_stop = _datetime_start
+                            _datetime_start = _datetime_stop - TIMEDELTA_HOUR
+                            logging.info("\t\tHOUR check start=%s stop=%s" % (_datetime_start, _datetime_stop))
+                            
+                            # use specific time limits
+                            _datetime_start_string = _datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                            _datetime_stop_string = _datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                            timestamp_query_hour = "_timestamp:[%s TO %s]" % (_datetime_start_string, _datetime_stop_string)
+                            
+                            retDict = self._check_sync(core=core, query=query, fq=timestamp_query_hour)
+                            
+                            # migrate records source_solr --> target_solr
+                            if not retDict['status']:
+                                logging.info("\t\tHOUR sync=%s start=%s stop=%s # records=%s --> %s" % (core, _datetime_start, _datetime_stop,
+                                             retDict['source']['counts'], retDict['target']['counts']))
+
+                                # first delete all records in timestamp bin from target solr
+                                # will NOT commit the changes yet
+                                delete_query = "(%s)AND(%s)" % (query, timestamp_query_hour)
+                                #FIXME self._delete_solr_records(target_solr_base_url, core, delete_query)
+                                
+                                # then migrate records from source solr
+                                # do NOT commit changes untill all cores are processed
+                                # do NOT optimize the index yet
+                                #FIXME numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query_hour,
+                                #                     commit=False, optimize=False)
+                                #numRecordsSynced[core] += numRecords
+                                
+                                # check day sync again to determine whether the hour loop can be stopped
+                                retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
+                                if retDict['status']:
+                                    logging.info("\tSolr servers are now in sync for time interval: %s" % timestamp_query_day)
+                                    break # out of the hour bin loop
                         
-                        # then migrate records from source solr
-                        # do NOT commit changes untill all cores are processed
-                        # do NOT optimize the index yet
-                        numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query,
-                                             commit=False, optimize=False)
-                        numRecordsSynced[core] += numRecords
-                        
-                        # check global sync again to determine whether the process can be stopped
+                        # check global sync again to determine whether the day loop can be stopped
                         retDict = self._check_sync(core=core, query=query)
                         if retDict['status']:
                             logging.info("Solr servers are now in sync, no further time bin synchronization is necessary")
-                            break # out of the time bin loop
+                            break # out of the day bin loop
                         
         # if any synchronization took place
         if synced:
