@@ -104,6 +104,7 @@ class AcosLiteFileParser_v35r02(HdfMetadataFileParser):
     def matches(self, filepath):
         '''Example filename: acos_b35_L2lite_20140607_r02.nc'''
         
+        print '\nTRYING TO MATCH'
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_LITE_PATTERN_V35R02, filename)
     

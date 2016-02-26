@@ -96,7 +96,9 @@ if __name__ == '__main__':
                           # acos_b34_L2lite_20130129_r02c.nc
                           "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc",
                           # acos_b34_L2lite_20100327_r03n.nc
-                          "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc",                          
+                          "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc",        
+                          # acos_b35_L2lite_20140607_r02.nc
+                          "acos_b35_L2lite_(?P<yyyymmdd>\d+)_r02.nc",
                           # AIRS.2010.01.01.031.L2.CO2_Std.v5.4.11.0.CO2.T10034082113.hdf
                           "AIRS\.(?P<yyyy>\d+)\.(?P<mm>\d+)\.(?P<dd>\d+)\..+\.hdf",
                           # TES-Aura_L2-CO2-Nadir_r0000015508_C01_F07_10.he5
