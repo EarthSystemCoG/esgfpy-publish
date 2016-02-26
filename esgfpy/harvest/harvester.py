@@ -12,6 +12,7 @@ import urllib, urllib2
 import json
 import dateutil.parser
 from datetime import timedelta
+from monthdelta import monthdelta
 from esgfpy.migrate.solr2solr import migrate
 
 DEFAULT_QUERY = "*:*"
@@ -22,6 +23,7 @@ CORE_AGGREGATIONS = 'aggregations'
 #CORES = [CORE_DATASETS, CORE_FILES, CORE_AGGREGATIONS]
 CORES = [CORE_DATASETS, CORE_FILES] # FIXME
 
+TIMEDELTA_MONTH = monthdelta(1)
 TIMEDELTA_DAY = timedelta(days=1) 
 TIMEDELTA_HOUR = timedelta(hours=1) 
 
@@ -40,6 +42,7 @@ class Harvester(object):
         synced = False
         numRecordsSynced = { CORE_DATASETS:0, CORE_FILES:0, CORE_AGGREGATIONS: 0}
         
+        # loop over cores
         for core in CORES:
             
             retDict = self._check_sync(core=core, query=query)
@@ -52,79 +55,95 @@ class Harvester(object):
                 # must issue commit/optimize before existing
                 synced = True
                 
-                # use largest possible datetime interval
-                if retDict['target']['timestamp_max'] is not None:
-                    datetime_max = dateutil.parser.parse(max(retDict['source']['timestamp_max'], retDict['target']['timestamp_max']))  
-                else:
-                    datetime_max = dateutil.parser.parse(retDict['source']['timestamp_max'])
-                if retDict['target']['timestamp_min'] is not None:
-                    datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
-                else:
-                    datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
-                
-                # enlarge [datetime_min, datetime_max] to an integer number of days
-                datetime_max = datetime_max + TIMEDELTA_DAY
-                datetime_max = datetime_max.replace(hour=0, minute=0, second=0, microsecond=0) # beginning of next day
-                datetime_min = datetime_min.replace(hour=0, minute=0, second=0, microsecond=0) # beginning of that day
+                # 0) full datetime interval to synchronize
+                (datetime_min, datetime_max) = self._get_sync_datetime_interval(retDict)
                 logging.info("SYNCING: CORE=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_min, datetime_max,
                              retDict['source']['counts'], retDict['target']['counts']))
             
-                # loop backward one TIMEDELTA at a time
-                datetime_stop = datetime_max
-                datetime_start = datetime_max
-                while datetime_stop > (datetime_min + TIMEDELTA_DAY):
+                # 1) loop over MONTHS
+                datetime_stop_month = datetime_max
+                datetime_start_month = datetime_max
+                while datetime_stop_month > (datetime_min + TIMEDELTA_MONTH):
                     
-                    datetime_stop = datetime_start
-                    datetime_start = datetime_stop - TIMEDELTA_DAY  
-                    logging.info("\tDAY check: start=%s stop=%s" % (datetime_start, datetime_stop))
-                  
+                    datetime_stop_month = datetime_start_month
+                    datetime_start_month = datetime_stop_month - TIMEDELTA_MONTH  
+                    logging.info("\tMONTH check: start=%s stop=%s" % (datetime_start_month, datetime_stop_month))
 
                     # use specific time limits
-                    datetime_start_string = datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                    datetime_stop_string = datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                    timestamp_query_day = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
-                    
-                    retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
-                    
+                    datetime_start_mpnth_string = datetime_start_month.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                    datetime_stop__month_string = datetime_stop_month.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                    timestamp_query_month = "_timestamp:[%s TO %s]" % (datetime_start_mpnth_string, datetime_stop__month_string)
+
+                    retDict = self._check_sync(core=core, query=query, fq=timestamp_query_month)
+                        
                     # migrate records source_solr --> target_solr
                     if not retDict['status']:
-                        logging.info("\tDAY sync=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_start, datetime_stop,
+                        logging.info("\tMONTH sync=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_start_month, datetime_stop_month,
                                      retDict['source']['counts'], retDict['target']['counts']))
-                        
-                        # divide into one-hour bins
-                        _datetime_stop = datetime_stop
-                        _datetime_start = datetime_stop
-                        while _datetime_stop > (datetime_start + TIMEDELTA_HOUR):
+
+                
+                        # 2) loop over DAYS
+                        datetime_stop_day = datetime_stop_month
+                        datetime_start_day = datetime_stop_month
+                        while datetime_stop_day > (datetime_start_month + TIMEDELTA_DAY):
                             
-                            _datetime_stop = _datetime_start
-                            _datetime_start = _datetime_stop - TIMEDELTA_HOUR
-                            logging.info("\t\tHOUR check start=%s stop=%s" % (_datetime_start, _datetime_stop))
-                            
+                            datetime_stop_day = datetime_start_day
+                            datetime_start_day = datetime_stop_day - TIMEDELTA_DAY  
+                            logging.info("\t\tDAY check: start=%s stop=%s" % (datetime_start_day, datetime_stop_day))
+                          
                             # use specific time limits
-                            _datetime_start_string = _datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                            _datetime_stop_string = _datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                            timestamp_query_hour = "_timestamp:[%s TO %s]" % (_datetime_start_string, _datetime_stop_string)
+                            datetime_start_day_string = datetime_start_day.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                            datetime_stop_day_string = datetime_stop_day.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                            timestamp_query_day = "_timestamp:[%s TO %s]" % (datetime_start_day_string, datetime_stop_day_string)
                             
-                            retDict = self._check_sync(core=core, query=query, fq=timestamp_query_hour)
+                            retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
                             
                             # migrate records source_solr --> target_solr
                             if not retDict['status']:
-                                logging.info("\t\tHOUR sync=%s start=%s stop=%s # records=%s --> %s" % (core, _datetime_start, _datetime_stop,
+                                logging.info("\t\tDAY sync=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_start_day, datetime_stop_day,
                                              retDict['source']['counts'], retDict['target']['counts']))
                                 
-                                #FIXME numRecordsSynced[core] += self._sync_records(core, query, timestamp_query_hour)
+                                # 3) loop over HOURS
+                                datetime_stop_hour = datetime_stop_day
+                                datetime_start_hour = datetime_stop_day
+                                while datetime_stop_hour > (datetime_start_day + TIMEDELTA_HOUR):
+                                    
+                                    datetime_stop_hour = datetime_start_hour
+                                    datetime_start_hour = datetime_stop_hour - TIMEDELTA_HOUR
+                                    logging.info("\t\t\tHOUR check start=%s stop=%s" % (datetime_start_hour, datetime_stop_hour))
+                                    
+                                    # use specific time limits
+                                    datetime_start_hour_string = datetime_start_hour.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                                    datetime_stop_hour_string = datetime_stop_hour.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                                    timestamp_query_hour = "_timestamp:[%s TO %s]" % (datetime_start_hour_string, datetime_stop_hour_string)
+                                    
+                                    retDict = self._check_sync(core=core, query=query, fq=timestamp_query_hour)
+                                    
+                                    # migrate records source_solr --> target_solr
+                                    if not retDict['status']:
+                                        logging.info("\t\t\tHOUR sync=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_start_hour, datetime_stop_hour,
+                                                     retDict['source']['counts'], retDict['target']['counts']))
+                                        
+                                        numRecordsSynced[core] += self._sync_records(core, query, timestamp_query_hour)
+                                        
+                                        # check DAY sync again to determine whether the hour loop can be stopped
+                                        retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
+                                        if retDict['status']:
+                                            logging.info("\t\tSolr servers are now in sync for DAY: %s" % timestamp_query_day)
+                                            break # out of the HOUR bin loop
                                 
-                                # check day sync again to determine whether the hour loop can be stopped
-                                retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
+                                # check MONTH sync again to determine whether the day loop can be stopped
+                                retDict = self._check_sync(core=core, query=query, fq=timestamp_query_month)
                                 if retDict['status']:
-                                    logging.info("\tSolr servers are now in sync for time interval: %s" % timestamp_query_day)
-                                    break # out of the hour bin loop
-                        
-                        # check global sync again to determine whether the day loop can be stopped
-                        retDict = self._check_sync(core=core, query=query)
-                        if retDict['status']:
-                            logging.info("Solr servers are now in sync, no further time bin synchronization is necessary")
-                            break # out of the day bin loop
+                                    logging.info("\tSolr servers are now in sync for MONTH: %s" % timestamp_query_month)
+                                    break # out of the DAY bin loop
+                            
+                            # check FULL sync again to determine whether the day loop can be stopped
+                            retDict = self._check_sync(core=core, query=query)
+                            if retDict['status']:
+                                logging.info("Solr servers are now in sync for FULL DATETIME INTERVAL")
+                                break # out of the MONTH bin loop
+
                         
         # if any synchronization took place
         if synced:
@@ -141,7 +160,28 @@ class Harvester(object):
                                                                                                                  retDict['source']['counts'],
                                                                                                                  retDict['target']['counts']))
             
-            
+     
+    def _get_sync_datetime_interval(self, retDict):
+        '''Method to compute the full datetime interval over which to wynchornize the two Solrs.'''
+        
+        # use largest possible datetime interval
+        if retDict['target']['timestamp_max'] is not None:
+            datetime_max = dateutil.parser.parse(max(retDict['source']['timestamp_max'], retDict['target']['timestamp_max']))  
+        else:
+            datetime_max = dateutil.parser.parse(retDict['source']['timestamp_max'])
+        if retDict['target']['timestamp_min'] is not None:
+            datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
+        else:
+            datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
+        
+        # enlarge [datetime_min, datetime_max] to an integer number of months
+        datetime_max = datetime_max + TIMEDELTA_MONTH
+        datetime_max = datetime_max.replace(day=1, hour=0, minute=0, second=0, microsecond=0) # beginning of month after datetime_max
+        datetime_min = datetime_min.replace(day=1, hour=0, minute=0, second=0, microsecond=0) # beginning of datetime_min month
+
+        return (datetime_min, datetime_max)
+
+        
     def _check_sync(self, core=None, query=DEFAULT_QUERY, fq="_timestamp:[* TO *]"):
         '''
         Method that asserts whether the source and target Solrs are synchronized between the datetimes included in the query, 
@@ -217,6 +257,7 @@ class Harvester(object):
         # do NOT optimize the index yet
         numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query,
                              commit=False, optimize=False)
+        logging.info("\t\t\tNumber or records migrated=%s" % numRecords)
         return numRecords
 
 
