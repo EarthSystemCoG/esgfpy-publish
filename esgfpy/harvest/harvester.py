@@ -20,8 +20,7 @@ DEFAULT_QUERY = "*:*"
 CORE_DATASETS = 'datasets'
 CORE_FILES = 'files'
 CORE_AGGREGATIONS = 'aggregations'
-#CORES = [CORE_DATASETS, CORE_FILES, CORE_AGGREGATIONS]
-CORES = [CORE_DATASETS, CORE_FILES] # FIXME
+CORES = [CORE_DATASETS, CORE_FILES, CORE_AGGREGATIONS]
 
 TIMEDELTA_MONTH = monthdelta(1)
 TIMEDELTA_DAY = timedelta(days=1) 
@@ -273,9 +272,9 @@ class Harvester(object):
                 numDatasets += migrate(source_solr_base_url, target_solr_base_url, CORE_DATASETS, query='id:%s' % source_dataset_id,
                                        commit=True, optimize=False)
                 numFiles += migrate(source_solr_base_url, target_solr_base_url, CORE_FILES, query='dataset_id:%s' % source_dataset_id,
-                                       commit=True, optimize=False)
-                #FIXMEnumAggregations += migrate(source_solr_base_url, target_solr_base_url, CORE_AGGREGATIONS, query='dataset_id:%s' % source_dataset_id,
-                #                       commit=True, optimize=False)
+                                    commit=True, optimize=False)
+                numAggregations += migrate(source_solr_base_url, target_solr_base_url, CORE_AGGREGATIONS, query='dataset_id:%s' % source_dataset_id,
+                                           commit=True, optimize=False)
         
         # synchronize target Solr <-- source Solr
         # must delete datasets that do NOT exist at the source
@@ -287,7 +286,7 @@ class Harvester(object):
                     logging.info("\t\t\t\tDeleting dataset=%s" % target_dataset_id)
                     self._delete_solr_records(self.target_solr_base_url, core=CORE_DATASETS, query='id:%s' % target_dataset_id)
                     self._delete_solr_records(self.target_solr_base_url, core=CORE_FILES, query='dataset_id:%s' % target_dataset_id)
-                    #FIXME self._delete_solr_records(self.target_solr_base_url, core=CORE_AGGREGATIONS, query='dataset_id:%s' % target_dataset_id)
+                    self._delete_solr_records(self.target_solr_base_url, core=CORE_AGGREGATIONS, query='dataset_id:%s' % target_dataset_id)
                     
         return (numDatasets, numFiles, numAggregations)
     
@@ -334,8 +333,6 @@ class Harvester(object):
         solr_url = solr_base_url +"/" + core
         solr_server = solr.Solr(solr_url)
         response = solr_server.select(query, start=0, rows=MAX_DATASETS_PER_HOUR, fq=timestamp_query, fl=["id", "_timestamp"])
-        # FIXME
-        print 'numFound=%s' % response.numFound
         for result in response.results:
             datasets[result['id']] = result['_timestamp']
         solr_server.close()
