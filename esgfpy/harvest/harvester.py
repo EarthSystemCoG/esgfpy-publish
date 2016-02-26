@@ -335,7 +335,7 @@ class Harvester(object):
         solr_server = solr.Solr(solr_url)
         response = solr_server.select(query, start=0, rows=MAX_DATASETS_PER_HOUR, fq=timestamp_query, fl=["id", "_timestamp"])
         # FIXME
-        print 'numFound=%s' % int( response['numFound'] )
+        print 'numFound=%s' % int( response.response['numFound'] )
         for result in response.results:
             datasets[result['id']] = result['_timestamp']
         solr_server.close()
