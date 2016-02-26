@@ -21,11 +21,12 @@ CORE_DATASETS = 'datasets'
 CORE_FILES = 'files'
 CORE_AGGREGATIONS = 'aggregations'
 #CORES = [CORE_DATASETS, CORE_FILES, CORE_AGGREGATIONS]
-CORES = [CORE_DATASETS, CORE_FILES] # FIXME
+CORES = [CORE_DATASETS] # FIXME
 
 TIMEDELTA_MONTH = monthdelta(1)
 TIMEDELTA_DAY = timedelta(days=1) 
 TIMEDELTA_HOUR = timedelta(hours=1) 
+MAX_DATASETS_PER_HOUR = 10000
 
 class Harvester(object):
     '''Class that harvests records from a source Solr server into a target Solr server.'''
@@ -124,7 +125,10 @@ class Harvester(object):
                                         logging.info("\t\t\tHOUR sync=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_start_hour, datetime_stop_hour,
                                                      retDict['source']['counts'], retDict['target']['counts']))
                                         
-                                        numRecordsSynced[core] += self._sync_records(core, query, timestamp_query_hour)
+                                        (numDatasets, numFiles, numAggregations) = self._sync_records(core, query, timestamp_query_hour)
+                                        numRecordsSynced[CORE_DATASETS] += numDatasets
+                                        numRecordsSynced[CORE_FILES] += numFiles
+                                        numRecordsSynced[CORE_AGGREGATIONS] += numAggregations
                                         
                                         # check DAY sync again to determine whether the hour loop can be stopped
                                         retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
@@ -247,6 +251,45 @@ class Harvester(object):
     def _sync_records(self, core, query, timestamp_query):
         '''Method that performs the actual synchronization of records within a given time interval.'''
         
+        # number of records copied from source Solr --> target Solr
+        numDatasets = 0
+        numFiles = 0
+        numAggregations = 0
+        
+        # query for dataset ids from source, target Solrs
+        source_dataset_ids = self._query_dataset_ids(self.source_solr_base_url, CORE_DATASETS, query, timestamp_query)
+        target_dataset_ids = self._query_dataset_ids(self.target_solr_base_url, CORE_DATASETS, query, timestamp_query)
+        
+        # synchronize source Solr --> target Solr
+        # commit after every core query
+        for source_dataset_id in source_dataset_ids.keys():
+            if source_dataset_id not in target_dataset_ids or source_dataset_ids[source_dataset_id] != target_dataset_ids[source_dataset_id]:
+                logging.info("\t\t\t\tCopying source dataset=%s" % source_dataset_id)
+                
+                numDatasets += migrate(source_solr_base_url, target_solr_base_url, CORE_DATASETS, query='id:%s' % source_dataset_id,
+                                       commit=True, optimize=False)
+                numFiles += migrate(source_solr_base_url, target_solr_base_url, CORE_FILES, query='dataset_id:%s' % source_dataset_id,
+                                       commit=True, optimize=False)
+                #FIXMEnumAggregations += migrate(source_solr_base_url, target_solr_base_url, CORE_AGGREGATIONS, query='dataset_id:%s' % source_dataset_id,
+                #                       commit=True, optimize=False)
+        
+        # synchronize target Solr <-- source Solr
+        # must delete datasets that do NOT exist at the source
+        for target_dataset_id in target_dataset_ids.keys():
+            if not target_dataset_id in source_dataset_ids:
+                # check wether dataset still exists at the source: if yes, it will be updated; if not, must delete
+                exists = self._check_record(self.source_solr_base_url, CORE_DATASETS, target_dataset_id)
+                if not exists:
+                    logging.info("\t\t\t\tDeleting dataset=%s" % target_dataset_id)
+                    self._delete_solr_records(self.target_solr_base_url, core=CORE_DATASETS, query='id:%s' % target_dataset_id)
+                    self._delete_solr_records(self.target_solr_base_url, core=CORE_FILES, query='dataset_id:%s' % target_dataset_id)
+                    #FIXME self._delete_solr_records(self.target_solr_base_url, core=CORE_AGGREGATIONS, query='dataset_id:%s' % target_dataset_id)
+                    
+        return (numDatasets, numFiles, numAggregations)
+        
+    def _sync_records_bulk(self, core, query, timestamp_query):
+        '''Method that performs the actual synchronization of records within a given time interval.'''
+        
         # first delete all records in timestamp bin from target solr
         # will NOT commit the changes yet
         delete_query = "(%s)AND(%s)" % (query, timestamp_query)
@@ -267,6 +310,18 @@ class Harvester(object):
         solr_server = solr.Solr(solr_url)
         solr_server.delete_query(query)
         solr_server.close()
+        
+    def _query_dataset_ids(self, solr_base_url, core, query, timestamp_query):
+        '''Method to query for dataset ids within a given datetime interval.'''
+        
+        datasets = {}
+        solr_url = solr_base_url +"/" + core
+        solr_server = solr.Solr(solr_url)
+        response = solr_server.select(query, start=0, rows=MAX_DATASETS_PER_HOUR, fq=timestamp_query, fl=["id", "_timestamp"])
+        for result in response.results:
+            datasets[result['id']] = result['_timestamp']
+        solr_server.close()
+        return datasets
         
     def _optimize_solr(self, solr_base_url):
         
