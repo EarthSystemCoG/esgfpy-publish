@@ -15,6 +15,8 @@ FILENAME_PATTERN_V33 = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Production_.+\.h5"
 FILENAME_PATTERN_V34 = "acos_L2s_(?P<yymmdd>\d+)_\d\d_Evaluation_.+\.h5"
 FILENAME_LITE_PATTERN_V34R02 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r02c.nc"
 FILENAME_LITE_PATTERN_V34R03 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc"
+# acos_b35_L2lite_20140607_r02.nc
+FILENAME_LITE_PATTERN_V35R02 = "acos_b35_L2lite_(?P<yyyymmdd>\d+)_r02.nc"
 
 class AcosFileParser(HdfMetadataFileParser):
     '''Works for: ACOSv3.3, ACOSv3.4_r01, ACOSv3.4_r02.'''
@@ -82,6 +84,28 @@ class AcosLiteFileParser_v34r03(HdfMetadataFileParser):
         
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_LITE_PATTERN_V34R03, filename)
+    
+    def getLatitudes(self, h5file):
+        return h5file['latitude'][:]
+
+    def getLongitudes(self, h5file):
+        return h5file['longitude'][:]
+    
+    def getTimes(self, h5file):
+                
+        datasetTimes = []
+        times = h5file['time'][:]
+        for time in times:
+            datasetTimes.append( dt.datetime.utcfromtimestamp(time) )
+        return np.asarray( datasetTimes )
+    
+class AcosLiteFileParser_v35r02(HdfMetadataFileParser):
+    
+    def matches(self, filepath):
+        '''Example filename: acos_b35_L2lite_20140607_r02.nc'''
+        
+        dir, filename = os.path.split(filepath)
+        return re.match(FILENAME_LITE_PATTERN_V35R02, filename)
     
     def getLatitudes(self, h5file):
         return h5file['latitude'][:]

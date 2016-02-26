@@ -30,7 +30,7 @@ from esgfpy.publish.utils import str2bool
 import sys, os
 import ConfigParser
 import logging
-from esgfpy.publish.parsers import (AcosFileParser, AcosLiteFileParser_v34r03,
+from esgfpy.publish.parsers import (AcosFileParser, AcosLiteFileParser_v34r03, AcosLiteFileParser_v35r02,
                                     Oco2L2StdFileParser, Oco2LtCO2FileParser, Oco2LtSIFFileParser,
                                     TesFileParser, AirsFileParser)
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
                                                     maxDaysPast=maxDaysPast
                                                     )
     # use special list of metadata parsers
-    myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(), AcosFileParser(),
+    myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(), AcosLiteFileParser_v35r02(), AcosFileParser(),
                                            Oco2L2StdFileParser(), Oco2LtCO2FileParser(), Oco2LtSIFFileParser(),
                                            TesFileParser(),
                                            AirsFileParser() ]
