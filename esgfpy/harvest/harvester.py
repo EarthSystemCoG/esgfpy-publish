@@ -299,7 +299,7 @@ class Harvester(object):
         query = "id:%s" % id
         response = solr_server.select(query)
         solr_server.close()
-        if int( response['numFound'] ) > 0:
+        if response.numFound > 0:
             return True
         else:
             return False
@@ -335,7 +335,7 @@ class Harvester(object):
         solr_server = solr.Solr(solr_url)
         response = solr_server.select(query, start=0, rows=MAX_DATASETS_PER_HOUR, fq=timestamp_query, fl=["id", "_timestamp"])
         # FIXME
-        print 'numFound=%s' % int( response.response['numFound'] )
+        print 'numFound=%s' % response.numFound
         for result in response.results:
             datasets[result['id']] = result['_timestamp']
         solr_server.close()
