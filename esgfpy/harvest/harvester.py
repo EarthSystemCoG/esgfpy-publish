@@ -290,7 +290,20 @@ class Harvester(object):
                     #FIXME self._delete_solr_records(self.target_solr_base_url, core=CORE_AGGREGATIONS, query='dataset_id:%s' % target_dataset_id)
                     
         return (numDatasets, numFiles, numAggregations)
+    
+    def check_record(self, solr_base_url, core, id):
+        '''Check for the existence of a record with a given id.'''
         
+        solr_url = solr_base_url +"/" + core
+        solr_server = solr.Solr(solr_url)
+        query = "id:%s" % id
+        response = solr_server.select(query)
+        solr_server.close()
+        if int( response['numFound'] ) > 0:
+            return True
+        else:
+            return False
+
     def _sync_records_by_time(self, core, query, timestamp_query):
         '''Method that executes synchronization of all records for a given core within given time interval.'''
         
@@ -321,6 +334,8 @@ class Harvester(object):
         solr_url = solr_base_url +"/" + core
         solr_server = solr.Solr(solr_url)
         response = solr_server.select(query, start=0, rows=MAX_DATASETS_PER_HOUR, fq=timestamp_query, fl=["id", "_timestamp"])
+        # FIXME
+        print 'numFound=%s' % int( response['numFound'] )
         for result in response.results:
             datasets[result['id']] = result['_timestamp']
         solr_server.close()
