@@ -111,18 +111,8 @@ class Harvester(object):
                             if not retDict['status']:
                                 logging.info("\t\tHOUR sync=%s start=%s stop=%s # records=%s --> %s" % (core, _datetime_start, _datetime_stop,
                                              retDict['source']['counts'], retDict['target']['counts']))
-
-                                # first delete all records in timestamp bin from target solr
-                                # will NOT commit the changes yet
-                                delete_query = "(%s)AND(%s)" % (query, timestamp_query_hour)
-                                #FIXME self._delete_solr_records(target_solr_base_url, core, delete_query)
                                 
-                                # then migrate records from source solr
-                                # do NOT commit changes untill all cores are processed
-                                # do NOT optimize the index yet
-                                #FIXME numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query_hour,
-                                #                     commit=False, optimize=False)
-                                #numRecordsSynced[core] += numRecords
+                                #FIXME numRecordsSynced[core] += self._sync_records(core, query, timestamp_query_hour)
                                 
                                 # check day sync again to determine whether the hour loop can be stopped
                                 retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
@@ -213,6 +203,22 @@ class Harvester(object):
         
         # return output
         return [counts, timestamp_min, timestamp_max, timestamp_mean]
+    
+    def _sync_records(self, core, query, timestamp_query):
+        '''Method that performs the actual synchronization of records within a given time interval.'''
+        
+        # first delete all records in timestamp bin from target solr
+        # will NOT commit the changes yet
+        delete_query = "(%s)AND(%s)" % (query, timestamp_query)
+        self._delete_solr_records(target_solr_base_url, core, delete_query)
+        
+        # then migrate records from source solr
+        # do NOT commit changes untill all cores are processed
+        # do NOT optimize the index yet
+        numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query,
+                             commit=False, optimize=False)
+        return numRecords
+
 
     def _delete_solr_records(self, solr_base_url, core=None, query=DEFAULT_QUERY):
         
