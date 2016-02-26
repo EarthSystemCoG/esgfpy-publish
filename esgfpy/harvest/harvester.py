@@ -21,7 +21,7 @@ CORE_DATASETS = 'datasets'
 CORE_FILES = 'files'
 CORE_AGGREGATIONS = 'aggregations'
 #CORES = [CORE_DATASETS, CORE_FILES, CORE_AGGREGATIONS]
-CORES = [CORE_DATASETS] # FIXME
+CORES = [CORE_DATASETS, CORE_FILES] # FIXME
 
 TIMEDELTA_MONTH = monthdelta(1)
 TIMEDELTA_DAY = timedelta(days=1) 
@@ -125,11 +125,17 @@ class Harvester(object):
                                         logging.info("\t\t\tHOUR sync=%s start=%s stop=%s # records=%s --> %s" % (core, datetime_start_hour, datetime_stop_hour,
                                                      retDict['source']['counts'], retDict['target']['counts']))
                                         
-                                        (numDatasets, numFiles, numAggregations) = self._sync_records(core, query, timestamp_query_hour)
-                                        numRecordsSynced[CORE_DATASETS] += numDatasets
-                                        numRecordsSynced[CORE_FILES] += numFiles
-                                        numRecordsSynced[CORE_AGGREGATIONS] += numAggregations
+                                        # synchornize by dataset id
+                                        if core == CORE_DATASETS:
+                                            (numDatasets, numFiles, numAggregations) = self._sync_records_by_id(core, query, timestamp_query_hour)
+                                            numRecordsSynced[CORE_DATASETS] += numDatasets
+                                            numRecordsSynced[CORE_FILES] += numFiles
+                                            numRecordsSynced[CORE_AGGREGATIONS] += numAggregations
                                         
+                                        # synchronize by datetime interval
+                                        else:
+                                            numRecordsSynced[core] += self._sync_records_by_time(core, query, timestamp_query_hour)
+                                            
                                         # check DAY sync again to determine whether the hour loop can be stopped
                                         retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
                                         if retDict['status']:
@@ -248,8 +254,11 @@ class Harvester(object):
         # return output
         return [counts, timestamp_min, timestamp_max, timestamp_mean]
     
-    def _sync_records(self, core, query, timestamp_query):
-        '''Method that performs the actual synchronization of records within a given time interval.'''
+    def _sync_records_by_id(self, core, query, timestamp_query):
+        '''
+        Method that executes synchronization of all cores based on the dataset id 
+        (within a given time interval).
+        '''
         
         # number of records copied from source Solr --> target Solr
         numDatasets = 0
@@ -287,8 +296,8 @@ class Harvester(object):
                     
         return (numDatasets, numFiles, numAggregations)
         
-    def _sync_records_bulk(self, core, query, timestamp_query):
-        '''Method that performs the actual synchronization of records within a given time interval.'''
+    def _sync_records_by_time(self, core, query, timestamp_query):
+        '''Method that executes synchronization of all records for a given core within given time interval.'''
         
         # first delete all records in timestamp bin from target solr
         # will NOT commit the changes yet
@@ -296,10 +305,9 @@ class Harvester(object):
         self._delete_solr_records(target_solr_base_url, core, delete_query)
         
         # then migrate records from source solr
-        # do NOT commit changes untill all cores are processed
-        # do NOT optimize the index yet
+        # commit but do NOT optimize the index yet
         numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query,
-                             commit=False, optimize=False)
+                             commit=True, optimize=False)
         logging.info("\t\t\tNumber or records migrated=%s" % numRecords)
         return numRecords
 
