@@ -72,8 +72,8 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=Non
     s2.close()
     
     t2 = datetime.datetime.now()
-    logging.info("Total number of records migrated: %s" % numRecords)
-    logging.info("Total elapsed time: %s" % (t2-t1))
+    logging.debug("Total number of records migrated: %s" % numRecords)
+    logging.debug("Total elapsed time: %s" % (t2-t1))
     
     return numRecords
     

@@ -69,11 +69,7 @@ class Harvester(object):
                     datetime_stop_month = datetime_start_month
                     datetime_start_month = datetime_stop_month - TIMEDELTA_MONTH  
                     logging.info("\tMONTH check: start=%s stop=%s" % (datetime_start_month, datetime_stop_month))
-
-                    # use specific time limits
-                    datetime_start_mpnth_string = datetime_start_month.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                    datetime_stop__month_string = datetime_stop_month.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                    timestamp_query_month = "_timestamp:[%s TO %s]" % (datetime_start_mpnth_string, datetime_stop__month_string)
+                    timestamp_query_month = self._get_timestamp_query(datetime_start_month, datetime_stop_month)
 
                     retDict = self._check_sync(core=core, query=query, fq=timestamp_query_month)
                         
@@ -91,11 +87,7 @@ class Harvester(object):
                             datetime_stop_day = datetime_start_day
                             datetime_start_day = datetime_stop_day - TIMEDELTA_DAY  
                             logging.info("\t\tDAY check: start=%s stop=%s" % (datetime_start_day, datetime_stop_day))
-                          
-                            # use specific time limits
-                            datetime_start_day_string = datetime_start_day.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                            datetime_stop_day_string = datetime_stop_day.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                            timestamp_query_day = "_timestamp:[%s TO %s]" % (datetime_start_day_string, datetime_stop_day_string)
+                            timestamp_query_day = self._get_timestamp_query(datetime_start_day, datetime_stop_day)
                             
                             retDict = self._check_sync(core=core, query=query, fq=timestamp_query_day)
                             
@@ -112,12 +104,8 @@ class Harvester(object):
                                     datetime_stop_hour = datetime_start_hour
                                     datetime_start_hour = datetime_stop_hour - TIMEDELTA_HOUR
                                     logging.info("\t\t\tHOUR check start=%s stop=%s" % (datetime_start_hour, datetime_stop_hour))
-                                    
-                                    # use specific time limits
-                                    datetime_start_hour_string = datetime_start_hour.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                                    datetime_stop_hour_string = datetime_stop_hour.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-                                    timestamp_query_hour = "_timestamp:[%s TO %s]" % (datetime_start_hour_string, datetime_stop_hour_string)
-                                    
+                                    timestamp_query_hour = self._get_timestamp_query(datetime_start_hour, datetime_stop_hour)
+                                     
                                     retDict = self._check_sync(core=core, query=query, fq=timestamp_query_hour)
                                     
                                     # migrate records source_solr --> target_solr
@@ -191,6 +179,13 @@ class Harvester(object):
 
         return (datetime_min, datetime_max)
 
+    def _get_timestamp_query(self, datetime_start, datetime_stop):
+        '''Builds the Solr timestamp query between a start, stop datetime.'''
+        
+        datetime_start_string = datetime_start.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        datetime_stop_string = datetime_stop.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+        timestamp_query = "_timestamp:[%s TO %s]" % (datetime_start_string, datetime_stop_string)
+        return timestamp_query
         
     def _check_sync(self, core=None, query=DEFAULT_QUERY, fq="_timestamp:[* TO *]"):
         '''
