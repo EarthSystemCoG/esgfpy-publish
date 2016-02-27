@@ -63,7 +63,7 @@ class Harvester(object):
                 # 1) loop over MONTHS
                 datetime_stop_month = datetime_max
                 datetime_start_month = datetime_max
-                while datetime_stop_month > (datetime_min + TIMEDELTA_MONTH):
+                while datetime_stop_month >= (datetime_min + TIMEDELTA_MONTH):
                     
                     datetime_stop_month = datetime_start_month
                     datetime_start_month = datetime_stop_month - TIMEDELTA_MONTH  
@@ -81,7 +81,7 @@ class Harvester(object):
                         # 2) loop over DAYS
                         datetime_stop_day = datetime_stop_month
                         datetime_start_day = datetime_stop_month
-                        while datetime_stop_day > (datetime_start_month + TIMEDELTA_DAY):
+                        while datetime_stop_day >= (datetime_start_month + TIMEDELTA_DAY):
                             
                             datetime_stop_day = datetime_start_day
                             datetime_start_day = datetime_stop_day - TIMEDELTA_DAY  
@@ -98,7 +98,7 @@ class Harvester(object):
                                 # 3) loop over HOURS
                                 datetime_stop_hour = datetime_stop_day
                                 datetime_start_hour = datetime_stop_day
-                                while datetime_stop_hour > (datetime_start_day + TIMEDELTA_HOUR):
+                                while datetime_stop_hour >= (datetime_start_day + TIMEDELTA_HOUR):
                                     
                                     datetime_stop_hour = datetime_start_hour
                                     datetime_start_hour = datetime_stop_hour - TIMEDELTA_HOUR
@@ -360,15 +360,20 @@ class Harvester(object):
         
 if __name__ == '__main__':
     
-    # source and target Solrs
-    source_solr_base_url = 'http://pcmdi.llnl.gov/solr'
-    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov/solr'
-    target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
-    harvester = Harvester(source_solr_base_url, target_solr_base_url)
+    # source Solr, index_node
     
-    # specific query to sub-select the records to sync
-    source_index_node = 'pcmdi.llnl.gov'
+    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8983/solr'
     #source_index_node = 'esgf-node.jpl.nasa.gov'
     
+    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8985/solr'
+    #source_index_node = 'pcmdi.llnl.gov'
+    
+    source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8986/solr'
+    source_index_node = 'esgf-data.dkrz.de'
+    
+    # target Solr
+    target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
+    
+    harvester = Harvester(source_solr_base_url, target_solr_base_url)
     index_query = 'index_node:%s' % source_index_node
     harvester.sync(query=index_query)
