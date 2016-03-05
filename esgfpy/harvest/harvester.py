@@ -365,11 +365,20 @@ if __name__ == '__main__':
     #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8983/solr'
     #source_index_node = 'esgf-node.jpl.nasa.gov'
     
-    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8985/solr'
-    #source_index_node = 'pcmdi.llnl.gov'
+    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8986/solr'
+    #source_index_node = 'esgf-data.dkrz.de'
+
+    source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8987/solr'
+    source_index_node = 'esg-dn1.nsc.liu.se'
+     
+    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8988/solr'
+    #source_index_node = 'esgf-node.ipsl.upmc.fr'
     
-    source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8986/solr'
-    source_index_node = 'esgf-data.dkrz.de'
+    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8989/solr'
+    #source_index_node = 'esgf-index1.ceda.ac.uk'
+
+    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8990/solr'
+    #source_index_node = 'pcmdi.llnl.gov'
     
     # target Solr
     target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
