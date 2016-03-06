@@ -236,25 +236,29 @@ class Harvester(object):
         response = json.loads(jdoc)
         
         # parse response
-        # convert strings into datetime objects
-        # ignore microseconds for comparison
         # logging.debug("Solr Response: %s" % response)
         counts = response['response']['numFound']
         try:
             timestamp_min = response['stats']['stats_fields']['_timestamp']['min']
-            timestamp_min = dateutil.parser.parse(timestamp_min).replace(microsecond=0)
         except KeyError:
             timestamp_min = None
         try:
             timestamp_max = response['stats']['stats_fields']['_timestamp']['max'] 
-            timestamp_max = dateutil.parser.parse(timestamp_max).replace(microsecond=0)
         except KeyError:
             timestamp_max = None
         try:
             timestamp_mean = response['stats']['stats_fields']['_timestamp']['mean'] 
-            timestamp_mean = dateutil.parser.parse(timestamp_mean).replace(microsecond=0)
         except KeyError:
             timestamp_mean = None
+            
+        # convert strings into datetime objects
+        # ignore microseconds for comparison
+        if timestamp_min is not None:
+            timestamp_min = dateutil.parser.parse(timestamp_min).replace(microsecond=0)
+        if timestamp_max is not None:
+            timestamp_max = dateutil.parser.parse(timestamp_max).replace(microsecond=0)
+        if timestamp_mean is not None:
+            timestamp_mean = dateutil.parser.parse(timestamp_mean).replace(microsecond=0)
             
         # return output
         return [counts, timestamp_min, timestamp_max, timestamp_mean]
