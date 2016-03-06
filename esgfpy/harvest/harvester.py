@@ -5,6 +5,7 @@ Created on Feb 22, 2016
 '''
 
 import logging
+import argparse
 logging.basicConfig(level=logging.INFO)
 
 import solr
@@ -368,29 +369,33 @@ class Harvester(object):
         
 if __name__ == '__main__':
     
-    # source Solr, index_node
+    '''
+    Example invocation:
+    python esgfpy/harvest/harvester.py 'http://esgf-node.jpl.nasa.gov:8983/solr' 'http://esgf-cloud.jpl.nasa.gov:8983/solr' --query 'index_node:esgf-node.jpl.nasa.gov'
     
-    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8983/solr'
-    #source_index_node = 'esgf-node.jpl.nasa.gov'
+    Source Solr URL, index for ESGF-JPL repeaters:
+    http://esgf-node.jpl.nasa.gov:8983/solr --> esgf-node.jpl.nasa.gov
+    http://esgf-node.jpl.nasa.gov:8986/solr --> esgf-data.dkrz.de
+    http://esgf-node.jpl.nasa.gov:8987/solr --> esg-dn1.nsc.liu.se
+    http://esgf-node.jpl.nasa.gov:8988/solr --> esgf-node.ipsl.upmc.fr
+    http://esgf-node.jpl.nasa.gov:8989/solr --> esgf-index1.ceda.ac.uk
+    http://esgf-node.jpl.nasa.gov:8990/solr --> pcmdi.llnl.gov
     
-    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8986/solr'
-    #source_index_node = 'esgf-data.dkrz.de'
-
-    source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8987/solr'
-    source_index_node = 'esg-dn1.nsc.liu.se'
-     
-    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8988/solr'
-    #source_index_node = 'esgf-node.ipsl.upmc.fr'
+    Target SolrURL for ESGF-JPL Solr-Cloud: 
+    http://esgf-cloud.jpl.nasa.gov:8983/solr
     
-    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8989/solr'
-    #source_index_node = 'esgf-index1.ceda.ac.uk'
-
-    #source_solr_base_url = 'http://esgf-node.jpl.nasa.gov:8990/solr'
-    #source_index_node = 'pcmdi.llnl.gov'
+    '''
     
-    # target Solr
-    target_solr_base_url = 'http://esgf-cloud.jpl.nasa.gov:8983/solr'
-    
-    harvester = Harvester(source_solr_base_url, target_solr_base_url)
-    index_query = 'index_node:%s' % source_index_node
-    harvester.sync(query=index_query)
+    # parse command line arguments
+    parser = argparse.ArgumentParser(description="Harvesting tool for ESGF Solr-Cloud")
+    parser.add_argument('source', type=str, 
+                        help="URL of source Solr (example: 'http://esgf-node.jpl.nasa.gov:8983/solr')", default=None)
+    parser.add_argument('target', type=str, 
+                        help="URL of target Solr (example: 'http://esgf-cloud.jpl.nasa.gov:8983/solr')", 
+                        default='http://localhost:8983/solr')
+    parser.add_argument('--query', dest='query', type=str, 
+                        help="Query by index node (example: 'index_node:esgf-node.jpl.nasa.gov'", default=None)
+        
+    args_dict = vars( parser.parse_args() )
+    harvester = Harvester(args_dict['source'], args_dict['target'])
+    harvester.sync(query=args_dict['query'])
