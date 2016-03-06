@@ -195,6 +195,8 @@ class Harvester(object):
                 
         [counts1, timestamp_min1, timestamp_max1, timestamp_mean1] = self._query_solr_stats(self.source_solr_base_url, core, query, fq)
         [counts2, timestamp_min2, timestamp_max2, timestamp_mean2] = self._query_solr_stats(self.target_solr_base_url, core, query, fq)
+        logging.info("SOURCE: counts=%s time stamp min=%s max=%s mean=%s" % (counts1, timestamp_min1, timestamp_max1, timestamp_mean1))
+        logging.info("TARGET: counts=%s time stamp min=%s max=%s mean=%s" % (counts2, timestamp_min2, timestamp_max2, timestamp_mean2))
         
         retDict = { 'source': {'counts':counts1, 'timestamp_min':timestamp_min1, 'timestamp_max':timestamp_max1, 'timestamp_mean':timestamp_mean1 },
                     'target': {'counts':counts2, 'timestamp_min':timestamp_min2, 'timestamp_max':timestamp_max2, 'timestamp_mean':timestamp_mean2 }  }
