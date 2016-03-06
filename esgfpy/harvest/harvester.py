@@ -35,9 +35,12 @@ class Harvester(object):
         
         self.source_solr_base_url = source_solr_base_url
         self.target_solr_base_url = target_solr_base_url
+        logging.info("HARVESTING: %s --> %s" % (source_solr_base_url, target_solr_base_url))
 
     def sync(self, query=DEFAULT_QUERY):
         '''Main method to sync from the source Solr to the target Solr.'''
+        
+        logging.info("Query: %s" % query)
         
         # flag to trigger commit/harvest
         synced = False
