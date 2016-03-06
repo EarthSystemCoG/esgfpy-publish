@@ -167,13 +167,13 @@ class Harvester(object):
         
         # use largest possible datetime interval
         if retDict['target']['timestamp_max'] is not None:
-            datetime_max = dateutil.parser.parse(max(retDict['source']['timestamp_max'], retDict['target']['timestamp_max']))  
+            datetime_max = max(retDict['source']['timestamp_max'], retDict['target']['timestamp_max'])
         else:
-            datetime_max = dateutil.parser.parse(retDict['source']['timestamp_max'])
+            datetime_max = retDict['source']['timestamp_max']
         if retDict['target']['timestamp_min'] is not None:
-            datetime_min = dateutil.parser.parse(min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min']))
+            datetime_min = min(retDict['source']['timestamp_min'], retDict['target']['timestamp_min'])
         else:
-            datetime_min = dateutil.parser.parse(retDict['source']['timestamp_min'])
+            datetime_min = retDict['source']['timestamp_min']
         
         # enlarge [datetime_min, datetime_max] to an integer number of months
         datetime_max = datetime_max + TIMEDELTA_MONTH
