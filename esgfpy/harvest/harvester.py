@@ -40,7 +40,7 @@ class Harvester(object):
     def sync(self, query=DEFAULT_QUERY):
         '''Main method to sync from the source Solr to the target Solr.'''
         
-        logging.info("Query: %s" % query)
+        logging.info("\tQuery: %s" % query)
         
         # flag to trigger commit/harvest
         synced = False
@@ -236,27 +236,26 @@ class Harvester(object):
         response = json.loads(jdoc)
         
         # parse response
-        #logging.debug("Solr Response: %s" % response)
+        # convert strings into datetime objects
+        # ignore microseconds for comparison
+        # logging.debug("Solr Response: %s" % response)
         counts = response['response']['numFound']
         try:
             timestamp_min = response['stats']['stats_fields']['_timestamp']['min']
+            timestamp_min = dateutil.parser.parse(timestamp_min).replace(microsecond=0)
         except KeyError:
             timestamp_min = None
         try:
             timestamp_max = response['stats']['stats_fields']['_timestamp']['max'] 
+            timestamp_max = dateutil.parser.parse(timestamp_max).replace(microsecond=0)
         except KeyError:
             timestamp_max = None
         try:
             timestamp_mean = response['stats']['stats_fields']['_timestamp']['mean'] 
+            timestamp_mean = dateutil.parser.parse(timestamp_mean).replace(microsecond=0)
         except KeyError:
             timestamp_mean = None
             
-        # parse strings into datetime objects
-        # ignore microseconds for comparison
-        timestamp_min = dateutil.parser.parse(timestamp_min).replace(microsecond=0)
-        timestamp_max = dateutil.parser.parse(timestamp_max).replace(microsecond=0)
-        timestamp_mean = dateutil.parser.parse(timestamp_mean).replace(microsecond=0)
-        
         # return output
         return [counts, timestamp_min, timestamp_max, timestamp_mean]
     
@@ -281,11 +280,11 @@ class Harvester(object):
             if source_dataset_id not in target_dataset_ids or source_dataset_ids[source_dataset_id] != target_dataset_ids[source_dataset_id]:
                 logging.info("\t\t\t\tCopying source dataset=%s" % source_dataset_id)
                 
-                numDatasets += migrate(source_solr_base_url, target_solr_base_url, CORE_DATASETS, query='id:%s' % source_dataset_id,
+                numDatasets += migrate(self.source_solr_base_url, self.target_solr_base_url, CORE_DATASETS, query='id:%s' % source_dataset_id,
                                        commit=True, optimize=False)
-                numFiles += migrate(source_solr_base_url, target_solr_base_url, CORE_FILES, query='dataset_id:%s' % source_dataset_id,
+                numFiles += migrate(self.source_solr_base_url, self.target_solr_base_url, CORE_FILES, query='dataset_id:%s' % source_dataset_id,
                                     commit=True, optimize=False)
-                numAggregations += migrate(source_solr_base_url, target_solr_base_url, CORE_AGGREGATIONS, query='dataset_id:%s' % source_dataset_id,
+                numAggregations += migrate(self.source_solr_base_url, self.target_solr_base_url, CORE_AGGREGATIONS, query='dataset_id:%s' % source_dataset_id,
                                            commit=True, optimize=False)
         
         # synchronize target Solr <-- source Solr
@@ -321,11 +320,11 @@ class Harvester(object):
         # first delete all records in timestamp bin from target solr
         # will NOT commit the changes yet
         delete_query = "(%s)AND(%s)" % (query, timestamp_query)
-        self._delete_solr_records(target_solr_base_url, core, delete_query)
+        self._delete_solr_records(self.target_solr_base_url, core, delete_query)
         
         # then migrate records from source solr
         # commit but do NOT optimize the index yet
-        numRecords = migrate(source_solr_base_url, target_solr_base_url, core, query=query, fq=timestamp_query,
+        numRecords = migrate(self.source_solr_base_url, self.target_solr_base_url, core, query=query, fq=timestamp_query,
                              commit=True, optimize=False)
         logging.info("\t\t\tNumber or records migrated=%s" % numRecords)
         return numRecords
