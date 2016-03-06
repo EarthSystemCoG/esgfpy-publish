@@ -5,6 +5,7 @@ Created on Feb 22, 2016
 '''
 
 import logging
+from astropy.units import microsecond
 logging.basicConfig(level=logging.INFO)
 
 import solr
@@ -246,6 +247,12 @@ class Harvester(object):
             timestamp_mean = response['stats']['stats_fields']['_timestamp']['mean'] 
         except KeyError:
             timestamp_mean = None
+            
+        # parse strings into datetime objects
+        # ignore microseconds for comparison
+        timestamp_min = dateutil.parser.parse(timestamp_min).replace(microsecond=0)
+        timestamp_max = dateutil.parser.parse(timestamp_max).replace(microsecond=0)
+        timestamp_mean = dateutil.parser.parse(timestamp_mean).replace(microsecond=0)
         
         # return output
         return [counts, timestamp_min, timestamp_max, timestamp_mean]
