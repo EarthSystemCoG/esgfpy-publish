@@ -66,9 +66,10 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
         params.append( ('fq',query) )
     # retrieve optional fields tor replacement: {'rcm_name':['$experiment'] }
     for fkey, fvals in fieldDict.items():
-        for fval in fvals:
-            if fval[0]=='$':
-                params.append( ('fl',fval[1:])) # '$experiment' --> 'experiment'
+        if fvals is not None:
+            for fval in fvals:
+                if fval[0]=='$':
+                    params.append( ('fl',fval[1:])) # '$experiment' --> 'experiment'
         
     # execute query to Solr
     url = url + "?"+urllib.urlencode(params)
