@@ -39,26 +39,21 @@ def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', 
         logging.info("SOLR QUERY: %s" % query)
         queries = query.split('&')
     
-        # VERY IMPORTANT: MUST FIRST CREATE ALL THE UPDATE DOCUMENTS, 
-        # THEN SENDING THEM WITH A commit=True STATEMENT
-        # OTHERWISE PAGINATION OF RESULTS DOES NOT WORK
-        xmlDocs = [] # list of XML update documents
+        # VERY IMPORTANT: DO NOT COMMIT THE CHANGES UNTIL THE VERY END
+        # OTHERWISE PAGINATION DOES NOT WORK
         start = 0
         numFound = start+1
         while start < numFound:
     
             # query Solr, construct update document
             (xmlDoc, numFound, numRecords) = _buildSolrXml(solr_core_url, queries, fieldDict, update=update, start=start)
-            
-            xmlDocs.append(xmlDoc)
-                        
+            _sendSolrXml(solr_core_url, xmlDoc)
+                                    
             # increase starting record locator
             start += numRecords
 
-        # SEND ALL UPDATES, COMMIT EACH TIME
-        for xmlDoc in xmlDocs:
-            _sendSolrXml(solr_core_url, xmlDoc)
-
+        # commit after each separate query
+        _commit(solr_core_url)
     
 def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
     
@@ -69,6 +64,11 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
               ('start', start), ('rows', MAX_ROWS) ]
     for query in queries:
         params.append( ('fq',query) )
+    # retrieve optional fields tor replacement: {'rcm_name':['$experiment'] }
+    for fkey, fvals in fieldDict.items():
+        for fval in fvals:
+            if fval[0]=='$':
+                params.append( ('fl',fval[1:])) # '$experiment' --> 'experiment'
         
     # execute query to Solr
     url = url + "?"+urllib.urlencode(params)
@@ -100,9 +100,23 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
             
             if fieldValues is not None and len(fieldValues)>0:
                 for fieldValue in fieldValues:
-                    #<field name="xlink" update="set">https://earthsystemcog.org/.../taTechNote_AIRS_L3_RetStd-v5_200209-201105.pdf|AIRS Air Temperature Technical Note|technote</field>
-                    el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
-                    el.text = str(fieldValue)
+                    
+                    # special case: override 'fieldValue' with value(s) from another field
+                    if fieldValue[0]=='$':
+                        _fieldName = fieldValue[1:] # field to copy from
+                        _fieldValues = result.get(_fieldName, None)
+                        if _fieldValues is not None and len(_fieldValues)>0:  
+                            for _fieldValue in _fieldValues:
+                                # <field name="xlink" update="set">https://earthsystemcog.org/.../taTechNote_AIRS_L3_RetStd-v5_200209-201105.pdf|AIRS Air Temperature Technical Note|technote</field>
+                                el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
+                                el.text = _fieldValue
+
+                    # otherwise use the specified value
+                    else:
+                        # <field name="xlink" update="set">https://earthsystemcog.org/.../taTechNote_AIRS_L3_RetStd-v5_200209-201105.pdf|AIRS Air Temperature Technical Note|technote</field>
+                        el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update })
+                        el.text = fieldValue
+                        
             else:
                 # <field name="xlink" update="set" null="true"/>
                 el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update, 'null':'true' })
@@ -116,8 +130,8 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
 def _sendSolrXml(solr_core_url, xmlDoc):
     '''Method to send a Solr/XML update document to a specific Solr server and core.'''
     
-    # update URL
-    url = solr_core_url + '/update?commit=true'
+    # update URL (no commit)
+    url = solr_core_url + '/update'
     
     # send XML document
     r = urllib2.Request(url, data=xmlDoc,
@@ -125,3 +139,18 @@ def _sendSolrXml(solr_core_url, xmlDoc):
     u = urllib2.urlopen(r)
     response = u.read()
     logging.info(response)
+
+
+def _commit(solr_core_url):
+    '''Method to commit the changes.'''
+    
+    # commit URL
+    url = solr_core_url + '/update?commit=true'
+    
+    # send XML document
+    r = urllib2.Request(url)
+    u = urllib2.urlopen(r)
+    response = u.read()
+    logging.info(response)
+
+    
