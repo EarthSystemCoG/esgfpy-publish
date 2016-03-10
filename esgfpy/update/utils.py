@@ -66,7 +66,6 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
     # https://esgf-node.jpl.nasa.gov/solr/datasets/select?q=*%3A*&wt=json&indent=true
     url = solr_core_url + "/select"
     params = [ ('q','*:*'), ('fl', 'id'), ('wt','json'), ('indent','true'),
-              ('fl','index_node'),
               ('start', start), ('rows', MAX_ROWS) ]
     for query in queries:
         params.append( ('fq',query) )
@@ -101,9 +100,6 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
         # <field name="id">obs4MIPs.NASA-JPL.AIRS.mon.v1.taStderr_AIRS_L3_RetStd-v5_200209-201105.nc|esgf-node.jpl.nasa.gov</field>
         el = SubElement(docEl, "field", attrib={ "name": 'id' })
         el.text = str(result['id'])
-        # always add 'index_node' in Solr-Cloud mode
-        el = SubElement(docEl, "field", attrib={ 'name':'index_node', 'update': 'set' })
-        el.text = result['index_node']
 
         # loop over fields to be updates
         for fieldName, fieldValues in fieldDict.items():
@@ -139,6 +135,8 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
 
 def _sendSolrXml(solr_core_url, xmlDoc):
     '''Method to send a Solr/XML update document to a specific Solr server and core.'''
+    
+    print xmlDoc
     
     # update URL (no commit)
     url = solr_core_url + '/update'
