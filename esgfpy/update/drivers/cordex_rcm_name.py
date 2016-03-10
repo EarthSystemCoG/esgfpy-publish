@@ -9,12 +9,22 @@ This script should have NO dependencies beyond the standard Python libraries.
 This script should be executed on the same server that hosts the master Solr shard,
 or a server that has access to that host on port 8984.
 
+Installation:
+
+
+
+
 Suggested execution:
 
 o Stop the ESGF node
 o Backup the master Solr index directory: /esg/solr-index/master-8984
 o Restart the ESGF node
-o Execute the script: python ./cordex_rcm_name.py
+
+o git clone https://github.com/EarthSystemCoG/esgfpy-publish.git
+o cd esgfpy-publish
+o export PYTHONPATH=.:$PYTHONPATH
+o python esgfpy/update/drivers/cordex_rcm_name.py
+
 o Look for changes into the master Solr (port 8984) or wait for the changes to be propagated to the slave Solr (port 8983)
 
 
