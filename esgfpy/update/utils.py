@@ -66,6 +66,7 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
     # https://esgf-node.jpl.nasa.gov/solr/datasets/select?q=*%3A*&wt=json&indent=true
     url = solr_core_url + "/select"
     params = [ ('q','*:*'), ('fl', 'id'), ('wt','json'), ('indent','true'),
+              ('fl','index_node'),
               ('start', start), ('rows', MAX_ROWS) ]
     for query in queries:
         params.append( ('fq',query) )
@@ -126,6 +127,10 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
             else:
                 # <field name="xlink" update="set" null="true"/>
                 el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update, 'null':'true' })
+                
+        # always add 'index_node' in Solr-Cloud mode
+        el = SubElement(docEl, "field", attrib={ 'name':'index_node', 'update': 'set' })
+        el.text = result['index_node']
 
     # serialize document from all queries            
     xmlstr = tostring(rootEl)
