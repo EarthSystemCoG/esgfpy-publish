@@ -9,11 +9,6 @@ This script should have NO dependencies beyond the standard Python libraries.
 This script should be executed on the same server that hosts the master Solr shard,
 or a server that has access to that host on port 8984.
 
-Installation:
-
-
-
-
 Suggested execution:
 
 o Stop the ESGF node
@@ -40,7 +35,7 @@ logging.basicConfig(level=logging.DEBUG)
 SOLR_URL = 'http://localhost:8984/solr'
 
 # dictionary of matching records and metadata fields to be updated
-myDict = {'project:obs4MIPs': {'rcm_name':['$model'], 'model':None } }
+myDict = {'project:CORDEX': {'rcm_name':['$model'], 'model':None } }
 
 # execute the atomi updates
 updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
