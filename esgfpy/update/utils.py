@@ -21,6 +21,11 @@ def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', 
     Note: multiple query constraints can be combined with '&', for example: 'id:obs4MIPs.NASA-JPL.AIRS.mon.v1|esgf-node.jpl.nasa.gov&variable:hus*'
     
     Note: to remove a field, set its value to None or to an empty list, for example: 'xlink':None or 'xlink':[]
+    
+    Note: to transfer the value of field1 to field2, use the special '$' notation: { query: { 'field2':[$field1], ... } }
+    
+    Note: to rename a field, you must first transfer the value to the new field, then delete the old field.
+          Example: {'project:CORDEX': {'rcm_name':['$model'], 'model':None } }
 
     Example of returned document:
     <?xml version="1.0" encoding="UTF-8" standalone="no"?>
