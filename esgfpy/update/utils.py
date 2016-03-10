@@ -101,7 +101,10 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
         # <field name="id">obs4MIPs.NASA-JPL.AIRS.mon.v1.taStderr_AIRS_L3_RetStd-v5_200209-201105.nc|esgf-node.jpl.nasa.gov</field>
         el = SubElement(docEl, "field", attrib={ "name": 'id' })
         el.text = str(result['id'])
-        
+        # always add 'index_node' in Solr-Cloud mode
+        el = SubElement(docEl, "field", attrib={ 'name':'index_node', 'update': 'set' })
+        el.text = result['index_node']
+
         # loop over fields to be updates
         for fieldName, fieldValues in fieldDict.items():
             
@@ -128,10 +131,6 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
                 # <field name="xlink" update="set" null="true"/>
                 el = SubElement(docEl, "field", attrib={ "name": fieldName, 'update': update, 'null':'true' })
                 
-        # always add 'index_node' in Solr-Cloud mode
-        el = SubElement(docEl, "field", attrib={ 'name':'index_node', 'update': 'set' })
-        el.text = result['index_node']
-
     # serialize document from all queries            
     xmlstr = tostring(rootEl)
     logging.debug(xmlstr)
