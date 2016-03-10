@@ -22,6 +22,9 @@ o python esgfpy/update/drivers/cordex_rcm_name.py
 
 o Look for changes into the master Solr (port 8984) or wait for the changes to be propagated to the slave Solr (port 8983)
 
+o Example URL to query Solr before/after running the script:
+
+http://localhost:8984/solr/datasets/select?q=project%3ACORDEX&wt=json&indent=true&facet=true&facet.field=model&facet.field=rcm_name
 
 @author: Luca Cinquini
 '''
