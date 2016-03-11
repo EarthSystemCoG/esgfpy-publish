@@ -33,7 +33,6 @@ import logging
 from esgfpy.publish.parsers import (AcosFileParser, AcosLiteFileParser_v34r03, AcosLiteFileParser_v35r02,
                                     Oco2L2StdFileParser, Oco2LtCO2FileParser, Oco2LtSIFFileParser,
                                     TesFileParser, AirsFileParser)
-from esgfpy.publish.drivers.main_dcmip_2012 import relativeDirectory
 
 logging.basicConfig(level=logging.DEBUG)
 
