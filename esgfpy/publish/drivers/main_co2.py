@@ -33,6 +33,7 @@ import logging
 from esgfpy.publish.parsers import (AcosFileParser, AcosLiteFileParser_v34r03, AcosLiteFileParser_v35r02,
                                     Oco2L2StdFileParser, Oco2LtCO2FileParser, Oco2LtSIFFileParser,
                                     TesFileParser, AirsFileParser)
+from esgfpy.publish.drivers.main_dcmip_2012 import relativeDirectory
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -82,6 +83,12 @@ if __name__ == '__main__':
                       "index_node": [HOSTNAME],
                       "data_node":[HOSTNAME],
                       "processing_level":["L2"] }
+    
+    # add dataset-specific metadata
+    if 'ACOS/3.5_r01' in relativeDirectory:
+        datasetFields['mission'] = 'GOSAT'
+        datasetFields['institute'] = 'NASA/JPL'
+        datasetFields['collection'] = 'ACOSv3.5r01'
 
     # constant file-level metadata
     fileFields = {  "index_node": [HOSTNAME],
