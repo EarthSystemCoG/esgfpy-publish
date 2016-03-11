@@ -85,9 +85,9 @@ if __name__ == '__main__':
     
     # add dataset-specific metadata
     if 'ACOS/3.5_r01' in relativeDirectory:
-        datasetFields['mission'] = 'GOSAT'
-        datasetFields['institute'] = 'NASA/JPL'
-        datasetFields['collection'] = 'ACOSv3.5r01'
+        datasetFields['mission'] = ['GOSAT']
+        datasetFields['institute'] = ['NASA/JPL']
+        datasetFields['collection'] = ['ACOSv3.5r01']
 
     # constant file-level metadata
     fileFields = {  "index_node": [HOSTNAME],
