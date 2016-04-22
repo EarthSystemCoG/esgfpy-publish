@@ -305,7 +305,7 @@ class Harvester(object):
                     
         return (numDatasets, numFiles, numAggregations)
     
-    def check_record(self, solr_base_url, core, id):
+    def _check_record(self, solr_base_url, core, id):
         '''Check for the existence of a record with a given id.'''
         
         solr_url = solr_base_url +"/" + core
