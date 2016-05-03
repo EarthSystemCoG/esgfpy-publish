@@ -19,6 +19,8 @@ myDict = {'id:obs4MIPs.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa.gov':
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/taTechNote_MLS_L3_v03-3x_200408-201012.pdf|MLS Air Temperature Technical Note|technote']},
           'id:obs4MIPs.NASA-JPL.MLS.hus.mon.v20111025|esgf-data.jpl.nasa.gov': 
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/husTechNote_MLS_L3_v03-3x_200408-201012.pdf|MLS Specific Humidity Technical Note|technote']},          
+          'id:obs4MIPs.NASA-JPL.MLS.cli.mon.v20160504|esgf-data.jpl.nasa.gov': 
+            {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/MLS_cloud_ice_content_04_28_2016.pdf|MLS Mass Fraction of Cloud Ice Technical Note|technote']},          
           'id:obs4MIPs.NASA-GSFC.MODIS.clt.mon.v20111130|esgf-data.jpl.nasa.gov': 
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/cltTechNote_MODIS_L3_C5_200003-201109.pdf|MODIS Cloud Fraction Technical Note|technote']},
           'id:obs4MIPs.NASA-JPL.QuikSCAT.sfcWind.mon.v20120411|esgf-data.jpl.nasa.gov': 
@@ -46,6 +48,8 @@ myDict = {'dataset_id:obs4MIPs.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/taTechNote_MLS_L3_v03-3x_200408-201012.pdf|MLS Air Temperature Technical Note|technote']},
           'dataset_id:obs4MIPs.NASA-JPL.MLS.hus.mon.v20111025|esgf-data.jpl.nasa.gov':
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/husTechNote_MLS_L3_v03-3x_200408-201012.pdf|MLS Specific Humidity Technical Note|technote']},
+          'dataset_id:obs4MIPs.NASA-JPL.MLS.cli.mon.v20160504|esgf-data.jpl.nasa.gov': 
+            {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/MLS_cloud_ice_content_04_28_2016.pdf|MLS Mass Fraction of Cloud Ice Technical Note|technote']},          
           'dataset_id:obs4MIPs.NASA-GSFC.MODIS.clt.mon.v20111130|esgf-data.jpl.nasa.gov': 
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/cltTechNote_MODIS_L3_C5_200003-201109.pdf|MODIS Cloud Fraction Technical Note|technote']},
           'dataset_id:obs4MIPs.NASA-JPL.QuikSCAT.sfcWind.mon.v20120411|esgf-data.jpl.nasa.gov': 
