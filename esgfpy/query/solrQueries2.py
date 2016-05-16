@@ -9,7 +9,7 @@ from random import randint
 CORES = ['datasets', 'files']
 
 # Solr servers
-SERVERS = ['esg-datanode.jpl.nasa.gov', 'esgf-cloud1.jpl.nasa.gov']
+SERVERS = ['esg-node.jpl.nasa.gov', 'esgf-cloud1.jpl.nasa.gov']
 
 # Solr queries
 FQS = [ ['*:*'], 
@@ -25,8 +25,8 @@ SEPARATOR = ","
 def get_shards(core):
     '''Builds list of localhost shards for a given core.'''
     
-    #solr_ports = [8983, 8985, 8986, 8987, 8988, 8989, 8990, 8991, 8992, 8993, 8994, 8995, 8996, 8997, 8998, 8999, 9000, 9001 ]
-    solr_ports = [8983] + range(8985, 9002) 
+    #solr_ports = [8983, 8985, 8986, 8987, 8988, 8989, 8990, 8991, 8992, 8993, 8994, 8995, 8996, 8997, 8998, 8999, 9000 ]
+    solr_ports = [8983] + range(8985, 9000+1) 
     shards = ",".join( ["localhost:%s/solr/%s" % (p, core) for p in solr_ports])
     
     return shards
