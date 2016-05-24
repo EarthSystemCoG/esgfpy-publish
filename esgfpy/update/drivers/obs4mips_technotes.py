@@ -31,6 +31,10 @@ myDict = {'id:obs4MIPs.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa.gov':
             {'xlink':['https://www.earthsystemcog.org/site_media/projects/obs4mips/vas_QuikSCAT_L2B_v20110531_199908-200910.pdf|QuikSCAT vas Technical Note|technote']},
           'id:obs4MIPs.NASA-JPL.TES.tro3.mon.v20110608|esgf-data.jpl.nasa.gov':
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/tro3TechNote_TES_L3_tbd_200507-200912.pdf|TES Ozone Technical Note|technote']},
+          'id:obs4MIPs.RSS.SSMI.prw.mon':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/prwTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI Water Vapor Technical Note|technote']},
+          'id:obs4MIPs.RSS.SSMI.sfcWind.mon':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/sfcWindTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI sfcWind Technical Note|technote']},            
           }
 
 updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
@@ -60,6 +64,10 @@ myDict = {'dataset_id:obs4MIPs.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa
             {'xlink':['https://www.earthsystemcog.org/site_media/projects/obs4mips/vas_QuikSCAT_L2B_v20110531_199908-200910.pdf|QuikSCAT vas Technical Note|technote']},
           'dataset_id:obs4MIPs.NASA-JPL.TES.tro3.mon.v20110608|esgf-data.jpl.nasa.gov':
             {'xlink':['http://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/tro3TechNote_TES_L3_tbd_200507-200912.pdf|TES Ozone Technical Note|technote']},
+          'dataset_id:obs4MIPs.RSS.SSMI.prw.mon':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/prwTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI Water Vapor Technical Note|technote']},
+          'dataset_id:obs4MIPs.RSS.SSMI.sfcWind.mon':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/sfcWindTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI sfcWind Technical Note|technote']},            
           }
 
 updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='files')
