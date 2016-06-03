@@ -35,6 +35,11 @@ myDict = {'id:obs4MIPs.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa.gov':
             {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/prwTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI Water Vapor Technical Note|technote']},
           'id:obs4MIPs.RSS.SSMI.sfcWind.mon.v20160523|esgf-data.jpl.nasa.gov':
             {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/sfcWindTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI sfcWind Technical Note|technote']},            
+          'id:obs4MIPs.NASA-JPL.GNSS_RO.ta.monClim.v20160601|esgf-data.jpl.nasa.gov':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/catalog/obs4MIPs/technotes/catalog.html?dataset=obs4mips.technotes/ta-zgTechNote_RO_L3_Ret-v1_3_200201-201412.pdf|RO Air Temperature and Geopotential Height Technical Note|technote']},            
+          'id:obs4MIPs.NASA-JPL.GNSS_RO.zg.monClim.v20160601|esgf-data.jpl.nasa.gov':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/catalog/obs4MIPs/technotes/catalog.html?dataset=obs4mips.technotes/ta-zgTechNote_RO_L3_Ret-v1_3_200201-201412.pdf|RO Air Temperature and Geopotential Height Technical Note|technote']},            
+
           }
 
 updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
@@ -68,6 +73,10 @@ myDict = {'dataset_id:obs4MIPs.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa
             {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/prwTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI Water Vapor Technical Note|technote']},
           'dataset_id:obs4MIPs.RSS.SSMI.sfcWind.mon.v20160523|esgf-data.jpl.nasa.gov':
             {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/fileServer/obs4MIPs/technotes/sfcWindTechNote_SSMI_L4_RSSv07r00_198801-201512.pdf|SSMI sfcWind Technical Note|technote']},            
+          'dataset_id:obs4MIPs.NASA-JPL.GNSS_RO.ta.monClim.v20160601|esgf-data.jpl.nasa.gov':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/catalog/obs4MIPs/technotes/catalog.html?dataset=obs4mips.technotes/ta-zgTechNote_RO_L3_Ret-v1_3_200201-201412.pdf|RO Air Temperature and Geopotential Height Technical Note|technote']},            
+          'dataset_id:obs4MIPs.NASA-JPL.GNSS_RO.zg.monClim.v20160601|esgf-data.jpl.nasa.gov':
+            {'xlink':['https://esgf-data.jpl.nasa.gov/thredds/catalog/obs4MIPs/technotes/catalog.html?dataset=obs4mips.technotes/ta-zgTechNote_RO_L3_Ret-v1_3_200201-201412.pdf|RO Air Temperature and Geopotential Height Technical Note|technote']},            
           }
 
 updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='files')
