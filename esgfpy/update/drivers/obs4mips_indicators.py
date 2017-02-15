@@ -5,6 +5,7 @@ import logging
 from esgfpy.update.utils import updateSolr
 import ConfigParser
 import sys
+import json
 
 # input: configuration file example:
 # [obs4MIPs.NASA-JPL.AIRS.hus.mon.v1|esgf-dev.jpl.nasa.gov]
@@ -74,5 +75,7 @@ except Exception as e:
 
 # publish to Solr
 print "Publishing metadata: %s" % myDict
+jDict = json.dumps(myDict)
+print jDict
 updateSolr(myDict, update='set', solr_url=SOLR_URL, solr_core='datasets')
 
