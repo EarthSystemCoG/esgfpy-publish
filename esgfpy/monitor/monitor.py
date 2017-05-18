@@ -1,5 +1,8 @@
-# Script to monitor consisteny of 'latest' datasets throughout the Earth System Grid Federation
-# Usage: python esgfpy-publish/monitor.py <project>
+# Script to monitor the consistency of the 'latest' datasets throughout the Earth System Grid Federation
+
+# Usage: python esgfpy/monitor/monitor.py <optional space-separated list of search constraints>
+# Example: python esgfpy/monitor/monitor.py  project=CMIP5
+# Example: python esgfpy/monitor/monitor.py  project=CMIP5 from=2015-01-01T00:00:00Z to=2015-12-31T23:59:29Z
 
 import sys
 import json
@@ -9,31 +12,34 @@ import urllib2
 
 ESGF_SEARCH_URL = 'https://esgf-node.jpl.nasa.gov/esg-search/search'
 RETURNED_FIELDS = 'id,version,latest,replica,master_id,instance_id'
-LIMIT = 100
+LIMIT = 100 
 FORMAT = 'application/solr+json'
 OUTPUT_FILE = 'bad_datasets.out'
 
-logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(message)s', level=logging.INFO)
 
 
-# function that checks all datasets for a given project
-def check_project(project):
+# function that checks all datasets matching a given set of constraints
+def check_datasets(constraints):
     
     # dictionary of detected inconsistent datasets
     bad_datasets = {}
+    
+    cparams = []
+    for constraint in constraints:
+        cparams.append( tuple(constraint.split('=')) )
 
     # 1) execute distributed query to ESGF Search API for all 'latest' datasets
     offset = 0
     numFound = 0
     
     while (offset==0 or offset < numFound):
-        params = [ ('project', project), 
-                   ('latest', 'true'),
+        params = [ ('latest', 'true'),
                    ('distrib', 'true'),
                    ('fields', RETURNED_FIELDS), 
                    ('format', FORMAT), 
                    ('offset', offset), 
-                   ('limit', LIMIT) ]
+                   ('limit', LIMIT) ] + cparams
         
         # execute query to Solr
         url = ESGF_SEARCH_URL + "?"+urllib.urlencode(params)
@@ -46,6 +52,8 @@ def check_project(project):
         numRecords = len( jobj['response']['docs'] )
         offset += numRecords
         logging.info("Total number of records found: %s number of records returned: %s" % (numFound, numRecords))
+        if numFound==0:
+            return bad_datasets # no records matching the query
   
         # 2) loop over latest datasets, search all versions, check consistency
         for doc in jobj['response']['docs'] :
@@ -86,17 +94,21 @@ def check_project(project):
                     logging.warn("\t\t\tid=%s version=%s latest=%s replica=%s" % (_doc['id'], _doc['version'], _doc['latest'], _doc['replica']))
 
     # return results
+    logging.info("Total number of inconsistent datasets found: %s" % len(bad_datasets))
     return bad_datasets
 
       
 # main program
 if __name__ == '__main__':
     
-    # capture project from command line arguments
-    project = sys.argv[1]
+    # capture optional search constraints from command line arguments
+    if len(sys.argv)>1:
+        constraints = sys.argv[1:]
+    else:
+        constraints = []
     
     # execute distributed queries
-    bad_datasets = check_project(project)
+    bad_datasets = check_datasets(constraints)
     
     # write out results
     with open(OUTPUT_FILE, 'w') as outfile:
