@@ -146,6 +146,7 @@ class Xco2FileParser(Oco2FileParser):
         
         # FIXME
         #datasetTimes.append( dt.datetime.utcfromtimestamp(int(x)).replace(tzinfo=tzutc()) )
-        datasetTimes.append( dt.datetime(2017, 1, 1, 0, 0, 0, 0, tzinfo=tzutc()) )
+        datasetTimes.append( dt.datetime(2017, 5, 21, 0, 0, 0, 0, tzinfo=tzutc()) )
+        datasetTimes.append( dt.datetime(2017, 5, 29, 0, 0, 0, 0, tzinfo=tzutc()) )
                     
         return datasetTimes
