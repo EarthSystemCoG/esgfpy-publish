@@ -124,13 +124,15 @@ class Oco2LtCO2FileParser(Oco2FileParser):
             
         return datasetTimes
     
-class Xco2FileParser(Oco2FileParser):
+class Xco2FileParser(HdfMetadataFileParser):
     '''Parser for XCO2 (NetCDF4 format)'''
     
     def matches(self, filepath):
         '''Example filename: ocoX_L3CO2_170105_170112_B8101_a7310Ao7305Br_170721052306s.nc4'''
-        
+                
         dir, filename = os.path.split(filepath)
+        # store filename to extract dates later
+        self.filename = filename
         return re.match(FILENAME_PATTERN_XCO2, filename)
     
     def getLatitudes(self, h5file):
@@ -144,9 +146,11 @@ class Xco2FileParser(Oco2FileParser):
         # use UTC time
         datasetTimes = []
         
-        # FIXME
-        #datasetTimes.append( dt.datetime.utcfromtimestamp(int(x)).replace(tzinfo=tzutc()) )
-        datasetTimes.append( dt.datetime(2017, 5, 21, 0, 0, 0, 0, tzinfo=tzutc()) )
-        datasetTimes.append( dt.datetime(2017, 5, 29, 0, 0, 0, 0, tzinfo=tzutc()) )
+        # extract start, stop times from file name
+        parts = self.filename.split('_')
+        dtStart = "20%sT00:00:00" % parts[2]
+        dtStop = "20%sT23:59:59" % parts[3]
+        datasetTimes.append( dt.datetime.strptime(dtStart,"%Y%m%dT%H:%M:%S").replace(tzinfo=tzutc()) )
+        datasetTimes.append( dt.datetime.strptime(dtStop,"%Y%m%dT%H:%M:%S").replace(tzinfo=tzutc()) )
                     
         return datasetTimes

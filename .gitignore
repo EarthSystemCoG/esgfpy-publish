@@ -4,3 +4,4 @@ build
 dist
 esgfpy_publish.egg-info
 *.pyc
+.settings
