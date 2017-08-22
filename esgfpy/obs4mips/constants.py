@@ -15,6 +15,5 @@ SOLR_PORTS = [8983] + range(8985, 8993+1)
 TEXT_FILE = "obs4mips_indicators.txt"
 JSON_FILE = "obs4mips_indicators.json"
 
-INDICATOR_MAP = { "white":"0", "yellow":"1", "green":"2", "orange":"3", "red":"4", "light_gray":"5" }
-
-REVERSE_INDICATOR_MAP = { i[1]:i[0] for i in INDICATOR_MAP.items()}
+#INDICATOR_MAP = { "white":"0", "yellow":"1", "green":"2", "orange":"3", "red":"4", "light_gray":"5" }
+#REVERSE_INDICATOR_MAP = { i[1]:i[0] for i in INDICATOR_MAP.items()}

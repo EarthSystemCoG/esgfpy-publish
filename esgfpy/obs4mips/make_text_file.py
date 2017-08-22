@@ -4,7 +4,7 @@ Python script that queries the Solr indexes and generates a text-file of obs4MIP
 @author: Luca Cinquini
 '''
 import solr
-from constants import SOLR_HOST, FQ1, FQ2, NUMROWS, FIELDS, SOLR_PORTS, TEXT_FILE, INDICATOR_MAP
+from constants import SOLR_HOST, FQ1, FQ2, NUMROWS, FIELDS, SOLR_PORTS, TEXT_FILE
 
 def obs4mips_query():
     
@@ -26,7 +26,7 @@ def obs4mips_query():
         qcflags = []
         for qcf in result["quality_control_flags"]:
             parts = qcf.split(":")
-            qcflags.append(INDICATOR_MAP[parts[2]])
+            qcflags.append(parts[2])
         datasets[ result["id"].lower() ] = [result["id"], result["index_node"], result["data_node"], [x for x in qcflags]]
         
     # 2) query for datasets WITHOUT quality control flags
@@ -34,7 +34,7 @@ def obs4mips_query():
     print "Query=%s number of results found=%s" % (FQ2, response.numFound)
     for result in response.results:
         print "Dataset id=%s" % result["id"]
-        qcflags = ["0", "0", "0", "0", "0", "0"]
+        qcflags = ["white", "white", "white", "white", "white", "white"]
         
         datasets[ result["id"].lower() ] = [result["id"], result["index_node"], result["data_node"], [x for x in qcflags]]
 

@@ -26,7 +26,7 @@ Example:
 @author: cinquini
 '''
 
-from constants import TEXT_FILE, REVERSE_INDICATOR_MAP, JSON_FILE
+from constants import TEXT_FILE, JSON_FILE
 import json
 
 def obs4mips_read_text_file():
@@ -44,7 +44,7 @@ def obs4mips_read_text_file():
             parts = line.rstrip('\n').split("\t")
             quality_control_flags = []
             for i in range(1,7):
-                quality_control_flags.append("obs4mips_indicators:%s:%s" % (i, REVERSE_INDICATOR_MAP[ parts[i+2] ] ) )
+                quality_control_flags.append("obs4mips_indicators:%s:%s" % (i, parts[i+2] ) )
             datasets[ "id:%s" % parts[0] ] = {"quality_control_flags": quality_control_flags }
     
     return datasets
