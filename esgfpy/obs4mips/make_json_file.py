@@ -29,6 +29,11 @@ Example:
 from constants import TEXT_FILE, JSON_FILE
 import json
 
+# indexes of important fields inside text file (starting at 0)
+iDatasetId = 8
+iIndicator1 = 2
+iIndicator6 = 7
+
 def obs4mips_read_text_file():
     
     # dictionary of obs4MIPs datasets
@@ -40,12 +45,13 @@ def obs4mips_read_text_file():
         lines = the_file.readlines()
         
     for line in lines:
+        # variables     time_frequency  indicator_1     indicator_2     indicator_3     indicator_4     indicator_5     indicator_6     dataset_id      index_node      data_node
         if not line.startswith("#"): # skip header
             parts = line.rstrip('\n').split("\t")
             quality_control_flags = []
-            for i in range(1,7):
-                quality_control_flags.append("obs4mips_indicators:%s:%s" % (i, parts[i+2] ) )
-            datasets[ "id:%s" % parts[0] ] = {"quality_control_flags": quality_control_flags }
+            for i in range(iIndicator1,iIndicator6+1):
+                quality_control_flags.append("obs4mips_indicators:%s:%s" % (i-iIndicator1+1, parts[i] ) )
+            datasets[ "id:%s" % parts[iDatasetId] ] = {"quality_control_flags": quality_control_flags }
     
     return datasets
 

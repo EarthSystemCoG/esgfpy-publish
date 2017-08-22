@@ -27,7 +27,9 @@ def obs4mips_query():
         for qcf in result["quality_control_flags"]:
             parts = qcf.split(":")
             qcflags.append(parts[2])
-        datasets[ result["id"].lower() ] = [result["id"], result["index_node"], result["data_node"], [x for x in qcflags]]
+        datasets[ result["id"].lower() ] = [",".join(str(x) for x in result["variable"]), result["time_frequency"][0], 
+                                            [x for x in qcflags], 
+                                            result["id"], result["index_node"], result["data_node"]]
         
     # 2) query for datasets WITHOUT quality control flags
     response = s.select('*:*', fq=FQ2, shards=shards, fields=FIELDS, rows=NUMROWS)
@@ -36,7 +38,9 @@ def obs4mips_query():
         print "Dataset id=%s" % result["id"]
         qcflags = ["white", "white", "white", "white", "white", "white"]
         
-        datasets[ result["id"].lower() ] = [result["id"], result["index_node"], result["data_node"], [x for x in qcflags]]
+        datasets[ result["id"].lower() ] = [",".join(str(x) for x in result["variable"]), 
+                                            result["time_frequency"][0], [x for x in qcflags], 
+                                            result["id"], result["index_node"], result["data_node"]]
 
     return datasets
         
@@ -45,10 +49,10 @@ def obs4mips_write_text_file(datasets):
     with open(TEXT_FILE, 'w') as the_file: 
         
         # write header row
-        the_file.write("# dataset_id\tindex_node\tdata_node\tindicator_1\tindicator_2\tindicator_3\tindicator_4\tindicator_5\tindicator_6\n")
+        the_file.write("# variables\ttime_frequency\tindicator_1\tindicator_2\tindicator_3\tindicator_4\tindicator_5\tindicator_6\tdataset_id\tindex_node\tdata_node\t\n")
         for key in sorted(datasets):
             values = datasets[key]
-            the_file.write("\t".join( [values[0], values[1], values[2]] + [v for v in values[3]] ) + "\n")
+            the_file.write("\t".join( [values[0], values[1]] + [v for v in values[2]] + [values[3], values[4], values[5]] ) + "\n")
     
 
 if __name__ == '__main__':
