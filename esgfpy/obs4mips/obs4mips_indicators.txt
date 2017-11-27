@@ -1,80 +1,80 @@
 # variables	time_frequency	indicator_1	indicator_2	indicator_3	indicator_4	indicator_5	indicator_6	dataset_id	index_node	data_node	
 zos,zosNobs,zosStderr	mon	green	green	green	green	yellow	light_gray	obs4mips.CNES.AVISO.zos.mon.v20110829|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-ua,va	mon	white	white	white	white	white	white	obs4MIPs.ECMWF.ERA-interim.atmos.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-prw	mon	white	white	white	white	white	white	obs4MIPs.FUB-DWD.SSMI-MERIS.prw.mon.v20140616|esgf1.dkrz.de	esgf-data.dkrz.de	esgf1.dkrz.de
-cfad2Lidarsr532	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfad2Lidarsr532.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cfad2Lidarsr532	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfad2Lidarsr532.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cfad2Lidarsr532	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfad2Lidarsr532.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cfadLidarsr532	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfadLidarsr532.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cfadLidarsr532	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfadLidarsr532.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cfadLidarsr532	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfadLidarsr532.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clcalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clcalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clcalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clccalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clccalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clccalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clccalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clccalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clccalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clhcalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clhcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clhcalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clhcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clhcalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clhcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cllcalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cllcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cllcalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cllcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cllcalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cllcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clmcalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clmcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clmcalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clmcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clmcalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clmcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clrcalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clrcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clrcalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clrcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clrcalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clrcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cltcalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cltcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cltcalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cltcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cltcalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cltcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-uncalipso	mon	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.uncalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-uncalipso	mon_day_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.uncalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-uncalipso	mon_night_time	white	white	white	white	white	white	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.uncalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-xch4	mon	white	white	white	white	white	white	obs4MIPs.IUP.XCH4_CRDP3.xch4.mon.v100|esgf-data1.ceda.ac.uk	esgf-index1.ceda.ac.uk	esgf-data1.ceda.ac.uk
-xco2	mon	white	white	white	white	white	white	obs4MIPs.IUP.XCO2_CRDP3.xco2.mon.v100|esgf-data1.ceda.ac.uk	esgf-index1.ceda.ac.uk	esgf-data1.ceda.ac.uk
-pr	day	white	white	white	white	white	white	obs4MIPs.NASA-GSFC.GPCP.atmos.day.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-pr,prStderr	mon	white	white	white	white	white	white	obs4MIPs.NASA-GSFC.GPCP.atmos.mon.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-od550aer,od550aerNobs,od550aerStdv	mon	white	white	white	white	white	white	obs4MIPs.NASA-GSFC.MISR.atmos.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-fpar,od550aer,od550aerNobs,od550aerStdv	mon	white	white	white	white	white	white	obs4MIPs.NASA-GSFC.MODIS.atmos.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-clt,cltNobs,cltStddev	mon	white	white	white	white	white	white	obs4mips.NASA-GSFC.MODIS.clt.mon.v20111130|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-lai	mon	white	white	white	white	white	white	obs4MIPs.NASA-GSFC.MODIS.land.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-pr	3hr	white	white	white	white	white	white	obs4MIPs.NASA-GSFC.TRMM.atmos.3hr.v20160613|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-pr,prStderr	mon	white	white	white	white	white	white	obs4MIPs.NASA-GSFC.TRMM.atmos.mon.v20160613|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-hus,husNobs,husStderr	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.AIRS.hus.mon.v20110608|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-ta,taNobs,taStderr	mon	green	green	green	green	yellow	light_gray	obs4mips.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-ta	monClim	white	white	white	white	white	white	obs4mips.NASA-JPL.GNSS_RO.ta.monClim.v20160601|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-zg	monClim	white	white	white	white	white	white	obs4mips.NASA-JPL.GNSS_RO.zg.monClim.v20160601|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-cli	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.MLS.cli.mon.v20160504|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-hus,husNobs,husStderr	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.MLS.hus.mon.v20111025|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-ta,taNobs,taStderr	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.MLS.ta.mon.v20111025|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-sfcWind,sfcWindNobs,sfcWindStderr	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.QuikSCAT.sfcWind.mon.v20120411|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-uas,uasNobs,uasStderr	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.QuikSCAT.uas.mon.v20120411|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-vas,vasNobs,vasStderr	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.QuikSCAT.vas.mon.v20120411|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-tro3,tro3Nobs,tro3Stderr	mon	white	white	white	white	white	white	obs4mips.NASA-JPL.TES.tro3.mon.v20110608|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-rlut,rlutcs,rsdt,rsut,rsutcs	mon	white	white	white	white	white	white	obs4MIPs.NASA-LaRC.CERES-EBAF.atmos.mon.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-rlds,rldscs,rlus,rsds,rsdscs,rsus,rsuscs	mon	white	white	white	white	white	white	obs4MIPs.NASA-LaRC.CERES-EBAF_Surface.atmos.mon.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
-tos	day	white	white	white	white	white	white	obs4MIPs.NCEI.OISST.tos.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-tos	mon	white	white	white	white	white	white	obs4MIPs.NCEI.OISST.tos.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-rlut	day	white	white	white	white	white	white	obs4MIPs.NCEI.OLR.rlut.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-rlut	mon	white	white	white	white	white	white	obs4MIPs.NCEI.OLR.rlut.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-sic	day	white	white	white	white	white	white	obs4MIPs.NCEI.PMSIC.NH.sic.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-sic	mon	white	white	white	white	white	white	obs4MIPs.NCEI.PMSIC.NH.sic.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-sic	day	white	white	white	white	white	white	obs4MIPs.NCEI.PMSIC.SH.sic.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-sic	mon	white	white	white	white	white	white	obs4MIPs.NCEI.PMSIC.SH.sic.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
-albisccp	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.albisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-albisccpunweighted	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.albisccpunweighted.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-clisccp	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.clisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cltisccp	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.cltisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cttisccp	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.cttisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-cttisccpunweighted	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.cttisccpunweighted.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-pctisccp	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.pctisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-pctisccpunweighted	mon	white	white	white	white	white	white	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.pctisccpunweighted.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-tos,tosNobs,tosStderr	mon	white	white	white	white	white	white	obs4mips.REMSS.AMSRE.tos.mon.v20111031|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-prw	mon	white	white	white	white	white	white	obs4mips.RSS.SSMI.prw.mon.v20160523|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-sfcWind	mon	white	white	white	white	white	white	obs4mips.RSS.SSMI.sfcWind.mon.v20160523|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
-crs,lat,lon,od550aer,time,time_bnds	mon	white	white	white	white	white	white	obs4mips.SU.ATSR2-AATSR.od550aer.mon.v20160922|eridanus.eoc.dlr.de	esgf-data.dkrz.de	eridanus.eoc.dlr.de
-tos	mon	white	white	white	white	white	white	obs4MIPs.UOE.ARC-SST-1-1.mon.v1|esgf-data1.ceda.ac.uk	esgf-index1.ceda.ac.uk	esgf-data1.ceda.ac.uk
-clMISR	mon	white	white	white	white	white	white	obs4MIPs.UW.CFMIP-Obs-MISR.clMISR.mon.v20131113|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
-samplesMISR	mon	white	white	white	white	white	white	obs4MIPs.UW.CFMIP-Obs-MISR.samplesMISR.mon.v20131113|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+ua,va	mon	green	green	green	green	yellow	light_gray	obs4MIPs.ECMWF.ERA-interim.atmos.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+prw	mon	green	green	green	green	yellow	light_gray	obs4MIPs.FUB-DWD.SSMI-MERIS.prw.mon.v20140616|esgf1.dkrz.de	esgf-data.dkrz.de	esgf1.dkrz.de
+cfad2Lidarsr532	mon	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfad2Lidarsr532.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cfad2Lidarsr532	mon_day_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfad2Lidarsr532.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cfad2Lidarsr532	mon_night_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfad2Lidarsr532.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cfadLidarsr532	mon	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfadLidarsr532.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cfadLidarsr532	mon_day_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfadLidarsr532.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cfadLidarsr532	mon_night_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cfadLidarsr532.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clcalipso	mon	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clcalipso	mon_day_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clcalipso	mon_night_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clccalipso	mon	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clccalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clccalipso	mon_day_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clccalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clccalipso	mon_night_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clccalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clhcalipso	mon	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clhcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clhcalipso	mon_day_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clhcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clhcalipso	mon_night_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clhcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cllcalipso	mon	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cllcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cllcalipso	mon_day_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cllcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cllcalipso	mon_night_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cllcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clmcalipso	mon	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clmcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clmcalipso	mon_day_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clmcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clmcalipso	mon_night_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clmcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clrcalipso	mon	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clrcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clrcalipso	mon_day_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clrcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clrcalipso	mon_night_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.clrcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cltcalipso	mon	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cltcalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cltcalipso	mon_day_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cltcalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cltcalipso	mon_night_time	green	green	yellow	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.cltcalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+uncalipso	mon	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.uncalipso.mon.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+uncalipso	mon_day_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.uncalipso.mon_day_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+uncalipso	mon_night_time	green	green	orange	yellow	Orange	black	obs4MIPs.IPSL.CFMIP-Obs-CALIPSO.uncalipso.mon_night_time.v20110323|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+xch4	mon	green	green	green	yellow	Yellow	Light gray	obs4MIPs.IUP.XCH4_CRDP3.xch4.mon.v100|esgf-data1.ceda.ac.uk	esgf-index1.ceda.ac.uk	esgf-data1.ceda.ac.uk
+xco2	mon	green	green	green	white	white	Light gray	obs4MIPs.IUP.XCO2_CRDP3.xco2.mon.v100|esgf-data1.ceda.ac.uk	esgf-index1.ceda.ac.uk	esgf-data1.ceda.ac.uk
+pr	day	green	green	yellow	Green	Yellow	Light gray	obs4MIPs.NASA-GSFC.GPCP.atmos.day.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+pr,prStderr	mon	green	green	yellow	Green	Yellow	Light gray	obs4MIPs.NASA-GSFC.GPCP.atmos.mon.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+od550aer,od550aerNobs,od550aerStdv	mon	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.NASA-GSFC.MISR.atmos.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+fpar,od550aer,od550aerNobs,od550aerStdv	mon	green	green	Orange	Green	Yellow	Light gray	obs4MIPs.NASA-GSFC.MODIS.atmos.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+clt,cltNobs,cltStddev	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-GSFC.MODIS.clt.mon.v20111130|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+lai	mon	green	green	Orange	Yellow	Orange	Light gray	obs4MIPs.NASA-GSFC.MODIS.land.mon.v20160614|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+pr	3hr	green	green	white	white	Yellow	Light gray	obs4MIPs.NASA-GSFC.TRMM.atmos.3hr.v20160613|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+pr,prStderr	mon	green	green	white	white	Yellow	Light gray	obs4MIPs.NASA-GSFC.TRMM.atmos.mon.v20160613|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+hus,husNobs,husStderr	mon	green	green	white	white	Yellow	Light gray	obs4mips.NASA-JPL.AIRS.hus.mon.v20110608|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+ta,taNobs,taStderr	mon	green	green	green	green	Yellow	Light gray	obs4mips.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+ta	monClim	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.GNSS_RO.ta.monClim.v20160601|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+zg	monClim	green	green	Yellow	Yellow	Yellow	Light gray	obs4mips.NASA-JPL.GNSS_RO.zg.monClim.v20160601|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+cli	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.MLS.cli.mon.v20160504|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+hus,husNobs,husStderr	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.MLS.hus.mon.v20111025|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+ta,taNobs,taStderr	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.MLS.ta.mon.v20111025|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+sfcWind,sfcWindNobs,sfcWindStderr	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.QuikSCAT.sfcWind.mon.v20120411|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+uas,uasNobs,uasStderr	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.QuikSCAT.uas.mon.v20120411|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+vas,vasNobs,vasStderr	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.QuikSCAT.vas.mon.v20120411|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+tro3,tro3Nobs,tro3Stderr	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.NASA-JPL.TES.tro3.mon.v20110608|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+rlut,rlutcs,rsdt,rsut,rsutcs	mon	green	green	Green	Green	Yellow	Light gray	obs4MIPs.NASA-LaRC.CERES-EBAF.atmos.mon.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+rlds,rldscs,rlus,rsds,rsdscs,rsus,rsuscs	mon	green	green	Orange	Green	Yellow	Light gray	obs4MIPs.NASA-LaRC.CERES-EBAF_Surface.atmos.mon.v20160610|esgf.nccs.nasa.gov	esgf.nccs.nasa.gov	esgf.nccs.nasa.gov
+tos	day	green	green	Green	Green	Yellow	Light gray	obs4MIPs.NCEI.OISST.tos.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+tos	mon	green	green	Green	Green	Yellow	Light gray	obs4MIPs.NCEI.OISST.tos.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+rlut	day	green	green	Green	Green	Yellow	Light gray	obs4MIPs.NCEI.OLR.rlut.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+rlut	mon	green	green	Green	Green	Yellow	Light gray	obs4MIPs.NCEI.OLR.rlut.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+sic	day	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.NCEI.PMSIC.NH.sic.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+sic	mon	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.NCEI.PMSIC.NH.sic.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+sic	day	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.NCEI.PMSIC.SH.sic.day.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+sic	mon	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.NCEI.PMSIC.SH.sic.mon.v20160401|esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov	esgdata.gfdl.noaa.gov
+albisccp	mon	green	green	Yellow	Yellow	Orange	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.albisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+albisccpunweighted	mon	green	green	Yellow	Orange	Orange	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.albisccpunweighted.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+clisccp	mon	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.clisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cltisccp	mon	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.cltisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cttisccp	mon	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.cttisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+cttisccpunweighted	mon	green	green	Yellow	Orange	Orange	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.cttisccpunweighted.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+pctisccp	mon	green	green	Yellow	Green	Yellow	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.pctisccp.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+pctisccpunweighted	mon	green	green	Yellow	Orange	Orange	Light gray	obs4MIPs.PCMDI.CFMIP-Obs-ISCCP.pctisccpunweighted.mon.v20130503|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+tos,tosNobs,tosStderr	mon	green	green	Green	Green	Yellow	Light gray	obs4mips.REMSS.AMSRE.tos.mon.v20111031|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+prw	mon	green	green	Green	Green	Yellow	Light gray	obs4mips.RSS.SSMI.prw.mon.v20160523|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+sfcWind	mon	green	green	Yellow	Green	Yellow	Light gray	obs4mips.RSS.SSMI.sfcWind.mon.v20160523|esgf-data.jpl.nasa.gov	esgf-node.jpl.nasa.gov	esgf-data.jpl.nasa.gov
+crs,lat,lon,od550aer,time,time_bnds	mon	green	green	Yellow	Orange	Yellow	Light gray	obs4mips.SU.ATSR2-AATSR.od550aer.mon.v20160922|eridanus.eoc.dlr.de	esgf-data.dkrz.de	eridanus.eoc.dlr.de
+tos	mon	green	green	Green	Green	Yellow	Light gray	obs4MIPs.UOE.ARC-SST-1-1.mon.v1|esgf-data1.ceda.ac.uk	esgf-index1.ceda.ac.uk	esgf-data1.ceda.ac.uk
+clMISR	mon	green	green	Yellow	Orange	Yellow	Light gray	obs4MIPs.UW.CFMIP-Obs-MISR.clMISR.mon.v20131113|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
+samplesMISR	mon	green	green	Green	Orange	Orange	Light gray	obs4MIPs.UW.CFMIP-Obs-MISR.samplesMISR.mon.v20131113|vesg.ipsl.polytechnique.fr	esgf-node.ipsl.upmc.fr	vesg.ipsl.polytechnique.fr
