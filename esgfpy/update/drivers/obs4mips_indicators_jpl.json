@@ -1,20 +1,20 @@
 {
 	"id:obs4mips.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa.gov": {
 		"quality_control_flags": ["obs4mips_indicators:1:green", 
-		                          "obs4mips_indicators:2:green", 
-		                          "obs4mips_indicators:3:green", 
-		                          "obs4mips_indicators:4:green", 
-		                          "obs4mips_indicators:5:yellow", 
-		                          "obs4mips_indicators:6:light_gray"
+		                          "obs4mips_indicators:2:yellow", 
+		                          "obs4mips_indicators:3:orange", 
+		                          "obs4mips_indicators:4:red", 
+		                          "obs4mips_indicators:5:white", 
+		                          "obs4mips_indicators:6:white"
 		                          ]
 	},
 	"id:obs4mips.CNES.AVISO.zos.mon.v20110829|esgf-data.jpl.nasa.gov": {
-		"quality_control_flags": ["obs4mips_indicators:1:green", 
-		                          "obs4mips_indicators:2:green", 
-		                          "obs4mips_indicators:3:green", 
-		                          "obs4mips_indicators:4:green", 
-		                          "obs4mips_indicators:5:yellow", 
-		                          "obs4mips_indicators:6:light_gray"
+		"quality_control_flags": ["obs4mips_indicators:1:black", 
+		                          "obs4mips_indicators:2:darkgray", 
+		                          "obs4mips_indicators:3:dimgray", 
+		                          "obs4mips_indicators:4:gray", 
+		                          "obs4mips_indicators:5:white", 
+		                          "obs4mips_indicators:6:white"
 		                          ]
 	}
 }
