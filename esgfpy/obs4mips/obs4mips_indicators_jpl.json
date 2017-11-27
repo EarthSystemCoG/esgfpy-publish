@@ -1,0 +1,162 @@
+{
+    "id:obs4mips.CNES.AVISO.zos.mon.v20110829|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:green", 
+            "obs4mips_indicators:4:green", 
+            "obs4mips_indicators:5:yellow", 
+            "obs4mips_indicators:6:light_gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-GSFC.MODIS.clt.mon.v20111130|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.AIRS.hus.mon.v20110608|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:white", 
+            "obs4mips_indicators:4:white", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.AIRS.ta.mon.v20110608|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:green", 
+            "obs4mips_indicators:4:green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.GNSS_RO.ta.monClim.v20160601|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.GNSS_RO.zg.monClim.v20160601|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Yellow", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.MLS.cli.mon.v20160504|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.MLS.hus.mon.v20111025|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.MLS.ta.mon.v20111025|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.QuikSCAT.sfcWind.mon.v20120411|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.QuikSCAT.uas.mon.v20120411|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.QuikSCAT.vas.mon.v20120411|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.NASA-JPL.TES.tro3.mon.v20110608|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.REMSS.AMSRE.tos.mon.v20111031|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Green", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.RSS.SSMI.prw.mon.v20160523|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Green", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }, 
+    "id:obs4mips.RSS.SSMI.sfcWind.mon.v20160523|esgf-data.jpl.nasa.gov": {
+        "quality_control_flags": [
+            "obs4mips_indicators:1:green", 
+            "obs4mips_indicators:2:green", 
+            "obs4mips_indicators:3:Yellow", 
+            "obs4mips_indicators:4:Green", 
+            "obs4mips_indicators:5:Yellow", 
+            "obs4mips_indicators:6:Light gray"
+        ]
+    }
+}

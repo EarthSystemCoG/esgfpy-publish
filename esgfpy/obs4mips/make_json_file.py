@@ -34,7 +34,7 @@ iDatasetId = 8
 iIndicator1 = 2
 iIndicator6 = 7
 
-def obs4mips_read_text_file():
+def obs4mips_read_text_file(index_node):
     
     # dictionary of obs4MIPs datasets
     
@@ -48,10 +48,12 @@ def obs4mips_read_text_file():
         # variables     time_frequency  indicator_1     indicator_2     indicator_3     indicator_4     indicator_5     indicator_6     dataset_id      index_node      data_node
         if not line.startswith("#"): # skip header
             parts = line.rstrip('\n').split("\t")
-            quality_control_flags = []
-            for i in range(iIndicator1,iIndicator6+1):
+            # write all, or match a specific index node
+            if index_node is None or index_node == parts[-2]:
+              quality_control_flags = []
+              for i in range(iIndicator1,iIndicator6+1):
                 quality_control_flags.append("obs4mips_indicators:%s:%s" % (i-iIndicator1+1, parts[i] ) )
-            datasets[ "id:%s" % parts[iDatasetId] ] = {"quality_control_flags": quality_control_flags }
+              datasets[ "id:%s" % parts[iDatasetId] ] = {"quality_control_flags": quality_control_flags }
     
     return datasets
 
@@ -64,5 +66,7 @@ def obs4mips_write_json_file(datasets):
 
 
 if __name__ == '__main__':
-    datasets = obs4mips_read_text_file()
+    #index_node = None
+    index_node = "esgf-node.jpl.nasa.gov"
+    datasets = obs4mips_read_text_file(index_node)
     obs4mips_write_json_file(datasets)
