@@ -33,6 +33,7 @@ import json
 iDatasetId = 8
 iIndicator1 = 2
 iIndicator6 = 7
+numParts = 11
 
 def obs4mips_read_text_file(index_node):
     
@@ -47,7 +48,9 @@ def obs4mips_read_text_file(index_node):
     for line in lines:
         # variables     time_frequency  indicator_1     indicator_2     indicator_3     indicator_4     indicator_5     indicator_6     dataset_id      index_node      data_node
         if not line.startswith("#"): # skip header
-            parts = line.rstrip('\n').split("\t")
+            parts = line.rstrip('\n').split()
+            if len(parts) != numParts:
+               raise 'Invalid line: %s' % parts
             # write all, or match a specific index node
             if index_node is None or index_node == parts[-2]:
               quality_control_flags = []
@@ -66,7 +69,7 @@ def obs4mips_write_json_file(datasets):
 
 
 if __name__ == '__main__':
-    #index_node = None
-    index_node = "esgf-node.jpl.nasa.gov"
+    index_node = None
+    #index_node = "esgf-node.jpl.nasa.gov"
     datasets = obs4mips_read_text_file(index_node)
     obs4mips_write_json_file(datasets)
