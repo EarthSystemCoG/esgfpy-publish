@@ -72,7 +72,7 @@ def updateSolr(updateDict, update='set', solr_url='http://localhost:8984/solr', 
 def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
     
     # /select URL
-    # https://esgf-node.jpl.nasa.gov/solr/datasets/select?q=*%3A*&wt=json&indent=true
+    # https://esgf-node.jpl.nasa.gov:8984/solr/datasets/select?q=*%3A*&wt=json&indent=true
     url = solr_core_url + "/select"
     params = [ ('q','*:*'), ('fl', 'id'), ('wt','json'), ('indent','true'),
               ('start', start), ('rows', MAX_ROWS) ]
@@ -110,7 +110,7 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
         el = SubElement(docEl, "field", attrib={ "name": 'id' })
         el.text = str(result['id'])
 
-        # loop over fields to be updates
+        # loop over fields to be updated
         for fieldName, fieldValues in fieldDict.items():
             
             if fieldValues is not None and len(fieldValues)>0:
@@ -151,8 +151,7 @@ def _sendSolrXml(solr_core_url, xmlDoc):
     url = solr_core_url + '/update'
     
     # send XML document
-    r = urllib2.Request(url, data=xmlDoc,
-                         headers={'Content-Type': 'application/xml'})
+    r = urllib2.Request(url, data=xmlDoc, headers={'Content-Type': 'application/xml'})
     u = urllib2.urlopen(r)
     response = u.read()
     logging.info(response)
@@ -169,5 +168,3 @@ def _commit(solr_core_url):
     u = urllib2.urlopen(r)
     response = u.read()
     logging.info(response)
-
-    
