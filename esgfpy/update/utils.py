@@ -138,7 +138,7 @@ def _buildSolrXml(solr_core_url, queries, fieldDict, update='set', start=0):
                 
     # serialize document from all queries            
     xmlstr = tostring(rootEl)
-    logging.debug(xmlstr)
+    #logging.debug(xmlstr)
     return (xmlstr, numFound, numRecords)
     
 
@@ -167,4 +167,4 @@ def _commit(solr_core_url):
     r = urllib2.Request(url)
     u = urllib2.urlopen(r)
     response = u.read()
-    logging.info(response)
+    logging.debug(response)
