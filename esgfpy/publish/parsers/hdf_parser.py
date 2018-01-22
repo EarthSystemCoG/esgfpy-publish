@@ -131,7 +131,9 @@ def storeMetadata(metadata, lons, lats, datetimes, variables):
         metadata[WEST_DEGREES] = [minLon]
         metadata[EAST_DEGREES] = [maxLon]            
         # minX minY maxX maxY
-        metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+        # metadata[GEO] = ["%s %s %s %s" % (minLon, minLat, maxLon, maxLat)]
+        # NOTE: must use ENVELOPE notation wit Solr5
+        metadata[GEO] = ["ENVELOPE(%s, %s, %s, %s)" % (minLon, maxLon, maxLat, minLat)]
     
     # datetimes
     try:
