@@ -56,7 +56,7 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=Non
                     try:
                         (_numFound, _numRecords) = _migrate(s1, s2, query, fq, core, start, 1, replacements, suffix)
                     except Exception as e:
-                        print 'ERROR: %s' % e
+                        logging.warn('ERROR: %s' % e)
                     start += 1
                     numRecords += 1
         
