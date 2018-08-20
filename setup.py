@@ -15,7 +15,7 @@ setup(
     keywords = "python publishing client ESGF earth system grid federation",
     url = "https://github.com/EarthSystemCoG/esgfpy-publish",
     packages=find_packages(),
-    install_requires=['python-dateutil', 'pil', 'h5py', 'netCDF4'],
+    install_requires=['python-dateutil', 'pil', 'h5py', 'netCDF4', 'solrpy'],
     long_description=read('README'),
     classifiers=[
         "Development Status :: 4 - Beta",

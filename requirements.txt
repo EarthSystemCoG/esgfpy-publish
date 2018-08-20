@@ -1,0 +1,5 @@
+python-dateutil
+pillow
+h5py
+netCDF4
+solrpy
