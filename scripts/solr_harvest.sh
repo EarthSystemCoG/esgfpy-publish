@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Script to harvest a remote Solr server
-# Exxample invocation from local host:
+# Script to harvest all records from a remote Solr server to a local Solr server.
+# Example invocation:
 # ./solr_harvest.sh http://esgf-node.jpl.nasa.gov/solr http://localhost:8983/solr datasets files aggregations
 
 set -e
@@ -23,5 +23,5 @@ cd $PARENT_DIR
 for collection in $collections
 do
   echo "Harvesting collection=${collection}"
-  python esgfpy/migrate/solr2solr.py --core ${collection} ${solr_source_url} ${solr_target_url}
+  python esgfpy/migrate/solr2solr4all.py ${solr_source_url} ${solr_target_url} --core ${collection}
 done
