@@ -62,10 +62,14 @@ def migrate(sourceSolrUrl, targetSolrUrl, core=None, query=DEFAULT_QUERY, fq=Non
         
     # optimize full index (optimize=True implies commit=True)
     if optimize:
+        logging.info("Optimizing the index...")
         s2.optimize()
+        logging.info("...done")
     # just commit the changes but do not optimize
     elif commit:
+        logging.info("Committing changes to the index...")
         s2.commit()
+        logging.info("...done")
     
     # close connections
     s1.close()
