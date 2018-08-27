@@ -1,19 +1,20 @@
 '''
-Python module to harvest ALL records from a source Solr to a target Solr
+Python module to harvest ALL records from a source Solr to a target Solr.
+This script splits harvesting in sessions of MAX_RECORDS_PER_SESSION
+to avoid deadlocks.
 '''
 
 import argparse
 import solr
 import logging
-from esgfpy.migrate.solr2solr import MAX_RECORDS_PER_REQUEST
-logging.basicConfig(level=logging.DEBUG)
-
-MAX_RECORDS_PER_SESSION = 100000
-
 from esgfpy.migrate.solr2solr import migrate
 
+MAX_RECORDS_PER_SESSION = 100000
+logging.basicConfig(level=logging.DEBUG)
+
+
 def harvest(sourceSolrUrl, targetSolrUrl, core):
-    
+
     # retrieve total number of records at source
     surl = (sourceSolrUrl +"/" + core if core is not None else sourceSolrUrl)
     s1 = solr.Solr(surl)
@@ -34,12 +35,16 @@ def harvest(sourceSolrUrl, targetSolrUrl, core):
 
 
 if __name__ == '__main__':
-    
+
     # parse command line arguments
     parser = argparse.ArgumentParser(description="Migration tool for Solr indexes")
-    parser.add_argument('sourceSolrUrl', type=str, help="URL of source Solr (example: http://localhost:8983/solr)")
-    parser.add_argument('targetSolrUrl', type=str, help="URL of target Solr (example: http://localhost:8984/solr)")
-    parser.add_argument('--core', dest='core', type=str, help="Solr core to harvest (example: --core datasets)", default=None)
-    args_dict = vars( parser.parse_args() )
-    
+    parser.add_argument('sourceSolrUrl', type=str, 
+                        help="URL of source Solr (example: http://localhost:8983/solr)")
+    parser.add_argument('targetSolrUrl', type=str, 
+                        help="URL of target Solr (example: http://localhost:8984/solr)")
+    parser.add_argument('--core', dest='core', type=str, 
+                        help="Solr core to harvest (example: --core datasets)",
+                        default=None)
+    args_dict = vars(parser.parse_args())
+
     harvest(args_dict['sourceSolrUrl'], args_dict['targetSolrUrl'], args_dict['core'])
