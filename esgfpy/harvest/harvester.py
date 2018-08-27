@@ -275,7 +275,9 @@ class Harvester(object):
         numAggregations = 0
         
         # query for dataset ids from source, target Solrs
+        print("Querying source")
         source_dataset_ids = self._query_dataset_ids(self.source_solr_base_url, CORE_DATASETS, query, timestamp_query)
+        print("Querying target")
         target_dataset_ids = self._query_dataset_ids(self.target_solr_base_url, CORE_DATASETS, query, timestamp_query)
         
         # synchronize source Solr --> target Solr
@@ -340,17 +342,46 @@ class Harvester(object):
         solr_server = solr.Solr(solr_url)
         solr_server.delete_query(query)
         solr_server.close()
-        
-    def _query_dataset_ids(self, solr_base_url, core, query, timestamp_query):
+     
+    '''   
+    def _query_dataset_ids2(self, solr_base_url, core, query, timestamp_query):
         '''Method to query for dataset ids within a given datetime interval.'''
         
         datasets = {}
         solr_url = solr_base_url +"/" + core
         solr_server = solr.Solr(solr_url)
+        print("query=%s timestamp_query=%s" % (query, timestamp_query))
         response = solr_server.select(query, start=0, rows=MAX_DATASETS_PER_HOUR, fq=timestamp_query, fl=["id", "_timestamp"])
         for result in response.results:
             datasets[result['id']] = result['_timestamp']
         solr_server.close()
+        return datasets
+    '''
+    
+    def _query_dataset_ids(self, solr_base_url, core, query, timestamp_query):
+        '''Method to query for dataset ids within a given datetime interval.'''
+        
+        datasets = {}
+        solr_url = solr_base_url +"/" + core
+        
+        # send request
+        params = { "q": query,
+                   "fq": timestamp_query,
+                   "wt":"json",
+                   "indent":"true",
+                   "start":"0",
+                   "rows":"%s" % MAX_DATASETS_PER_HOUR,
+                   "fl": ["id", "_timestamp"]
+                  }
+        url = solr_url+"/select?"+urllib.urlencode(params, doseq=True)
+        logging.debug("Solr request: %s" % url)
+        fh = urllib2.urlopen( url )
+        jdoc = fh.read().decode("UTF-8")
+        response = json.loads(jdoc)
+        if int(response['response']['numFound']) > 0:
+            for doc in response['response']['docs']:
+                datasets[doc['id']] = doc['_timestamp']
+        
         return datasets
         
     def _optimize_solr(self, solr_base_url):
