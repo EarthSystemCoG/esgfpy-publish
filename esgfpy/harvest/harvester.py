@@ -343,21 +343,7 @@ class Harvester(object):
         solr_server.delete_query(query)
         solr_server.close()
      
-    '''   
-    def _query_dataset_ids2(self, solr_base_url, core, query, timestamp_query):
-        '''Method to query for dataset ids within a given datetime interval.'''
-        
-        datasets = {}
-        solr_url = solr_base_url +"/" + core
-        solr_server = solr.Solr(solr_url)
-        print("query=%s timestamp_query=%s" % (query, timestamp_query))
-        response = solr_server.select(query, start=0, rows=MAX_DATASETS_PER_HOUR, fq=timestamp_query, fl=["id", "_timestamp"])
-        for result in response.results:
-            datasets[result['id']] = result['_timestamp']
-        solr_server.close()
-        return datasets
-    '''
-    
+     
     def _query_dataset_ids(self, solr_base_url, core, query, timestamp_query):
         '''Method to query for dataset ids within a given datetime interval.'''
         
