@@ -1,3 +1,5 @@
+dateutils
+monthdelta
 python-dateutil
 pillow
 h5py

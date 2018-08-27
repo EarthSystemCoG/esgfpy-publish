@@ -400,7 +400,8 @@ if __name__ == '__main__':
                         help="URL of target Solr (example: 'http://esgf-cloud.jpl.nasa.gov:8983/solr')", 
                         default='http://localhost:8983/solr')
     parser.add_argument('--query', dest='query', type=str, 
-                        help="Query by index node (example: 'index_node:esgf-node.jpl.nasa.gov'", default=None)
+                        help="Query to subset the records namespace "
+                             "(example: 'index_node:esgf-node.jpl.nasa.gov'", default=DEFAULT_QUERY)
         
     args_dict = vars( parser.parse_args() )
     harvester = Harvester(args_dict['source'], args_dict['target'])
