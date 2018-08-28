@@ -135,7 +135,7 @@ def _migrate(s1, s2, query, fq, core, start, howManyMax, replacements, suffix):
                     except ValueError:
                         result[field] = 0.
     
-    s2.add_many(response.results, commit=True) # will commit these changes
+    s2.add_many(response.results, commit=False) # will not commit these changes
     
     logging.debug("Response: current number of records=%s total number of records=%s" % (start+_numRecords, _numFound))
     return (_numFound, _numRecords)

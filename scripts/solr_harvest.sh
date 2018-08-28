@@ -27,6 +27,7 @@ do
   echo ""
   echo "Harvesting collection=${collection} total number of records=$numTotal"
   
+  # harvest at most $maxRecords at a time, continue untill all records are harvested
   startRecord=0
   maxRecords=100000
   while [ $startRecord -lt $numTotal ]; do
