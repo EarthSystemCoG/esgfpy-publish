@@ -22,19 +22,17 @@ cd $PARENT_DIR
 # loop over collections
 for collection in $collections
 do
-  #numTotal=`curl -s 'http://esgdata.gfdl.noaa.gov/solr/'${collection}'/select/?q=*:*&wt=json&rows=0' | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["response"]["numFound"]'`
   url="${solr_source_url}/${collection}"'/select/?q=*:*&wt=json&rows=0'
-  echo $url
   numTotal=`curl -s "$url" | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["response"]["numFound"]'`
+  echo ""
   echo "Harvesting collection=${collection} total number of records=$numTotal"
   
-  start=0
+  startRecord=0
   maxRecords=10
-  while [ $start -lt $numTotal ]; do
-     echo "\tStarting record=$start max records=$maxRecords"
-     
-     start=$((start + maxRecords))
+  while [ $startRecord -lt $numTotal ]; do
+     echo "	Starting record=$startRecord max records=$maxRecords"
+     python esgfpy/migrate/solr2solr.py ${solr_source_url} ${solr_target_url} --core ${collection} --start ${startRecord} --max ${maxRecords}
+     startRecord=$((startRecord + maxRecords))
   done
 
-  #python esgfpy/migrate/solr2solr4all.py ${solr_source_url} ${solr_target_url} --core ${collection}
 done
