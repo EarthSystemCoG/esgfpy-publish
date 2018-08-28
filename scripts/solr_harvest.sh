@@ -28,7 +28,7 @@ do
   echo "Harvesting collection=${collection} total number of records=$numTotal"
   
   startRecord=0
-  maxRecords=10
+  maxRecords=100000
   while [ $startRecord -lt $numTotal ]; do
      echo "	Starting record=$startRecord max records=$maxRecords"
      python esgfpy/migrate/solr2solr.py ${solr_source_url} ${solr_target_url} --core ${collection} --start ${startRecord} --max ${maxRecords}
