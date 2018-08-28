@@ -17,4 +17,4 @@ SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PARENT_DIR="$(dirname $SOURCE_DIR)"
 cd $PARENT_DIR
 
-python esgfpy/harvest/harvester.py "${SOLR_SOURCE_URL}" "${SOLR_TARGET_URL}" --query=index_node:${index_node}
+python esgfpy/harvest/harvester.py "${solr_source_url}" "${solr_target_url}" --query=index_node:${index_node}
