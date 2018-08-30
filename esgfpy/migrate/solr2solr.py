@@ -93,9 +93,11 @@ def _migrate(s1, s2, query, fq, core, start, howManyMax, replacements, suffix):
     fquery=[] # empty
     if fq is not None:
         fquery = [fq]
+    logging.info("Querying: query=%s start=%s rows=%s fq=%s" % (query, start, howManyMax, fquery))
     response = s1.select(query, start=start, rows=howManyMax, fq=fquery)
     _numFound = response.numFound
     _numRecords = len(response.results)
+    logging.info("Query returned numFound=%s" % _numFound)
     
     # process records
     for result in response.results:
@@ -134,8 +136,10 @@ def _migrate(s1, s2, query, fq, core, start, howManyMax, replacements, suffix):
                         result[field] = float(value)
                     except ValueError:
                         result[field] = 0.
-    
+                        
+    logging.info("Adding results...")
     s2.add_many(response.results, commit=False) # will not commit these changes
+    logging.info("...done adding")
     
     logging.debug("Response: current number of records=%s total number of records=%s" % (start+_numRecords, _numFound))
     return (_numFound, _numRecords)
