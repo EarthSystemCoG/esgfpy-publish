@@ -19,6 +19,7 @@ FILENAME_LITE_PATTERN_V34R03 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc"
 FILENAME_LITE_PATTERN_V35R02 = "acos_b35_L2lite_(?P<yyyymmdd>\d+)_r02.nc"
 
 FILENAME_PATTERN_V9 = "acos_L2s_(?P<yymmdd>\d+)_\d\d_.+\.h5"
+FILENAME_PATTERN_V9_LITE = "acos_LtCO2_(?P<yyyymmdd>\d+)_.+.nc4"
 
 class AcosFileParser(HdfMetadataFileParser):
     '''Works for: ACOSv3.3, ACOSv3.4_r01, ACOSv3.4_r02.'''
@@ -27,7 +28,9 @@ class AcosFileParser(HdfMetadataFileParser):
         '''Example filename: acos_L2s_100129_16_Evaluation_v150151_L2s30400_r01_PolB_130904152222c.h5'''
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_PATTERN_V33, filename) or re.match(
-            FILENAME_PATTERN_V34, filename) or re.match(FILENAME_PATTERN_V9, filename)
+            FILENAME_PATTERN_V34, filename) or re.match(
+                FILENAME_PATTERN_V9, filename) or re.match(
+                    FILENAME_PATTERN_V9_LITE, filename)
     
     def getLatitudes(self, h5file):
         print(h5file['SoundingGeometry']['sounding_latitude'][:])
