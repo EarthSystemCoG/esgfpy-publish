@@ -157,5 +157,6 @@ if __name__ == '__main__':
     # filepath = '/usr/local/co2/data/ACOS/B9200_r01/acos_L2s_100103_43_B9200_PolB_190713202704.h5'
     filepath = '/usr/local/co2/data/ACOS/B9213A/acos_LtCO2_180129_v205205_B9213A_200311112240s.nc4'
     
-    parser = AcosFileParser()
+    # parser = AcosFileParser()
+    parser = AcosLiteFileParser_v9()
     parser.parseMetadata(filepath)
