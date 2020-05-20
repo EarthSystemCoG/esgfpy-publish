@@ -18,15 +18,19 @@ FILENAME_LITE_PATTERN_V34R03 = "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc"
 # acos_b35_L2lite_20140607_r02.nc
 FILENAME_LITE_PATTERN_V35R02 = "acos_b35_L2lite_(?P<yyyymmdd>\d+)_r02.nc"
 
+FILENAME_PATTERN_V9 = "acos_L2s_(?P<yymmdd>\d+)_\d\d_.+\.h5"
+
 class AcosFileParser(HdfMetadataFileParser):
     '''Works for: ACOSv3.3, ACOSv3.4_r01, ACOSv3.4_r02.'''
     
     def matches(self, filepath):
         '''Example filename: acos_L2s_100129_16_Evaluation_v150151_L2s30400_r01_PolB_130904152222c.h5'''
         dir, filename = os.path.split(filepath)
-        return re.match(FILENAME_PATTERN_V33, filename) or re.match(FILENAME_PATTERN_V34, filename)
+        return re.match(FILENAME_PATTERN_V33, filename) or re.match(
+            FILENAME_PATTERN_V34, filename) or re.match(FILENAME_PATTERN_V9, filename)
     
     def getLatitudes(self, h5file):
+        print(h5file['SoundingGeometry']['sounding_latitude'][:])
         return h5file['SoundingGeometry']['sounding_latitude'][:]
 
     def getLongitudes(self, h5file):
@@ -123,8 +127,9 @@ class AcosLiteFileParser_v35r02(HdfMetadataFileParser):
 
 if __name__ == '__main__':
     
-    #filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_44_Evaluation_v150151_L2s30400_r01_PolB_130914015757c.h5'
-    filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_06_Evaluation_v150151_L2s30400_r01_PolB_130904132249c.h5'
+    # filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_44_Evaluation_v150151_L2s30400_r01_PolB_130914015757c.h5'
+    # filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_06_Evaluation_v150151_L2s30400_r01_PolB_130904132249c.h5'
+    filepath = '/usr/local/co2/data/ACOS/B9200_r01/acos_L2s_100103_43_B9200_PolB_190713202704.h5'
     
     parser = AcosFileParser()
     parser.parseMetadata(filepath)
