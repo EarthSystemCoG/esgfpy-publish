@@ -112,7 +112,7 @@ if __name__ == '__main__':
                           "acos_b35_L2lite_(?P<yyyymmdd>\d+)_r02.nc",
                           
                           # acos_L2s_100103_32_B9200_PolB_190713202740.h5
-                          "acos_L2s_(?P<yymmdd>\d+)_\d\d_PolB_.+\.h5",
+                          "acos_L2s_(?P<yymmdd>\d+)_\d\d_.+\.h5",
                           
                           # AIRS.2010.01.01.031.L2.CO2_Std.v5.4.11.0.CO2.T10034082113.hdf
                           "AIRS\.(?P<yyyy>\d+)\.(?P<mm>\d+)\.(?P<dd>\d+)\..+\.hdf",
