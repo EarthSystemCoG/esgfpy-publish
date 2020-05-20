@@ -94,6 +94,11 @@ if __name__ == '__main__':
         datasetFields['institute'] = ['NASA/JPL']
         datasetFields['collection'] = ['ACOSv9']
 
+    elif 'ACOS/B9213A' in relativeDirectory:
+        datasetFields['mission'] = ['GOSAT']
+        datasetFields['institute'] = ['NASA/JPL']
+        datasetFields['collection'] = ['ACOSv9lite']
+
     # constant file-level metadata
     fileFields = {  "index_node": [HOSTNAME],
                     "data_node":[HOSTNAME] }
@@ -110,10 +115,12 @@ if __name__ == '__main__':
                           "acos_b34_L2lite_(?P<yyyymmdd>\d+)_r03n.nc",        
                           # acos_b35_L2lite_20140607_r02.nc
                           "acos_b35_L2lite_(?P<yyyymmdd>\d+)_r02.nc",
-                          
+
                           # acos_L2s_100103_32_B9200_PolB_190713202740.h5
                           "acos_L2s_(?P<yymmdd>\d+)_\d\d_.+\.h5",
-                          
+                          # acos_LtCO2_180120_v205205_B9213A_200311112033s.nc4
+                          "acos_LtCO2_(?P<yyyymmdd>\d+)_.+.nc4"
+
                           # AIRS.2010.01.01.031.L2.CO2_Std.v5.4.11.0.CO2.T10034082113.hdf
                           "AIRS\.(?P<yyyy>\d+)\.(?P<mm>\d+)\.(?P<dd>\d+)\..+\.hdf",
                           # TES-Aura_L2-CO2-Nadir_r0000015508_C01_F07_10.he5
