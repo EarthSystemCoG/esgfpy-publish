@@ -29,11 +29,9 @@ class AcosFileParser(HdfMetadataFileParser):
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_PATTERN_V33, filename) or re.match(
             FILENAME_PATTERN_V34, filename) or re.match(
-                FILENAME_PATTERN_V9, filename) or re.match(
-                    FILENAME_PATTERN_V9_LITE, filename)
+                FILENAME_PATTERN_V9, filename)
     
     def getLatitudes(self, h5file):
-        print(h5file['SoundingGeometry']['sounding_latitude'][:])
         return h5file['SoundingGeometry']['sounding_latitude'][:]
 
     def getLongitudes(self, h5file):
@@ -115,6 +113,29 @@ class AcosLiteFileParser_v35r02(HdfMetadataFileParser):
         return re.match(FILENAME_LITE_PATTERN_V35R02, filename)
     
     def getLatitudes(self, h5file):
+        print(h5file['latitude'][:])
+        return h5file['latitude'][:]
+
+    def getLongitudes(self, h5file):
+        return h5file['longitude'][:]
+    
+    def getTimes(self, h5file):
+                
+        datasetTimes = []
+        times = h5file['time'][:]
+        for time in times:
+            datasetTimes.append( dt.datetime.utcfromtimestamp(time) )
+        return np.asarray( datasetTimes )
+    
+class AcosLiteFileParser_v9(HdfMetadataFileParser):
+    
+    def matches(self, filepath):
+        '''Example filename: acos_LtCO2_180120_v205205_B9213A_200311112033s.nc4'''
+        
+        dir, filename = os.path.split(filepath)
+        return re.match(FILENAME_PATTERN_V9_LITE, filename)
+    
+    def getLatitudes(self, h5file):
         return h5file['latitude'][:]
 
     def getLongitudes(self, h5file):
@@ -132,7 +153,8 @@ if __name__ == '__main__':
     
     # filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_44_Evaluation_v150151_L2s30400_r01_PolB_130914015757c.h5'
     # filepath = '/usr/local/co2/data/ACOS/3.4_r01/acos_L2s_100101_06_Evaluation_v150151_L2s30400_r01_PolB_130904132249c.h5'
-    filepath = '/usr/local/co2/data/ACOS/B9200_r01/acos_L2s_100103_43_B9200_PolB_190713202704.h5'
+    # filepath = '/usr/local/co2/data/ACOS/B9200_r01/acos_L2s_100103_43_B9200_PolB_190713202704.h5'
+    filepath = '/usr/local/co2/data/ACOS/B9213A/acos_LtCO2_180129_v205205_B9213A_200311112240s.nc4'
     
     parser = AcosFileParser()
     parser.parseMetadata(filepath)

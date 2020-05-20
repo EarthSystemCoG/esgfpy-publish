@@ -31,6 +31,7 @@ import sys, os
 import ConfigParser
 import logging
 from esgfpy.publish.parsers import (AcosFileParser, AcosLiteFileParser_v34r03, AcosLiteFileParser_v35r02,
+                                    AcosLiteFileParser_v9,
                                     Oco2L2StdFileParser, Oco2LtCO2FileParser, Oco2LtSIFFileParser,
                                     TesFileParser, AirsFileParser, Xco2FileParser)
 
@@ -162,6 +163,7 @@ if __name__ == '__main__':
                                                     )
     # use special list of metadata parsers
     myFileRecordFactory.metadataParsers = [AcosLiteFileParser_v34r03(), AcosLiteFileParser_v35r02(), AcosFileParser(),
+                                           AcosLiteFileParser_v9(),
                                            Oco2L2StdFileParser(), Oco2LtCO2FileParser(), Oco2LtSIFFileParser(), Xco2FileParser(),
                                            TesFileParser(),
                                            AirsFileParser() ]
