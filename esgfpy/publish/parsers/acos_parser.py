@@ -113,7 +113,6 @@ class AcosLiteFileParser_v35r02(HdfMetadataFileParser):
         return re.match(FILENAME_LITE_PATTERN_V35R02, filename)
     
     def getLatitudes(self, h5file):
-        print(h5file['latitude'][:])
         return h5file['latitude'][:]
 
     def getLongitudes(self, h5file):
@@ -136,6 +135,7 @@ class AcosLiteFileParser_v9(HdfMetadataFileParser):
         return re.match(FILENAME_PATTERN_V9_LITE, filename)
     
     def getLatitudes(self, h5file):
+        print(h5file['latitude'][:])
         return h5file['latitude'][:]
 
     def getLongitudes(self, h5file):
