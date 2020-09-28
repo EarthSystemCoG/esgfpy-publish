@@ -132,11 +132,9 @@ class AcosLiteFileParser_v9(HdfMetadataFileParser):
         '''Example filename: acos_LtCO2_180120_v205205_B9213A_200311112033s.nc4'''
         
         dir, filename = os.path.split(filepath)
-        print("MATCH=%s" %  re.match(FILENAME_PATTERN_V9_LITE, filename))
         return re.match(FILENAME_PATTERN_V9_LITE, filename)
     
     def getLatitudes(self, h5file):
-        print(h5file['latitude'][:])
         return h5file['latitude'][:]
 
     def getLongitudes(self, h5file):
