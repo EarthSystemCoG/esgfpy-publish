@@ -71,24 +71,26 @@ class Oco2LtSIFFileParser(Oco2FileParser):
     ''' Parser for OCO-2 Level 2 Lite SIF files (NetCDF)'''
     
     def matches(self, filepath):
-        '''Example filename: oco2_LtSIF_150831_B7101_150903013836s.nc4'''
+        '''Example filename: oco2_LtSIF_200101_B10206r_200728210139s.nc4 '''
         
         dir, filename = os.path.split(filepath)
         return re.match(FILENAME_PATTERN_LTSIF, filename)
     
     def getLatitudes(self, h5file):
-        return h5file['latitude'][:]
+        #return h5file['latitude'][:]
+        return h5file['Geolocation']['latitude'][:]
 
     def getLongitudes(self, h5file):
-        return h5file['longitude'][:]
+        #return h5file['longitude'][:]
+        return h5file['Geolocation']['longitude'][:]
     
     def getTimes(self, h5file):
         
         datasetTimes = []
         
         # use TAI93 time
-        # string sounding_time_string(phony_dim_16, phony_dim_17) ;
-        seconds = h5file['time'][:]
+        #seconds = h5file['time'][:]
+        seconds = h5file['Geolocation']['time_tai93'][:]
 
         # loop over data points
         for secs in seconds:
