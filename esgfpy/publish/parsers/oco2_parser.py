@@ -1,5 +1,5 @@
 '''
-HDF parser specific to OCO-2 files.
+HDF parser specific to OCO-2 and OCO-3 files.
 
 @author: Luca Cinquini
 '''
@@ -18,8 +18,8 @@ FILENAME_PATTERN_IDP = "oco2_L2IDP.+\.h5" # oco2_L2IDPGL_03783a_150319_B6000r_15
 # Lite L2 files (NetCDF4)
 #FILENAME_PATTERN_LTE = "oco2_L2.+\.nc4" # oco2_L2Daily_141127_B5000_150116014823s.nc4
 # FIXME
-FILENAME_PATTERN_LTCO2 = "oco2_LtCO2.+\.nc4$" # test_oco2_b70_20150704.nc4, 
-FILENAME_PATTERN_LTSIF = "oco2_LtSIF.+\.nc4$" # OCO2-SIF-L2-150317-B7000r-fv1.nc
+FILENAME_PATTERN_LTCO2 = "oco[23]_LtCO2.+\.nc4$" # test_oco2_b70_20150704.nc4, 
+FILENAME_PATTERN_LTSIF = "oco[23]_LtSIF.+\.nc4$" # OCO2-SIF-L2-150317-B7000r-fv1.nc
 FILENAME_PATTERN_XCO2 = "ocoX_L3CO2.+\.nc4$" # test_oco2_b70_20150704.nc4, 
 
 AQUISITION_MODE = "AcquisitionMode"
