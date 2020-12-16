@@ -12,7 +12,7 @@ from esgfpy.publish.consts import TAI93_DATETIME_START
 import numpy as np
 
 # standard L2 files (HDF5)
-FILENAME_PATTERN_STD = "oco2_L2Std.+\.h5" # oco2_L2StdGL_89234a_100924_B3500_140205185958n.h5
+FILENAME_PATTERN_STD = "oco[23]_L2Std.+\.h5" # oco2_L2StdGL_89234a_100924_B3500_140205185958n.h5
 # SIF L2 files (HDF5)
 FILENAME_PATTERN_IDP = "oco2_L2IDP.+\.h5" # oco2_L2IDPGL_03783a_150319_B6000r_150328142340.h5
 # Lite L2 files (NetCDF4)
