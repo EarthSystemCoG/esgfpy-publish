@@ -140,6 +140,8 @@ if __name__ == '__main__':
                           ".*SIF.+\.nc",
                           # ocoX_L3CO2_170105_170112_B8101_a7310Ao7305Br_170721052306s.nc4
                           "ocoX_L3CO2.+\.nc4",
+                          # OCO-3
+                          "oco3_L2Std.+.h5", "oco3_LtCO2.*.nc4", "oco3_LtSIF.+.nc4"
                        ]
 
 
