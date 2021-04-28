@@ -67,6 +67,13 @@ class Oco2L2StdFileParser(Oco2FileParser):
                 pass # ignore one bad time stamp
         return datasetTimes
     
+    def getExtras(self, h5file):
+
+        modes = h5file['RetrievalHeader']['sounding_operation_mode'][:]
+
+        # return unique set of acquisition modes
+        return {'AcquisitionMode': set(modes)}
+    
 class Oco2LtSIFFileParser(Oco2FileParser):
     ''' Parser for OCO-2 Level 2 Lite SIF files (NetCDF)'''
     

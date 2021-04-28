@@ -37,9 +37,11 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
             lons = self.getLongitudes(h5file)
             datetimes = self.getTimes(h5file)
             variables = self.getVariables(h5file)
+            extras = self.getExtras(h5file)
             
             # store metadata
-            storeMetadata(metadata, lons, lats, datetimes, variables)
+            storeMetadata(metadata, lons, lats, datetimes, variables,
+                          extras=extras)
             
             # close HDF file
             h5file.close()
@@ -68,6 +70,10 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
     def getTimes(self, h5file):
         '''Returns a numpy array of python datetime values.'''
         pass
+
+    def getExtras(self, h5file):
+        '''Returns a dictionary of additional metadata keys to list of values.'''
+        return {}
     
     def getVariables(self, h5file):
         '''
@@ -94,7 +100,7 @@ class HdfMetadataFileParser(AbstractMetadataFileParser):
 
         return variables
         
-def storeMetadata(metadata, lons, lats, datetimes, variables):
+def storeMetadata(metadata, lons, lats, datetimes, variables, extras={}):
     '''Utility method to process the numeric arrays and extract metadata values to store.'''
     
     # latitudes
@@ -147,3 +153,7 @@ def storeMetadata(metadata, lons, lats, datetimes, variables):
     
     # variables
     metadata[VARIABLE] = variables
+    
+    # additional metadata
+    for key, values in extras.items():
+        metadata[key] = values
