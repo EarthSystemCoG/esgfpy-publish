@@ -72,7 +72,9 @@ class Oco2L2StdFileParser(Oco2FileParser):
         modes = h5file['RetrievalHeader']['sounding_operation_mode'][:]
 
         # return unique set of acquisition modes
-        return {'AcquisitionMode': set(modes)}
+        umodes = set(modes)
+        
+        return {'AcquisitionMode': umodes}
     
 class Oco2LtSIFFileParser(Oco2FileParser):
     ''' Parser for OCO-2 Level 2 Lite SIF files (NetCDF)'''
