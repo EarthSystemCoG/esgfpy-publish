@@ -11,5 +11,5 @@ from tes_xml_parser import TesXmlMetadataFileParser
 from hdf_parser import HdfMetadataFileParser
 from acos_parser import AcosFileParser, AcosLiteFileParser_v34r02, AcosLiteFileParser_v34r03, AcosLiteFileParser_v35r02, AcosLiteFileParser_v9
 from oco2_parser import Oco2L2StdFileParser, Oco2LtCO2FileParser, Oco2LtSIFFileParser, Xco2FileParser
-from tes_parser import TesFileParser
+from tes_parser import TesFileParser, TesFileParserLite
 from airs_parser import AirsFileParser
