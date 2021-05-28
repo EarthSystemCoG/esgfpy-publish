@@ -168,6 +168,7 @@ if __name__ == '__main__':
                                            AcosLiteFileParser_v9(),
                                            Oco2L2StdFileParser(), Oco2LtCO2FileParser(), Oco2LtSIFFileParser(), Xco2FileParser(),
                                            TesFileParser(),
+                                           TesFileParserLite(),
                                            AirsFileParser() ]
 
     # metadata fields to copy Dataset <--> File
