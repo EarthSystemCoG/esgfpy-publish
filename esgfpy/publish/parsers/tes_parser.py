@@ -61,15 +61,15 @@ class TesFileParserLite(HdfMetadataFileParser):
         return re.match(FILENAME_PATTERN_LITE, filename)
     
     def getLatitudes(self, h5file):
-        return h5file['HDFEOS']['SWATHS']['CO2NadirSwath']['Geolocation Fields']['Latitude'][:]
+        return h5file['Latitude'][:]
  
     def getLongitudes(self, h5file):
-        return h5file['HDFEOS']['SWATHS']['CO2NadirSwath']['Geolocation Fields']['Longitude'][:]
+        return h5file['Longitude'][:]
     
     def getTimes(self, h5file):
         
         # uses TAI time
-        seconds = h5file['HDFEOS']['SWATHS']['CO2NadirSwath']['Geolocation Fields']['Time'][:]
+        seconds = h5file['Time'][:]
         times = []
         for secs in seconds:
             if secs>0: # avoid Time:MissingValue = -999. ;
@@ -80,7 +80,7 @@ class TesFileParserLite(HdfMetadataFileParser):
     def getVariables(self, h5file):
         
         variables = []
-        for vname, vobj in h5file['HDFEOS']['SWATHS']['CO2NadirSwath']['Data Fields'].items():
+        for vname, vobj in h5file['Retrieval'].items():
             variables.append(str(vname))
     
         return variables
