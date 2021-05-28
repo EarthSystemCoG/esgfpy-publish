@@ -11,8 +11,11 @@ from dateutil.tz import tzutc
 import numpy as np
 from esgfpy.publish.consts import TAI93_DATETIME_START
 
-# TES-Aura_L2-CO2-Nadir_r0000015508_C01_F07_10.he5
-FILENAME_PATTERN = "TES-Aura_L2-CO2-Nadir_.+10\.he5"
+# TL2CO2Nv6: TES-Aura_L2-CO2-Nadir_r0000015508_C01_F07_10.he5
+# FILENAME_PATTERN = "TES-Aura_L2-CO2-Nadir_.+10\.he5"
+
+# TL2CO2Nv8: TES-Aura_L2-CO2-Nadir_r0000006521_F08_12.he5
+FILENAME_PATTERN = "TES-Aura_L2-CO2-Nadir_.+12\.he5"
 
 class TesFileParser(HdfMetadataFileParser):
     
