@@ -80,7 +80,13 @@ class TesFileParserLite(HdfMetadataFileParser):
     def getVariables(self, h5file):
         
         variables = []
+        for vname, vobj in h5file[''].items():
+            variables.append(str(vname))
+        for vname, vobj in h5file['Characterization'].items():
+            variables.append(str(vname))
         for vname, vobj in h5file['Retrieval'].items():
+            variables.append(str(vname))
+        for vname, vobj in h5file['Geolocation'].items():
             variables.append(str(vname))
     
         return variables
